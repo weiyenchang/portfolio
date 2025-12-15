@@ -7,78 +7,177 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
   <title data-i18n="pageTitle">學習計劃表</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@200..900&family=Chocolate+Classical+Sans&family=Noto+Sans+TC:wght@100..900&display=swap');
     /* CSS Variables for Theme */
     :root {
-      /* Light Mode */
-      --bg-body: #F3F1F5;
-      --bg-primary: #fff; /* Input/Day background */
-      --bg-secondary: #eee; /* Button background */
-      --text-color: #3B3E3D;
-      --border-color: #ccc;
-      --button-hover: #ddd;
+      /* Light Mode - 模擬截圖的簡約風格 */
+      --bg-body: #F9F9F9; /* 淺灰色背景 */
+      --bg-primary: #fff; /* 輸入/日曆背景 */
+      --bg-secondary: #000; /* 主要按鈕背景 (Add Event) */
+      --text-color: #000;
+      --text-secondary: #707070; /* 日期和次要文字顏色 */
+      --border-color: #E0E0E0; /* 淺邊框 */
+      --button-hover: #333; /* 主要按鈕懸停 */
+      --calendar-border: #E0E0E0; /* 日曆網格線 */
+      --highlight-color: #FF5722; /* 星期五高亮和標題顏色 (現在用於週末紅字) */
     }
     .dark-mode {
-      /* Dark Mode */
+      /* Dark Mode - 簡約黑白 */
       --bg-body: #1E1E1E;
       --bg-primary: #2D2D30;
-      --bg-secondary: #3C3C3F;
+      --bg-secondary: #fff;
       --text-color: #f7f7f7;
+      --text-secondary: #A0A0A0;
       --border-color: #555;
       --button-hover: #4a4a4d;
+      --calendar-border: #333;
+      --highlight-color: #FF7043;
     }
 
     body {
-      font-family: "Noto Sans TC", sans-serif;
-      padding: 20px;
+      /* 僅使用系統無襯線字體 */
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+      padding: 0; /* 移除 padding，由容器控制 */
       margin: 0;
-      background-color: var(--bg-body); /* Using Variable */
-      color: var(--text-color); /* Using Variable */
+      background-color: var(--bg-body); 
+      color: var(--text-color);
+      min-height: 100vh;
     }
+    
+    /* 調整整體容器佈局以匹配截圖的導航欄和主體內容 */
+    .app-container {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* 導航側邊欄 (左側小圖標) - 截圖風格 */
+    .nav-sidebar {
+        display: none !important;
+        background-color: var(--bg-primary);
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 15px;
+    }
+    .nav-item {
+        margin: 15px 0;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 20px;
+    }
+    .nav-item.active {
+        color: var(--highlight-color); /* 高亮當前日曆圖標 */
+    }
+
+    .main-content {
+        flex: 1;
+        padding: 30px;
+        background-color: var(--bg-body);
+    }
+
+    /* 調整主標題樣式 */
     h1 {
       font-size: 30px;
-      letter-spacing: 2px;
+      letter-spacing: 0; 
+      font-weight: 500; 
+      margin: 0;
     }
+    
+    /* 主體 Header 區 (包含標題、日期導航和 Add event) */
+    .header-main {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start; /* 讓內容靠上對齊 */
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border-color); 
+    }
+    .header-title-area {
+        /* 包含 'Jan 2020' 和下方的描述 */
+    }
+    /* 調整日曆月份顯示的樣式 */
+    .header-title-area h1 {
+        font-size: 32px;
+        font-weight: 500;
+    }
+    .header-title-area p {
+        font-size: 14px;
+        margin: 5px 0 0;
+        color: var(--text-secondary);
+    }
+
+    /* 模擬截圖中的 "Add event" 按鈕 (這裡用來裝 Language/Theme Toggle) */
+    #add-event-btn {
+        background-color: var(--bg-secondary);
+        color: var(--bg-body); /* 顏色反轉 */
+        border: none;
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: 0; /* 移除圓角 */
+        cursor: pointer;
+        transition: background-color 0.2s;
+        /* 移除原有的 flex 居中設定 */
+        display: block; 
+    }
+    #add-event-btn:hover {
+        background-color: var(--button-hover);
+    }
+
+    /* 主體佈局 (側邊欄和日曆) */
     .container {
       display: flex;
       gap: 20px;
+      margin-top: 30px; /* 與 Header 區隔 */
     }
     .sidebar {
       flex: 1;
       max-width: 300px;
+      /*padding: 20px;
+      background-color: var(--bg-primary); /* 側邊欄白色背景 */
+      /*border: 1px solid var(--border-color); /* 側邊欄邊框 */
+      /*border-radius: 0;*/ /* 移除圓角 */
     }
     .main {
       flex: 3;
     }
     label {
-      display: block;
+      display: flex;
       margin: 8px 0 4px;
-    }
-    /* 統一設定所有輸入欄位的基礎樣式 */
-    input[type="text"], input[type="number"], input[type="date"], textarea, button {
-      padding: 6px;
-      margin-bottom: 12px;
-      border: 1px solid var(--border-color); /* Using Variable */
-      border-radius: 4px;
       font-size: 14px;
-      background-color: var(--bg-primary); /* Using Variable */
-      color: var(--text-color); /* Using Variable */
-      /* 確保按鈕內容文字與圖標之間的間距 */
+      font-weight: 500;
+    }
+    label span{
+      font-weight: 500;
+    }
+    /* 隱藏計劃名稱標籤 (來自 LearningPlan.html 的 .titleLabel) */
+    .titleLabel {
+      display: none;
+    }
+
+    /* 統一設定所有輸入欄位的基礎樣式 - 扁平化 */
+    input[type="text"], input[type="number"], input[type="date"], textarea, button {
+      padding: 8px; /* 增加 padding */
+      margin-bottom: 12px;
+      border: 1px solid var(--border-color); 
+      border-radius: 0; /* 移除圓角 */
+      font-size: 14px;
+      background-color: var(--bg-primary); 
+      color: var(--text-color); 
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px; /* 圖標與文字間距 */
+      gap: 8px; 
+      box-sizing: border-box; 
     }
     /* 確保寬度一致 */
-    input[type="text"], input[type="date"], input[type="number"], textarea {
-      width: 261px;
-      box-sizing: border-box; /* Add box-sizing to manage padding/border within width */
+    input[type="text"], input[type="date"], input[type="number"] {
+      width: 100%; /* 在側邊欄中佔滿寬度 */
     }
-    /* 讓 textarea 的高度保持彈性，但給一個合理的最小高度 */
     textarea {
+      width: 100%;
       min-height: 50px; 
     }
-    /* 專門針對 Textarea 的高度調整 */
+    /* 專門針對 Textarea 的高度調整 (L1's adjustment) */
     #plan-container textarea:not(#outline) {
         height: 80px; /* 設定新的日期 textarea 高度 */
     }
@@ -86,210 +185,343 @@
         height: 209px; /* 維持大綱 textarea 的高度 */
     }
 
-    button {
-      background-color: var(--bg-secondary); /* Using Variable */
+    /* 側邊欄按鈕風格調整 (L1 側邊欄按鈕) */
+    .sidebar button {
+      background-color: var(--bg-body); /* 淺色按鈕 */
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
       cursor: pointer;
+      width: 100%; /* 讓側邊欄按鈕佔滿寬度 */
+      justify-content: center;
     }
-    button:hover {
-      background-color: var(--button-hover); /* Using Variable */
+    .sidebar button:hover {
+      background-color: var(--border-color); 
     }
-
-    /* === 月曆顯示樣式調整 START === */
-    #calendar {
-      margin-top: 20px;
-      display: flex; /* Use flex to stack month views vertically */
-      flex-direction: column;
-      gap: 20px; /* Gap between different months */
-    }
-    .month-container {
-        border: 1px solid var(--border-color);
-        padding: 15px;
-        border-radius: 6px;
-        background-color: var(--bg-primary); /* Use primary color as month background */
+    .sidebar hr {
+        border: none;
+        border-top: 1px solid var(--border-color);
+        margin: 15px 0;
     }
     
-    /* 1. Month Header Style for Collapse */
-    .month-header {
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 10px;
-        padding-bottom: 5px;
-        border-bottom: 2px solid var(--border-color);
-        text-align: left; /* Aligned left for the collapse icon */
+    /* --- 日曆佈局調整 (L1 Multi-Month Structure with L2 Flat Style) --- */
+
+    /* L1: Calendar Container */
+    #calendar {
+      margin-top: 0;
+      display: flex; 
+      flex-direction: column;
+      gap: 20px; 
     }
-    .month-header > div { /* targeting the flex wrapper inside month-header for the click area */
+    /* L1: Month Container (Box for each month) */
+    .month-container {
+        border: 1px solid var(--border-color);
+        padding: 0; /* 移除 padding，內容在內部處理 */
+        border-radius: 0; /* 移除圓角 */
+        background-color: var(--bg-primary); 
+    }
+    /* L1: Month Header */
+    .month-header {
+        font-size: 20px; /* 調整字體大小 */
+        font-weight: 500; /* 調整字體粗細 */
+        margin-bottom: 0;
+        padding: 10px 15px; /* 調整 padding */
+        border-bottom: 1px solid var(--border-color); /* 調整分隔線 */
+        text-align: left;
+    }
+    .month-header > div { 
         display: flex; 
         justify-content: space-between; 
         align-items: center; 
         cursor: pointer;
         width: 100%;
-        padding: 0 5px; 
+        padding: 0; 
     }
     .month-header .toggle-icon {
-        font-size: 20px;
-        /* 移除 transform 相關設定，改為切換文字 */
+        font-size: 16px;
         margin-left: 10px;
     }
-    
-    /* 2. Month Content Collapse */
+    /* L1: Month Content Wrapper (for collapse) */
     .month-content-wrapper {
-        overflow: hidden;
-        max-height: 2000px; /* A large value for expansion */
-        transition: max-height 0.3s ease-out;
+        padding: 15px;
     }
     .month-content-wrapper.collapsed {
         max-height: 0;
-        margin-top: 0;
-        margin-bottom: 0;
         padding-top: 0;
         padding-bottom: 0;
+        overflow: hidden; /* 確保收合時內容被裁剪 */
+        transition: max-height 0.3s ease-out, padding 0.3s ease-out; /* 增加過渡效果 */
     }
 
+    /* L2: Day of Week Header (Applied to L1's .weekday-header) */
     .calendar-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        gap: 5px;
+        /* 移除 gap */
+        gap: 0;
+        /* 僅在左上角設置邊框，讓格子之間的邊框連貫 */
+        border-left: 1px solid var(--calendar-border);
     }
     .weekday-header {
-        font-weight: bold;
-        text-align: center;
-        padding: 5px 0;
+      font-weight: 500;
+      color: var(--text-secondary);
+      font-size: 12px; /* 星期文字較小 */
+      text-align: center;
+      padding: 8px 0; /* 調整 padding */
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      
+      /* 應用 L2 的網格線樣式 */
+      border-right: 1px solid var(--calendar-border);
+      border-bottom: 1px solid var(--calendar-border);
     }
+    /* 標記週末的樣式 */
+    .weekday-weekend {
+        color: var(--highlight-color) !important; /* 使用高亮色作為紅色 */
+    }
+
+
+    /* L2: Day Cell Style (Applied to L1's .day) */
     .day {
-        border: 1px solid var(--border-color);
-        background-color: var(--bg-primary); 
-        padding: 5px; /* Slightly smaller padding for denser view */
-        min-height: 80px; /* Minimum height for calendar cells */
-        white-space: pre-wrap;
-        border-radius: 4px; 
-        overflow: hidden; /* Ensure content fits */
+      /* 移除 border-radius */
+      border-radius: 0; 
+      /* 使用右邊和底部的邊框來畫出網格 */
+      border: none;
+      border-right: 1px solid var(--calendar-border);
+      border-bottom: 1px solid var(--calendar-border);
+      background-color: var(--bg-primary); /* 預設為白色/主要背景色 */
+      padding: 8px 10px;
+      min-height: 100px;
+      white-space: pre-wrap;
+      overflow: hidden; 
     }
+    
+    /* FIX 2: 將今天日期的邊框顏色調整為 #FF7043 */
+    .day.today {
+        border: 2px solid #FF7043 !important;
+        box-shadow: 0 0 5px rgba(255, 112, 67, 0.5); /* 輕微陰影強調 */
+    }
+    
     .empty-day {
         background-color: transparent;
-        border: 1px dashed var(--border-color); /* Dashed border for empty days */
-        min-height: 80px;
-        border-radius: 4px;
-        /* Day number not displayed in empty-day */
+        border: 1px dashed var(--border-color); 
+        min-height: 100px; /* 保持與 .day 相同 */
+        border-radius: 0;
+        border-right: 1px solid var(--calendar-border);
+        border-bottom: 1px solid var(--calendar-border);
     }
-    .day-label { /* Adjusted from .date-label for consistency */
-        font-weight: bold;
-        margin-bottom: 4px;
+    
+    /* L2: 隱藏原有的 月/日（星期）標籤 - 移除 display: none!important; 讓勾選框可見 */
+    .day-label { 
+        display: none !important; /* 保持隱藏原始的日期文字，因為我們現在使用 .date-only */
+    }
+
+    /* NEW: 日期數字和勾選框的容器 */
+    .date-header-container {
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-items: center; /* 讓勾選框垂直居中對齊日期數字 */
+        margin-bottom: 5px; 
+        line-height: 1;
     }
-    .day-label span {
-        font-weight: bold;
-    }
-    .task {
-        font-size: 12px;
-        padding: 1px 3px;
-        margin-top: 2px;
-        border-radius: 2px;
-        line-height: 1.3;
-    }
-    /* === 月曆顯示樣式調整 END === */
     
-    /* Calendar Checkbox Style */
+    /* L2: 新增樣式來顯示日期數字，模擬截圖中的大號字體 */
+    .date-only {
+      font-weight: 500;
+      font-size: 32px;
+      display: inline-block; /* 配合 flex 佈局 */
+      line-height: 1;
+      text-align: left;
+    }
+    /* L2: 調整非當月日期文字的顏色 */
+    .date-only.outside-month {
+        color: var(--text-secondary);
+    }
+
+    /* Calendar Checkbox Style (L1's checkbox for mass selection) */
     .day-checkbox {
       width: 15px !important;
       height: 15px;
       margin: 0 !important;
       padding: 0 !important;
       cursor: pointer;
-      display: block !important;
+      /* 移除 display: block !important; 讓 flex 處理 */
     }
+    
+    /* L2: 任務/計劃項目的樣式調整 */
+    .task {
+      padding: 3px 6px;
+      margin-top: 4px; /* 調整間距 */
+      border-radius: 4px; /* 保留任務項目的小圓角 */
+      font-size: 12px;
+      color: #3B3E3D; /* 固定任務文字顏色 */
+      opacity: 0.9;
+      line-height: 1.3;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .dark-mode .task {
+        color: #1E1E1E;
+    }
+
+    /* L2: 計劃組件樣式調整 */
     .plan-group {
-      border: 1px solid var(--border-color); /* Using Variable */
-      padding: 10px;
+      border: 1px solid var(--border-color); 
+      padding: 0; /* 移除 padding，由內部控制 */
       margin-bottom: 15px;
-      border-radius: 6px;
+      border-radius: 0; /* 移除圓角 */
+      /* 這裡不再固定背景色，改由 JS 根據標籤顏色設定 */
     }
     .plan-header {
       cursor: pointer;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 10px; 
+      border-bottom: 1px solid var(--border-color);
+    }
+    /* FIX: Add style for the plan-group toggle icon */
+    .plan-header .toggle-icon {
+        font-size: 14px;
+        cursor: pointer;
+        color: var(--text-secondary);
+        user-select: none;
     }
     .plan-header h3 {
       margin: 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-color);
     }
-    .plan-header .toggle-icon {
-      font-size: 20px;
-      /* 移除 transform 相關設定，改為切換文字 */
-    }
-    /* .plan-header .toggle-icon.rotated {
-      transform: rotate(180deg);
-    } */
-    .plan-header .delete-btn {
-      margin-left: 10px;
-      padding: 3px 8px;
-      font-size: 12px;
-      background-color: #f44336;
-      color: white;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-    }
-    .delete-btn{
-      margin:0;
-    }
-    .plan-header .delete-btn:hover {
-      background-color: #d32f2f;
-    }
-    /* --- FIX: Collapse Functionality CSS --- */
     .plan-content {
-      overflow: hidden;
-      max-height: 1000px; /* A large value for expansion */
-      transition: max-height 0.3s ease-out;
+      padding: 10px; 
+      max-height: 1000px; 
+      transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+      overflow: hidden; /* 確保收合時內容被裁剪 */
     }
     .plan-content.collapsed {
       max-height: 0;
-      padding-top: 0; /* FIX: Ensure padding is zero when collapsed */
-      padding-bottom: 0; /* FIX: Ensure padding is zero when collapsed */
+      padding-top: 0;
+      padding-bottom: 0;
+      border-bottom: none;
     }
-    /* --- END FIX --- */
-    .color-label {
-        display: flex;
-        align-items: center;
+    .plan-header .delete-btn {
+      border-radius: 0; /* 移除圓角 */
+      padding: 5px 10px;
     }
     .color-label input[type="color"] {
         width: 30px;
         height: 30px;
         padding: 2px;
         margin-left: 8px;
-        cursor: pointer;
-        border: 1px solid var(--border-color); /* Using Variable */
-    }
-    .weekday-checkboxes {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .weekday-checkboxes label {
-      display: inline-flex;
-      align-items: center;
-      margin: 0;
-    }
-    .btn-group{
-      display: flex;
+        border: 1px solid var(--border-color);
+        border-radius: 0;
     }
     .color-label button {
-        margin-bottom: 0; /* Adjust button margin inside color label */
+        /* 保持按鈕的扁平化樣式 */
+        background-color: var(--bg-body); 
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+        width: auto;
+        justify-content: center;
+        margin-bottom: 0;
+        border-radius: 0;
     }
-    
+    .weekday-checkboxes label {
+        /* 保持扁平化 */
+        border-radius: 0;
+        padding: 5px;
+        border: 1px solid var(--border-color);
+        background-color: var(--bg-body);
+    }
+    .weekday-checkboxes input[type="checkbox"] {
+        margin-right: 5px;
+        width: auto;
+    }
+
+    /* L2: 日期導航和主題/語言切換按鈕區 (Header 區塊的右側) */
+    .calendar-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px; /* 增加間距 */
+    }
+    .calendar-controls .date-nav-buttons i {
+        display: none;
+        font-size: 16px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        margin-left: 10px;
+    }
+    .calendar-controls .header_btn {
+        display: flex;
+        gap: 5px; /* 按鈕間距 */
+    }
+    .calendar-controls .header_btn button {
+        /* 保持按鈕的扁平化樣式 */
+        border-radius: 0; 
+        padding: 8px 15px; 
+        margin: 0 !important; 
+        font-size: 14px;
+        background-color: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        justify-content: center; 
+        width: auto;
+    }
+    .calendar-controls .header_btn button:hover {
+        background-color: var(--border-color);
+    }
+    /* Dark Mode 下的按鈕樣式 */
+    .dark-mode .calendar-controls .header_btn button {
+        background-color: var(--bg-primary); 
+        color: var(--text-color); 
+        border: 1px solid var(--border-color);
+    }
+
+
     /* RWD media query for small screens */
     @media (max-width: 768px) {
+      .app-container {
+        flex-direction: column;
+      }
+      .nav-sidebar {
+        display: none; /* 小螢幕隱藏側邊導航 */
+      }
+      .main-content {
+        padding: 15px;
+      }
+      .header-main {
+        flex-direction: column;
+        align-items: flex-start;
+        padding-bottom: 10px;
+      }
+      .calendar-controls {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-top: 10px;
+        gap: 5px;
+      }
+      .calendar-controls .date-nav-buttons {
+        /* 確保日期導航按鈕在 RWD 模式下正確顯示 */
+        display: block; 
+      }
+      .calendar-controls .header_btn {
+        margin-top: 5px; 
+        justify-content: flex-start;
+      }
       .container {
         flex-direction: column;
+        gap: 15px;
+        margin-top: 15px;
       }
       .sidebar, .main {
         flex: 1;
         max-width: 100%;
+        padding: 15px;
       }
-      .calendar-grid { /* RWD for calendar */
-        grid-template-columns: repeat(7, 1fr);
+      .sidebar {
+        /* 移除最大寬度限制 */
+        max-width: unset; 
       }
       /* 讓輸入欄位在小螢幕上佔滿寬度 */
       input[type="text"], input[type="date"], input[type="number"], textarea, button {
@@ -297,136 +529,128 @@
         box-sizing: border-box; /* 確保 padding 不會讓寬度超出 100% */
       }
       /* 修正 RWD 寬度覆蓋，讓非輸入欄位按鈕恢復自動寬度 */
-      #lang-toggle-btn, #theme-toggle-btn, [onclick="addPlan()"], [onclick="generatePlan()"], [onclick="downloadCSV()"], #addToCalendarBtn {
-          width: auto;
-          display: inline-flex; /* 恢復為內容決定寬度的 inline-flex */
-      }
       .sidebar button {
-        margin-right: 5px; /* 增加按鈕間距 */
+          width: 100%;
       }
-      .sidebar label { /* 確保 sidebar 內的 label (全選日期) 在 RWD 下也是 100% 寬度 */
-        width: 100%;
+      /* 側邊欄的 flex 按鈕組 (新增/產生) */
+      .sidebar > div:nth-child(2) {
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
       }
-    }
-    .header{
-      display: flex;
-      align-items: center;
-      width: 100%;
-    }
-    .header p{
-      margin-left:10px;
-      margin-right:10px;
-      font-size: 30px;
-    }
-    .title{
-      flex: 1;
-      display: flex;
-      align-items: center;
-    }
-    .header_btn{
-      flex: 1;
-      display: flex;
-      justify-content:flex-end;
-    }
-    .header_btn button{
-      /* 圖標字體樣式 */
-      border-radius: 50px;
-      padding: 10px;
-      margin:10px !important;
-      font-size: 15px;
-      background-color: white;
-      border: none;
-      color:#3B3E3D;
-      
-      /* 取消原本 button 的 flex 居中，讓內容靠左/右 */
-      justify-content: start; 
-    }
-    /* 確保在 Dark Mode 下按鈕顏色維持一致 */
-    .dark-mode .header_btn button {
-        background-color: #3C3C3F; 
-        color: #f7f7f7; 
-        border: 1px solid #555;
-    }
-    .titleLabel{
-      display: none;
-    }
-    label span{
-      font-weight: 300;
+      .sidebar > div:nth-child(2) button {
+          margin-right: 0 !important; 
+          width: 100%;
+      }
+
+      /* 讓日曆網格在小螢幕上保持可讀性 */
+      .calendar-grid {
+        /* 恢復 L1 的設定，讓日曆在小螢幕上能捲動或保持 7 欄 */
+        grid-template-columns: repeat(7, 1fr);
+      }
+      .day {
+          min-height: 80px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="title">
-      <p><i class="fa-regular fa-calendar-days"></i></p>
-      <h1 data-i18n="mainHeader">記憶計劃表</h1>
-    </div>
-    <div class="header_btn">
-      <button onclick="toggleLanguage()" id="lang-toggle-btn">
-        <i class="fa-solid fa-language"></i>
-      </button>
-      <button onclick="toggleTheme()" id="theme-toggle-btn">
-        <i id="theme-icon" class="fa-solid fa-moon"></i>
-        <span data-i18n-id="toggleThemeBtn">夜間</span>
-      </button>
-    </div>
-  </div>
-  <div class="container">
-    <div class="sidebar">
-      <div id="plan-container">
-        </div>
-      <div style="display:flex;">
-        <button style="margin-right: 5px;" onclick="addPlan()" data-i18n="addPlanBtn">新增學習計劃</button>
-        <button onclick="generatePlan()" data-i18n="generatePlanBtn">產生記憶計劃</button>
+  <div class="app-container">
+    
+    <div class="nav-sidebar">
+      <i class="nav-item fa-solid fa-cube" style="font-size: 24px;"></i>
+      <hr style="width: 50%; border: none; border-top: 1px solid var(--border-color); margin: 20px 0;">
+      <i class="nav-item fa-regular fa-clock"></i>
+      <i class="nav-item fa-regular fa-calendar-days active"></i>
+      <i class="nav-item fa-solid fa-list-ul"></i>
+      <i class="nav-item fa-regular fa-bookmark"></i>
+      <div style="margin-top: auto; margin-bottom: 20px;">
+        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='10' fill='%23666'/><circle cx='12' cy='9' r='3' fill='%23ccc'/><path d='M12 14c-2.67 0-5.33 1.33-6 4h12c-.67-2.67-3.33-4-6-4z' fill='%23ccc'/></svg>" alt="User Profile" style="width: 30px; height: 30px; border-radius: 50%; border: 1px solid #999;">
       </div>
-      <hr>
-      <div id="gc-title-setting" style="border: 1px solid var(--border-color); padding: 10px; margin-bottom: 12px; border-radius: 4px;">
-        <label style="font-weight: bold; margin-bottom: 4px;" data-i18n-id="gcTitleSettingLabel">Google Caledar 標題顯示設定:</label>
-        <div>
-          <input type="radio" id="mergePlans" name="gcTitleOption" value="merge" checked>
-          <label for="mergePlans" style="display: inline;" data-i18n-id="mergePlansLabel">合併多個計劃</label>
+    </div>
+
+    <div class="main-content">
+      
+      <div class="header-main">
+          <div class="header-title-area">
+              <h1 data-i18n="mainHeader">記憶計劃表</h1>
+              <p data-i18n-id="headerSubtitle"></p>
+          </div>
+          <div class="calendar-controls">
+              <div class="date-nav-buttons">
+                  <i class="fa-solid fa-chevron-left"></i>
+                  <i class="fa-solid fa-chevron-right"></i>
+              </div>
+              <div class="header_btn">
+                  <button onclick="toggleLanguage()" id="lang-toggle-btn">
+                      <i class="fa-solid fa-language"></i>
+                  </button>
+                  <button onclick="toggleTheme()" id="theme-toggle-btn">
+                      <i id="theme-icon" class="fa-solid fa-moon"></i>
+                      <span data-i18n-id="toggleThemeBtn">夜間</span>
+                  </button>
+              </div>
+          </div>
+      </div>
+      
+      <div class="container">
+        
+        <div class="sidebar">
+          <div id="plan-container">
+            </div>
+          <div style="display:flex; flex-wrap: wrap;"> <button style="margin-right: 5px;" onclick="addPlan()" data-i18n="addPlanBtn">新增學習計劃</button>
+            <button onclick="generatePlan()" data-i18n="generatePlanBtn">產生記憶計劃</button>
+          </div>
+          <hr>
+          <div id="gc-title-setting" class="plan-group" style="padding: 10px; border-radius: 0; background-color: var(--bg-primary);"> 
+            <label style="font-weight: bold; margin-bottom: 4px;" data-i18n-id="gcTitleSettingLabel">Google Caledar 標題顯示設定:</label>
+            <div>
+              <input type="radio" id="mergePlans" name="gcTitleOption" value="merge" checked>
+              <label for="mergePlans" style="display: inline;" data-i18n-id="mergePlansLabel">合併多個計劃</label>
+            </div>
+            <div>
+              <input type="radio" id="separatePlans" name="gcTitleOption" value="separate">
+              <label for="separatePlans" style="display: inline;" data-i18n-id="separatePlansLabel">將各計劃獨立顯示</label>
+            </div>
+          </div>
+          <button onclick="addToGoogleCalendar()" id="addToCalendarBtn">
+            <i class="fa-brands fa-google"></i>
+            <span data-i18n-id="addToCalendarBtnText">加入 Google 行事曆</span>
+          </button>
+          <button onclick="downloadCSV()" data-i18n="downloadCSVBtn">
+            下載 Google Caledar Import csv</button>
         </div>
-        <div>
-          <input type="radio" id="separatePlans" name="gcTitleOption" value="separate">
-          <label for="separatePlans" style="display: inline;" data-i18n-id="separatePlansLabel">將各計劃獨立顯示</label>
+        
+        <div class="main">
+          <label style="margin: 0 0 12px 0; display: flex; align-items: center; width: 100%; box-sizing: border-box;">
+            <input type="checkbox" id="selectAllDays" onchange="toggleAllCheckboxes()" style="width: auto; margin: 0 5px 0 0;">
+            <span data-i18n-id="selectAllDays">全選日期</span>
+          </label>
+
+          <div id="calendar"></div>
         </div>
       </div>
-      <button onclick="addToGoogleCalendar()" id="addToCalendarBtn">
-        <i class="fa-brands fa-google"></i>
-        <span data-i18n-id="addToCalendarBtnText">加入 Google 行事曆</span>
-      </button>
-      <button onclick="downloadCSV()" data-i18n="downloadCSVBtn">
-        下載 Google Caledar Import csv</button>
-    </div>
-    <div class="main">
-      <label style="margin: 0 0 12px 0; display: flex; align-items: center; width: 100%; box-sizing: border-box;">
-        <input type="checkbox" id="selectAllDays" onchange="toggleAllCheckboxes()" style="width: auto; margin: 0 5px 0 0;">
-        <span data-i18n-id="selectAllDays">全選日期</span>
-      </label>
-
-      <div id="calendar"></div>
-    </div>
-  </div>
-
-  <script>
+    </div> </div> <script>
     const weekdayMap = ['日', '一', '二', '三', '四', '五', '六'];
     const weekdayMap_en = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const randomPalette = ['#63b598', '#ce7d78', '#ea9e70', '#a48a9e', '#c68487', '#8e967a', '#7895aa', '#e1a692', '#8676a3', '#8e8582', '#9f85c0', '#a29587', '#5d9185', '#b08c9f', '#c99a6b', '#c4c481', '#7889b7', '#a19777', '#c29790', '#83afaf', '#9c9297', '#92a3b7', '#b9745e', '#a0b189', '#9f7887'];
     const defaultColors = ['#FBEAE4', '#FEF3EB', '#FCF1D9', '#E5EEE4', '#FFFFFF', '#E9E7EE'];
     let latestPlan = {};
+    let allPlansData = {}; // 全域數據模型
     let planCount = 0;
-    let planColors = {}; 
+    let planColors = {}; // 專門用於儲存顏色，以應對語言切換時的顏色持久性 (Fix 1)
     let currentLang = 'zh'; // 預設語言
 
-    // 國際化文本
+    // 國際化文本 (L1's complete i18n data)
     const translations = {
       zh: {
         pageTitle: '學習計劃表',
-        mainHeader: '學習計劃表',
-        toggleThemeBtn: '夜間模式',
+        mainHeader: '記憶計劃表',
+        headerSubtitle: '',
+        toggleThemeBtn: '夜間', // L2 簡化文本
         toggleLangBtn: '切換語言',
-        addPlanBtn: '新增計劃',
-        generatePlanBtn: '產生計劃',
+        addPlanBtn: '新增學習計劃',
+        generatePlanBtn: '產生記憶計劃',
         downloadCSVBtn: '下載 Google Caledar Import CSV',
         selectAllDays: '全選日期', 
         addToCalendarBtnText: '加入 Google 行事曆', 
@@ -436,14 +660,14 @@
         mergePlansLabel: '合併顯示多個計劃',
         separatePlansLabel: '將計劃各自獨立顯示',
 
-        planHeader: '',
+        planHeader: '計劃', // L2 簡化文本
         titleLabel: '計劃名稱：',
         colorLabel: '標籤顏色：',
         randomColorBtn: '隨機',
         unitLabel: '任務內容：',
         startDateLabel: '開始日期：',
         endDateLabel: '結束日期（可留空）：',
-        executionDatesLabel: '指定執行日期：',
+        executionDatesLabel: '指定執行日期：', 
         executionDatesPlaceholder: '用逗號或換行分隔 M/D 或 YYYY/M/D',
         excludeDaysLabel: '排除日：',
         weekdaySun: '週日', weekdayMon: '週一', weekdayTue: '週二', weekdayWed: '週三', weekdayThu: '週四', weekdayFri: '週五', weekdaySat: '週六',
@@ -456,6 +680,7 @@
         outlineLabel: '任務清單/大綱：',
         outlinePlaceholder: '用逗號分隔，例如：主題一,主題二,主題三',
         dailyAmountLabel: '執行量/次：',
+        requiredDaysLabel: '所需天數：', 
         reverseOrder: '逆序',
         showContentLabel: '執行動作：',
         showStudy: '學習',
@@ -466,12 +691,12 @@
         deleteBtn: '刪除',
         studyText: '學習',
         reviewText: '複習',
-        // 舊的 CSV 標頭已移除
       },
       en: {
         pageTitle: 'Ebbinghaus Memory Plan',
         mainHeader: 'Ebbinghaus Memory Plan',
-        toggleThemeBtn: 'Dark',
+        headerSubtitle: '',
+        toggleThemeBtn: 'Dark', // L2 簡化文本
         toggleLangBtn: 'Toggle Language',
         addPlanBtn: 'Add Learning Plan',
         generatePlanBtn: 'Generate Memory Plan',
@@ -484,14 +709,14 @@
         mergePlansLabel: 'Merge Multiple Plans',
         separatePlansLabel: 'Show Each Plan Separately',
 
-        planHeader: '',
+        planHeader: 'Plan', // L2 簡化文本
         titleLabel: 'Plan Name:',
         colorLabel: 'Plan Color:',
         randomColorBtn: 'Random Color',
         unitLabel: 'Unit:',
         startDateLabel: 'Start Date:',
         endDateLabel: 'End Date (Optional):',
-        executionDatesLabel: 'Specified Execution Dates (M/D or YYYY/M/D comma/newline separated):',
+        executionDatesLabel: 'Specified Execution Dates:', 
         executionDatesPlaceholder: 'e.g. 11/23\n11/25\n2026/1/1',
         excludeDaysLabel: 'Exclude Days:',
         weekdaySun: 'Sun', weekdayMon: 'Mon', weekdayTue: 'Tue', weekdayWed: 'Wed', weekdayThu: 'Thu', weekdayFri: 'Fri', weekdaySat: 'Sat',
@@ -504,1006 +729,1313 @@
         outlineLabel: 'Outline (comma separated):',
         outlinePlaceholder: 'e.g. Topic 1, Topic 2, Topic 3',
         dailyAmountLabel: 'Daily Amount:',
+        requiredDaysLabel: 'Required Days:', 
         reverseOrder: 'Reverse Order',
-        showContentLabel: 'Show Content:',
+        showContentLabel: 'Action:',
         showStudy: 'Study',
         showReview: 'Review',
-        showCustom: 'Custom', 
-        customTextLabel: 'Custom Text:', 
-        customTextPlaceholder: 'e.g. Today\'s Task', 
+        showCustom: 'Custom',
+        customTextLabel: 'Custom Text:',
+        customTextPlaceholder: 'e.g. Today\'s Task',
         deleteBtn: 'Delete',
         studyText: 'Study',
         reviewText: 'Review',
-        // 舊的 CSV 標頭已移除
       }
     };
 
-    function parsePageRange(rangeStr) {
-      const [start, end] = rangeStr.split("~").map(x => parseInt(x));
-      return { start, end };
+    // --- Helper Functions (From L1) ---
+    function getRandomColor() {
+      // 從預設顏色中隨機選擇一個
+      return defaultColors[Math.floor(Math.random() * defaultColors.length)];
     }
 
     function formatDate(date) {
-      const m = date.getMonth() + 1;
-      const d = date.getDate();
-      return `${m}/${d}`;
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
     }
-
-    /**
-     * @description 使用本地時間 component 來格式化 YYYY-MM-DD，避免 toISOString 的時區偏移問題。
-     */
     function getDateStr(date) {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
     }
-    
-    /**
-     * @description 修正後的日期解析函數，可解析 M/D, YYYY/M/D, YYYY-M-D 等多種日期格式。
-     */
-    function parseDateInputToYYYYMMDD(dateString, referenceYear) {
-        if (!dateString) return null;
-        // 1. 標準化分隔符（將 - 替換為 /）並分割
-        const parts = dateString.trim().replace(/-/g, '/').split('/').map(s => s.trim()).filter(Boolean);
-        
-        let year, month, day;
 
-        if (parts.length === 3) {
-            // YYYY/M/D 格式 (例如: 2026/01/01)
-            const part1 = Number(parts[0]);
-            const part2 = Number(parts[1]);
-            const part3 = Number(parts[2]);
-            
-            if (part1 >= 1000) { 
-                year = part1;
-                month = part2;
-                day = part3;
-            } else if (part3 >= 1000) { 
-                // M/D/YYYY 格式 (例如: 1/1/2026)
-                year = part3;
-                month = part1;
-                day = part2;
+    function parseDateInputToYYYYMMDD(dateStr, referenceYear) {
+        dateStr = dateStr.trim();
+        const parts = dateStr.split(/[\/-]/).filter(Boolean).map(s => s.trim());
+        let y, m, d;
+
+        if (parts.length === 2) { // M/D format (e.g., 11/23)
+            m = parseInt(parts[0], 10);
+            d = parseInt(parts[1], 10);
+            y = referenceYear;
+        } else if (parts.length === 3) { // YYYY/M/D or M/D/YYYY (assuming YYYY-MM-DD standard for simplicity)
+            // Prioritize YYYY/M/D or YYYY-M-D
+            if (parts[0].length === 4) {
+                y = parseInt(parts[0], 10);
+                m = parseInt(parts[1], 10);
+                d = parseInt(parts[2], 10);
+            } else if (parts[2].length === 4) { // Assume M/D/YYYY
+                y = parseInt(parts[2], 10);
+                m = parseInt(parts[0], 10);
+                d = parseInt(parts[1], 10);
             } else {
-                return null; // 無效的完整日期
+                return null; // Invalid format
             }
-
-        } else if (parts.length === 2) {
-            // M/D 格式 (例如: 11/23)。使用 referenceYear。
-            year = referenceYear;
-            month = Number(parts[0]);
-            day = Number(parts[1]);
         } else {
-            return null; // 無效的格式
+            return null; // Invalid number of parts
         }
 
-        if (isNaN(year) || isNaN(month) || isNaN(day) || month < 1 || month > 12 || day < 1 || day > 31) return null;
-
-        // 關鍵修正：使用 (year, month - 1, day) 來創建 Date 物件，避免時區問題導致日期錯誤
-        const date = new Date(year, month - 1, day);
-
-        // 驗證日期是否有效（例如 2/30 會被 JS 自動調整）
-        if (date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day) {
-            return getDateStr(date); // 返回 YYYY-MM-DD (使用已修復的 getDateStr)
+        if (isNaN(y) || isNaN(m) || isNaN(d) || m < 1 || m > 12 || d < 1 || d > 31) {
+            return null;
         }
-        return null;
+
+        // Validate the date to ensure it's a real date (e.g., not Feb 30th)
+        const date = new Date(y, m - 1, d);
+        if (date.getFullYear() !== y || date.getMonth() !== m - 1 || date.getDate() !== d) {
+            return null;
+        }
+
+        return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    }
+
+    /**
+     * @description Helper function to check if a date is excluded by weekday or custom dates.
+     * @param {Date} date - The date to check.
+     * @param {number[]} excludeWeekdays - Array of excluded weekdays (0=Sun to 6=Sat).
+     * @param {string[]} excludeDates - Array of excluded dates (YYYY-MM-DD).
+     * @returns {boolean} True if the date is excluded.
+     */
+    function isExcluded(date, excludeWeekdays, excludeDates) {
+        const dayOfWeek = date.getDay();
+        const dateStr = getDateStr(date);
+        return excludeWeekdays.includes(dayOfWeek) || excludeDates.includes(dateStr);
     }
     
     /**
-     * @description 僅返回學習範圍字串，不包含學習內容（Unit Name）。
+     * @description Helper function to create the range string from an array of items.
+     * @param {string[]} items - Array of range items (e.g., ['10', '11', '12'] or ['Topic A']).
+     * @returns {string} Formatted range string (e.g., '10~12' or 'Topic A, Topic B').
      */
-    function getRangeString(items) { 
-      if (items.length === 0) return "";
-      const isNumberRange = !isNaN(Number(items[0]));
+    function getRangeString(items) {
+        if (!items || items.length === 0) return '';
+        // Check if the items are all numeric (likely page numbers)
+        const isNumeric = items.every(item => /^\d+$/.test(item));
 
-      if (isNumberRange) {
-        if (items.length === 1) return `${items[0]}`;
-        return `${items[0]}~${items[items.length - 1]}`;
-      } else {
-        const separator = currentLang === 'zh' ? '、' : ', ';
-        return `${items.join(separator)}`;
-      }
+        if (isNumeric) {
+            const numbers = items.map(Number).sort((a, b) => a - b);
+            const start = numbers[0];
+            const end = numbers[numbers.length - 1];
+            
+            // 檢查數字是否連續，如果不連續則只顯示第一個和最後一個
+            let isConsecutive = true;
+            for (let i = 0; i < numbers.length - 1; i++) {
+                if (numbers[i] + 1 !== numbers[i + 1]) {
+                    isConsecutive = false;
+                    break;
+                }
+            }
+
+            if (start === end) {
+                return String(start);
+            } else if (isConsecutive) {
+                 return `${start}~${end}`; // 連續則顯示範圍
+            } else {
+                 // 不連續，則用逗號分隔所有項目
+                 return items.join(', ');
+            }
+        } else {
+            // Assume outline items, join with comma
+            return items.join(', ');
+        }
     }
     
     /**
-     * @description Schedules review tasks for a set of study items.
+     * @description Recalculates and updates the required days span based on task range and daily amount.
+     * @param {number} id - Plan ID.
      */
-    function scheduleReviews(studyDate, studyItems, allPlans, id, reviewPrefix, showReview, excludeWeekdays, excludeDates) { 
-        if (!showReview) return;
+    function updateRequiredDays(id) {
+        const dailyAmountInput = document.getElementById(`dailyAmount-${id}`);
+        const requiredDaysSpan = document.getElementById(`requiredDays-${id}`);
+        if (!dailyAmountInput || !requiredDaysSpan) return;
 
-        // Review offsets: 1 day, 3 days, 6 days, 14 days
-        [1, 3, 6, 14].forEach(offset => {
-            // Create a safe date object for calculation (Study Date is already a safe Date object)
-            const reviewDate = new Date(studyDate); 
-            reviewDate.setDate(reviewDate.getDate() + offset);
-            
-            let rDateStr = getDateStr(reviewDate);
-            let rDateKey = formatDate(reviewDate); // M/D format for exclusion check
+        const totalRange = getTaskRange(id);
+        const dailyAmount = parseInt(dailyAmountInput.value);
+        let requiredDays = '-';
 
-            // Advance date if it falls on an excluded day/date
-            while (excludeWeekdays.includes(reviewDate.getDay()) || excludeDates.includes(rDateKey)) {
-                reviewDate.setDate(reviewDate.getDate() + 1);
-                rDateStr = getDateStr(reviewDate);
-                rDateKey = formatDate(reviewDate);
-            }
-
-            if (!allPlans[rDateStr]) allPlans[rDateStr] = [];
-            const reviewTask = `${reviewPrefix} ${getRangeString(studyItems)}`; 
-            
-            // Avoid duplicate review tasks
-            const existingTask = allPlans[rDateStr].find(t => t.text === reviewTask);
-            if (!existingTask) {
-                allPlans[rDateStr].push({text: reviewTask, planId: id});
-            }
-        });
+        // Must have positive range and positive daily amount
+        if (totalRange > 0 && dailyAmount > 0 && !isNaN(dailyAmount)) {
+            // Calculation: ceil(Total Range / Daily Amount)
+            requiredDays = Math.ceil(totalRange / dailyAmount);
+            requiredDays = requiredDays + (currentLang === 'zh' ? ' 天' : ' Days');
+        }
+        requiredDaysSpan.textContent = requiredDays;
+    }
+    
+    /**
+     * @description Calculates the total number of items in the task range.
+     * @param {number} id - Plan ID.
+     * @returns {number} The total count of items.
+     */
+    function getTaskRange(id) {
+        const items = getItemsArray(id);
+        return items.length;
     }
 
-    function generatePlan() {
-      const allPlans = {};
-      const planGroups = document.querySelectorAll('.plan-group');
-      
-      planColors = {};
-      planGroups.forEach(group => {
-        const id = group.dataset.id;
-        planColors[id] = document.getElementById(`colorPicker-${id}`).value;
-      });
+    /**
+     * @description Gets the array of learning items based on range type.
+     * @param {number} id - Plan ID.
+     * @returns {string[]} Array of learning items (page numbers or outline topics).
+     */
+    function getItemsArray(id) {
+        let items = [];
+        const rangeType = document.querySelector(`input[name="rangeType-${id}"]:checked`)?.value || 'pages';
+        const reverse = document.getElementById(`reverseOrder-${id}`)?.checked || false;
 
-      const studyText = translations[currentLang].studyText;
-      const reviewText = translations[currentLang].reviewText;
+        if (rangeType === 'pages') {
+            const pageRangeInput = document.getElementById(`pageRange-${id}`);
+            if (!pageRangeInput) return []; // Robustness check
+            const rangeStr = pageRangeInput.value.trim();
+            const match = rangeStr.match(/^(\d+)~(\d+)$/);
+            
+            if (match) {
+                let start = parseInt(match[1]);
+                let end = parseInt(match[2]);
 
-      planGroups.forEach(group => {
-        const id = group.dataset.id;
-        const unit = document.getElementById(`unit-${id}`).value; // 學習內容（Unit Name）
-        const startDateValue = document.getElementById(`startDate-${id}`).value; // YYYY-MM-DD or empty
-        const dailyAmount = parseInt(document.getElementById(`dailyAmount-${id}`).value);
+                if (start > end) {
+                    [start, end] = [end, start]; // Swap if start > end
+                }
 
-        // --- Determine Reference Year and Specified Execution Dates ---
-        
-        const executionDatesInput = document.getElementById(`executionDates-${id}`).value.trim();
-        let specifiedDates = [];
-        
-        // 1. Determine the year reference (use startDate's year, or current year if startDate is empty)
-        let referenceYear = new Date().getFullYear();
-        if (startDateValue) {
-             // 確保能正確從 YYYY-MM-DD 取得年份
-             referenceYear = new Date(startDateValue.split('-')[0], 0, 1).getFullYear();
+                for (let i = start; i <= end; i++) {
+                    items.push(String(i));
+                }
+            } else if (/^\d+$/.test(rangeStr)) {
+                 items.push(rangeStr);
+            }
+        } else if (rangeType === 'outline') {
+            const outlineInput = document.getElementById(`outline-${id}`);
+            if (!outlineInput) return []; // Robustness check
+            const outlineStr = outlineInput.value.trim();
+            items = outlineStr.split(',').map(item => item.trim()).filter(item => item.length > 0);
         }
 
-        // 2. Parse specifiedDates (Handle commas and newlines)
-        if (executionDatesInput) {
-            const rawDates = executionDatesInput.split(/[\n,]/)
-                .map(s => s.trim())
-                .filter(Boolean); // 過濾掉空字串
-                
-            specifiedDates = rawDates
-                .map(s => parseDateInputToYYYYMMDD(s, referenceYear)) // 使用新的解析函數
-                .filter(Boolean) 
-                .sort(); // 排序日期
-        }
+        return reverse ? items.reverse() : items;
+    }
 
-        // 3. Validation Check (Adjusted for specifiedDates)
-        // Check 1: Must have a scheduling mechanism (Start Date or Execution Dates)
-        if (!startDateValue && specifiedDates.length === 0) {
-            console.warn(`學習計劃 #${id} 已跳過：缺少「開始日期」或「指定執行日期」。`);
-            return; 
+    /**
+     * @description Loads plans data from localStorage and initializes global state.
+     */
+    function loadPlansData() {
+        try {
+            const savedPlans = localStorage.getItem('learningPlans');
+            if (savedPlans) {
+                allPlansData = JSON.parse(savedPlans);
+                // 找到最大的 ID 來設定 planCount
+                const ids = Object.keys(allPlansData).map(Number);
+                if (ids.length > 0) {
+                    planCount = Math.max(...ids) + 1;
+                }
+                // 初始化 planColors 映射
+                Object.values(allPlansData).forEach(planData => {
+                    if (planData.color) {
+                        planColors[planData.id] = planData.color;
+                    }
+                });
+            } else {
+                allPlansData = {};
+                planCount = 0;
+            }
+        } catch (e) {
+            console.error("Error loading plans data:", e);
+            allPlansData = {};
+            planCount = 0;
         }
-        // Check 2: Daily amount must be valid
-        if (isNaN(dailyAmount) || dailyAmount <= 0) {
-            console.warn(`學習計劃 #${id} 已跳過：無效的「每天學習量」。`);
-            return; 
-        }
-        
-        // --- Get other parameters ---
-        const reverse = document.getElementById(`reverseOrder-${id}`).checked;
-        const rangeType = document.querySelector(`input[name="rangeType-${id}"]:checked`).value;
-        
-        const showStudy = document.getElementById(`showStudy-${id}`).checked;
-        const showReview = document.getElementById(`showReview-${id}`).checked;
-        const showCustom = document.getElementById(`showCustom-${id}`).checked;
-        const customText = document.getElementById(`customText-${id}`).value.trim();
-        
-        // 決定任務前綴 (Prefix)
-        let studyPrefix = studyText;
-        let reviewPrefix = reviewText;
+    }
 
-        if (showCustom && customText) {
-            studyPrefix = customText;
-            reviewPrefix = customText;
-        }
+    /**
+     * @description Saves plan data to localStorage.
+     * @param {number} id - The ID of the plan to save.
+     */
+    function savePlanData(id) {
+        const planGroup = document.querySelector(`.plan-group[data-id="${id}"]`);
+        if (!planGroup) return;
 
-        // Fix #1: 決定是否要產生主要任務 (Study Task / Custom Task)
-        const shouldGeneratePrimaryTask = showStudy || (showCustom && customText.length > 0);
+        const colorPicker = document.getElementById(`colorPicker-${id}`);
+        const unitInput = document.getElementById(`unit-${id}`);
+        const startDateInput = document.getElementById(`startDate-${id}`);
+        const endDateInput = document.getElementById(`endDate-${id}`);
+        const executionDatesInput = document.getElementById(`executionDates-${id}`);
+        const useExecutionDatesCheckbox = document.getElementById(`useExecutionDatesCheckbox-${id}`);
+        const excludeDatesInput = document.getElementById(`excludeDates-${id}`);
+        const excludeCustomDatesCheckbox = document.getElementById(`excludeCustomDates-${id}`);
+        const dailyAmountInput = document.getElementById(`dailyAmount-${id}`);
+        const pageRangeInput = document.getElementById(`pageRange-${id}`);
+        const outlineInput = document.getElementById(`outline-${id}`);
+        const reverseOrderCheckbox = document.getElementById(`reverseOrder-${id}`);
+        const showStudyCheckbox = document.getElementById(`showStudy-${id}`);
+        const showReviewCheckbox = document.getElementById(`showReview-${id}`);
+        const showCustomCheckbox = document.getElementById(`showCustomCheckbox-${id}`);
+        const customTextInput = document.getElementById(`customText-${id}`);
+        
+        const rangeType = document.querySelector(`input[name="rangeType-${id}"]:checked`)?.value || 'pages';
 
         let excludeWeekdays = [];
         for (let i = 0; i < 7; i++) {
-          if (document.getElementById(`excludeWeekday-${id}-${i}`).checked) {
-            excludeWeekdays.push(i);
-          }
-        }
-        
-        // 4. Parse Exclude Dates (Handle commas and newlines)
-        const excludeDatesInput = document.getElementById(`excludeDates-${id}`).value.trim();
-        const rawExcludeDates = excludeDatesInput.split(/[\n,]/)
-            .map(s => s.trim())
-            .filter(Boolean);
-            
-        // Exclude Dates for comparison (M/D format)
-        const excludeDates = rawExcludeDates
-            .map(s => {
-                 const fullDateStr = parseDateInputToYYYYMMDD(s, referenceYear);
-                 if (fullDateStr) {
-                     const dateParts = fullDateStr.split('-');
-                     // 使用本地時間建構函數，確保日期在本地時間是正確的
-                     const dateObj = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
-                     return formatDate(dateObj); // Returns M/D
-                 }
-                 return null;
-            })
-            .filter(Boolean); // M/D format array
-
-        let learningItems = [];
-
-        if (rangeType === 'pages') {
-          const { start: pageStart, end: pageEnd } = parsePageRange(document.getElementById(`pageRange-${id}`).value);
-          if (reverse) {
-            for (let i = pageEnd; i >= pageStart; i--) learningItems.push(i);
-          } else {
-            for (let i = pageStart; i <= pageEnd; i++) learningItems.push(i);
-          }
-        } else {
-          const outlineText = document.getElementById(`outline-${id}`).value;
-          learningItems = outlineText.split(',').map(s => s.trim()).filter(Boolean);
-          if (reverse) {
-            learningItems.reverse();
-          }
-        }
-
-        let index = 0;
-        
-        // --- Core Scheduling Logic ---
-
-        if (specifiedDates.length > 0) {
-            // Case 1: Specified Execution Dates are provided (Study tasks only run on these dates)
-            
-            for (let i = 0; i < specifiedDates.length && index < learningItems.length; i++) {
-                const dateStr = specifiedDates[i]; // YYYY-MM-DD
-                
-                // 關鍵修正：使用 (year, month - 1, day) 來創建本地時間的 Date Object
-                const dateParts = dateStr.split('-');
-                const year = parseInt(dateParts[0]);
-                const month = parseInt(dateParts[1]);
-                const day = parseInt(dateParts[2]);
-                const date = new Date(year, month - 1, day); 
-                
-                const dateKey = formatDate(date); // M/D format for exclusion check
-
-                // 檢查排除日期清單 (M/D 格式)
-                if (excludeDates.includes(dateKey)) {
-                    continue; // 跳過指定的日期
-                }
-
-                const todayItems = learningItems.slice(index, index + dailyAmount);
-                if (todayItems.length > 0) {
-                    
-                    // taskObj.text 僅包含 [Prefix] [Range]
-                    if (shouldGeneratePrimaryTask) { 
-                        const task = `${studyPrefix} ${getRangeString(todayItems)}`; 
-                        if (!allPlans[dateStr]) allPlans[dateStr] = [];
-                        allPlans[dateStr].push({text: task, planId: id});
-                    }
-                    
-                    // Schedule Reviews based on the actual study date (date)
-                    scheduleReviews(date, todayItems, allPlans, id, reviewPrefix, showReview, excludeWeekdays, excludeDates); 
-                    
-                    index += dailyAmount;
-                }
-            }
-            
-        } else {
-            // Case 2: No Specified Execution Dates (Use sequential date generation, original logic)
-            
-            // Define the actual starting point for the iteration
-            // 修正：使用 (year, month - 1, day) 確保日期正確
-            const parts = startDateValue.split('-');
-            let dateCursor = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-
-            while (index < learningItems.length) {
-                const dateKey = formatDate(dateCursor);
-                const dateStr = getDateStr(dateCursor); // 使用已修正的 getDateStr
-
-                if (excludeWeekdays.includes(dateCursor.getDay()) || excludeDates.includes(dateKey)) {
-                    dateCursor.setDate(dateCursor.getDate() + 1);
-                    continue;
-                }
-
-                const todayItems = learningItems.slice(index, index + dailyAmount);
-                if (todayItems.length > 0) {
-                    
-                    // taskObj.text 僅包含 [Prefix] [Range]
-                    if (shouldGeneratePrimaryTask) { 
-                        const task = `${studyPrefix} ${getRangeString(todayItems)}`; 
-                        if (!allPlans[dateStr]) allPlans[dateStr] = [];
-                        allPlans[dateStr].push({text: task, planId: id});
-                    }
-                    
-                    // Schedule Reviews based on the study date (dateCursor)
-                    scheduleReviews(dateCursor, todayItems, allPlans, id, reviewPrefix, showReview, excludeWeekdays, excludeDates); 
-                    
-                    index += dailyAmount;
-                }
-                dateCursor.setDate(dateCursor.getDate() + 1);
+            if (document.getElementById(`excludeWeekday-${id}-${i}`)?.checked) {
+                excludeWeekdays.push(i);
             }
         }
 
-      });
+        const planData = {
+            id: id,
+            color: colorPicker ? colorPicker.value : '',
+            unit: unitInput ? unitInput.value.trim() : '',
+            startDate: startDateInput ? startDateInput.value : '',
+            endDate: endDateInput ? endDateInput.value : '',
+            executionDates: executionDatesInput ? executionDatesInput.value.trim() : '',
+            useExecutionDates: useExecutionDatesCheckbox ? useExecutionDatesCheckbox.checked : false,
+            excludeWeekdays: excludeWeekdays,
+            excludeDates: excludeDatesInput ? excludeDatesInput.value.trim() : '',
+            useExcludeDates: excludeCustomDatesCheckbox ? excludeCustomDatesCheckbox.checked : false,
+            rangeType: rangeType,
+            dailyAmount: dailyAmountInput ? parseInt(dailyAmountInput.value) : 1,
+            pageRange: pageRangeInput ? pageRangeInput.value.trim() : '',
+            outline: outlineInput ? outlineInput.value.trim() : '',
+            reverseOrder: reverseOrderCheckbox ? reverseOrderCheckbox.checked : false,
+            showStudy: showStudyCheckbox ? showStudyCheckbox.checked : true,
+            showReview: showReviewCheckbox ? showReviewCheckbox.checked : true,
+            showCustom: showCustomCheckbox ? showCustomCheckbox.checked : false,
+            customText: customTextInput ? customTextInput.value.trim() : '',
+        };
 
-      latestPlan = allPlans;
-      renderCalendar(allPlans);
+        allPlansData[id] = planData;
+        localStorage.setItem('learningPlans', JSON.stringify(allPlansData));
     }
 
     /**
-     * @description 重新設計的月曆顯示邏輯。
+     * @description Deletes a plan from the UI and storage.
+     * @param {number} id - The ID of the plan to delete.
      */
-    function renderCalendar(calendarMap) {
-      const calendar = document.getElementById("calendar");
-      calendar.innerHTML = "";
+    function deletePlan(id) {
+        if (!confirm(currentLang === 'zh' ? '確定要刪除這個計劃嗎？' : 'Are you sure you want to delete this plan?')) {
+            return;
+        }
+        const planGroup = document.querySelector(`.plan-group[data-id="${id}"]`);
+        if (planGroup) {
+            planGroup.remove();
+        }
 
-      const keys = Object.keys(calendarMap).sort();
-      if (keys.length === 0) return;
+        // 從全域數據和顏色映射中刪除
+        delete allPlansData[id];
+        delete planColors[id];
 
-      const getSafeDate = (dateStr) => {
-          const parts = dateStr.split('-');
-          // YYYY, M-1, D to avoid timezone issues
-          return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-      };
+        // 儲存最新的計劃數據
+        localStorage.setItem('learningPlans', JSON.stringify(allPlansData));
+        // 重新產生計劃表以更新日曆
+        generatePlan();
+    }
 
-      const startDate = getSafeDate(keys[0]);
-      const endDate = getSafeDate(keys[keys.length - 1]);
-      
-      let cursor = new Date(startDate.getFullYear(), startDate.getMonth(), 1); // Start at the 1st day of the first month
-      const endMonth = endDate.getMonth();
-      const endYear = endDate.getFullYear();
-      
-      const weekdayNames = currentLang === 'zh' ? weekdayMap : weekdayMap_en;
-      
-      // Loop through each month from start to end
-      while (cursor.getFullYear() < endYear || (cursor.getFullYear() === endYear && cursor.getMonth() <= endMonth)) {
-          
-          const monthId = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}`;
-          
-          const monthContainer = document.createElement('div');
-          monthContainer.className = 'month-container';
-          monthContainer.dataset.monthId = monthId; // Add unique ID for collapse
-          
-          const monthHeader = document.createElement('div');
-          monthHeader.className = 'month-header';
-          const monthName = currentLang === 'zh' ? `${cursor.getFullYear()} 年 ${cursor.getMonth() + 1} 月` : `${cursor.toLocaleString('default', { month: 'long' })} ${cursor.getFullYear()}`;
-          
-          // *** NEW: Collapse Button in Header (FIX: 展開 ▲ / 收合 ▼) ***
-          const headerContent = document.createElement('div');
-          headerContent.style.cssText = 'display: flex; justify-content: space-between; align-items: center; cursor: pointer;';
-          // 初始為展開狀態，圖標為 ▲
-          headerContent.innerHTML = `
-              <span>${monthName}</span>
-              <span class="toggle-icon" id="month-toggle-${monthId}">▲</span> 
-          `;
-          // Attach click handler to toggle collapse
-          headerContent.onclick = () => toggleMonthContent(monthId); 
-          monthHeader.appendChild(headerContent);
-          monthContainer.appendChild(monthHeader);
-          
-          // *** NEW: Collapsible Content Wrapper ***
-          const contentWrapper = document.createElement('div');
-          contentWrapper.className = 'month-content-wrapper'; // Default is not collapsed (show content)
-          contentWrapper.id = `month-content-${monthId}`;
-          monthContainer.appendChild(contentWrapper);
-          
-          const grid = document.createElement('div');
-          grid.className = 'calendar-grid';
-          contentWrapper.appendChild(grid);
-          
-          // 1. Weekday Headers (Sun to Sat)
-          for (let i = 0; i < 7; i++) {
-              const header = document.createElement('div');
-              header.className = 'weekday-header';
-              header.textContent = weekdayNames[i];
-              grid.appendChild(header);
-          }
-          
-          // 2. Placeholder for days before the 1st
-          const firstDayOfMonth = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
-          const startOffset = firstDayOfMonth.getDay(); // 0 (Sun) to 6 (Sat)
-          
-          for (let i = 0; i < startOffset; i++) {
-              const emptyDiv = document.createElement('div');
-              emptyDiv.className = 'empty-day';
-              grid.appendChild(emptyDiv);
-          }
-          
-          // 3. Days of the Month
-          let dayCursor = new Date(firstDayOfMonth);
-          
-          while (dayCursor.getMonth() === firstDayOfMonth.getMonth()) {
-              const dateStr = getDateStr(dayCursor); // YYYY-MM-DD (使用已修正的 getDateStr)
-              
-              const dayDiv = document.createElement('div');
-              
-              const label = document.createElement("span");
-              label.className = "day-label";
-              
-              const dateSpan = document.createElement("span");
-              // *** 修正：僅顯示日期數字 ***
-              dateSpan.textContent = `${dayCursor.getDate()}`; 
-              label.appendChild(dateSpan);
-              
-              // Add checkbox if there are tasks
-              if (calendarMap[dateStr]) {
-                  dayDiv.className = "day"; // 有任務才設定 .day 樣式
-                  const checkbox = document.createElement("input");
-                  checkbox.type = "checkbox";
-                  checkbox.className = "day-checkbox";
-                  checkbox.value = dateStr; 
-                  label.appendChild(checkbox);
-              } else {
-                  dayDiv.className = "empty-day"; // 沒任務，但仍是當月日期，使用 .empty-day
-                  
-                  // 沒有任務時，仍然要顯示日期
-                  const dayNumDiv = document.createElement('div');
-                  dayNumDiv.className = "day-label";
-                  dayNumDiv.appendChild(dateSpan);
-                  dayDiv.appendChild(dayNumDiv);
+    /**
+     * @description Renders all plans currently in allPlansData.
+     */
+    function renderPlans() {
+        const container = document.getElementById('plan-container');
+        if (!container) return;
+        // 清空現有的 plans
+        container.innerHTML = '';
+        // 重新渲染每個 plan
+        Object.values(allPlansData).forEach(planData => {
+            addPlan(planData, planData.id);
+        });
+    }
 
-                  // 檢查是否為當天日期 (僅做日期邊框提醒)
-                  const todayStr = getDateStr(new Date());
-                  if (dateStr === todayStr) {
-                    dayDiv.style.border = '2px solid orange';
-                  }
-                  
-                  grid.appendChild(dayDiv);
-                  dayCursor.setDate(dayCursor.getDate() + 1);
-                  continue; // 跳過任務處理
-              }
-              
-              dayDiv.appendChild(label);
-              
-              // Add tasks
-              if (calendarMap[dateStr]) {
-                calendarMap[dateStr].forEach(taskObj => {
-                  const taskDiv = document.createElement("div");
-                  
-                  const planTitle = document.getElementById(`unit-${taskObj.planId}`) ? document.getElementById(`unit-${taskObj.planId}`).value : `計劃 #${taskObj.planId}`;
-                  
-                  // taskObj.text is: "[Prefix] [Range]" (e.g., "學習 8")
-                  const parts = taskObj.text.split(' ');
-                  const prefix = parts[0]; // e.g., "學習"
-                  // 重新組合剩餘部分作為範圍字串 (可能包含空格)
-                  const range = parts.slice(1).join(' '); 
+    /**
+     * @description Adds a new plan element to the sidebar.
+     * @param {Object} [planData=null] - Optional plan data object for loading existing plans.
+     * @param {number} [id=null] - Optional plan ID for loading existing plans.
+     */
+    function addPlan(planData = null, id = null) {
+        const headerText = translations[currentLang].planHeader;
+        id = id === null ? planCount++ : id;
+        
+        // --- FIX 1: 標籤顏色非隨機化邏輯 ---
+        let colorValue;
+        // 1. 優先使用 in-memory 的 planColors
+        if (planColors[id]) {
+            colorValue = planColors[id];
+        } 
+        // 2. 否則，使用持久化數據 (planData) 中的顏色
+        else if (planData && planData.color) {
+            colorValue = planData.color;
+        }
+        // 3. 最後，生成一個隨機顏色
+        else {
+            colorValue = getRandomColor();
+        }
+        planColors[id] = colorValue; // 儲存或更新 colorValue 到全域映射
+        // --- END FIX 1 ---
 
-                  // *** 修正: 任務顯示格式調整為 [顯示內容] [學習內容] [學習範圍] ***
-                  const taskName = `${prefix} ${planTitle} ${range}`;
-                  
-                  taskDiv.textContent = taskName;
-                  taskDiv.className = "task";
-                  taskDiv.title = taskName; // Add title for hover tooltip
-                  taskDiv.style.backgroundColor = planColors[taskObj.planId] || defaultColors[(taskObj.planId - 1) % defaultColors.length];
-                  dayDiv.appendChild(taskDiv);
-                });
-              }
+        const showStudy = planData === null || planData.showStudy === undefined ? true : planData.showStudy;
+        const showReview = planData === null || planData.showReview === undefined ? true : planData.showReview;
+        const showCustom = planData ? planData.showCustom : false;
+        const customText = planData ? planData.customText : '';
+        const isExecutionDatesUsed = planData ? planData.useExecutionDates : false;
+        const isExcludeDatesCustomChecked = planData ? planData.useExcludeDates : false;
+        const rangeType = planData ? planData.rangeType : 'pages';
+        const container = document.getElementById('plan-container');
+        
+        const newPlanGroup = document.createElement('div');
+        newPlanGroup.className = 'plan-group';
+        newPlanGroup.dataset.id = id;
+        newPlanGroup.style.backgroundColor = colorValue; // 設置背景顏色
 
-              grid.appendChild(dayDiv);
-              
-              // Move to the next day
-              dayCursor.setDate(dayCursor.getDate() + 1);
-          }
-          
-          calendar.appendChild(monthContainer);
-          
-          // Move cursor to the 1st day of the next month
-          cursor.setMonth(cursor.getMonth() + 1);
-      }
+        newPlanGroup.innerHTML = `
+            <div class="plan-header" onclick="togglePlanContent(${id})">
+                <h3 id="plan-title-${id}" data-i18n="planHeader">${headerText} #${id}</h3>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="toggle-icon" data-id="${id}">▲</span>
+                    <button class="delete-btn" onclick="deletePlan(${id})" data-i18n="deleteBtn">${translations[currentLang].deleteBtn}</button>
+                </div>
+            </div>
+            <div id="plan-content-${id}" class="plan-content" onchange="savePlanData(${id})">
+                <label data-i18n-id="colorLabel" class="color-label"><span>${translations[currentLang].colorLabel}</span>
+                    <input id="colorPicker-${id}" type="color" value="${colorValue}">
+                    <button onclick="randomizeColor(${id})" data-i18n-id="randomColorBtn">${translations[currentLang].randomColorBtn}</button>
+                </label>
+                <label data-i18n-id="unitLabel"><span>${translations[currentLang].unitLabel}</span>
+                    <input id="unit-${id}" type="text" placeholder="" value="${planData ? planData.unit : ''}">
+                </label>
+
+                <label><span data-i18n-id="startDateLabel">${translations[currentLang].startDateLabel}</span><input id="startDate-${id}" type="date" value="${planData ? planData.startDate : formatDate(new Date())}"></label>
+                <label><span data-i18n-id="endDateLabel">${translations[currentLang].endDateLabel}</span><input id="endDate-${id}" type="date" value="${planData ? planData.endDate : ''}"></label>
+
+                <label style="display: flex; align-items: center; margin-bottom: 5px;">
+                    <input id="useExecutionDatesCheckbox-${id}" type="checkbox" ${isExecutionDatesUsed ? 'checked' : ''} onchange="toggleExecutionDatesInput(${id})" style="width: auto; margin: 0 5px 0 0;">
+                    <span data-i18n-id="executionDatesLabel">${translations[currentLang].executionDatesLabel}</span>
+                </label>
+                <div id="executionDatesDiv-${id}" style="display: ${isExecutionDatesUsed ? 'block' : 'none'};">
+                    <textarea id="executionDates-${id}" data-i18n-placeholder="executionDatesPlaceholder" placeholder="${translations[currentLang].executionDatesPlaceholder}">${planData ? planData.executionDates : ''}</textarea>
+                </div>
+
+                <label data-i18n-id="excludeDaysLabel" style="margin-top: 15px;">${translations[currentLang].excludeDaysLabel}</label>
+                <div class="weekday-checkboxes">
+                    <label><input id="excludeWeekday-${id}-0" type="checkbox" ${planData && planData.excludeWeekdays.includes(0) ? 'checked' : ''}><span data-i18n-id="weekdaySun">${translations[currentLang].weekdaySun}</span></label>
+                    <label><input id="excludeWeekday-${id}-1" type="checkbox" ${planData && planData.excludeWeekdays.includes(1) ? 'checked' : ''}><span data-i18n-id="weekdayMon">${translations[currentLang].weekdayMon}</span></label>
+                    <label><input id="excludeWeekday-${id}-2" type="checkbox" ${planData && planData.excludeWeekdays.includes(2) ? 'checked' : ''}><span data-i18n-id="weekdayTue">${translations[currentLang].weekdayTue}</span></label>
+                    <label><input id="excludeWeekday-${id}-3" type="checkbox" ${planData && planData.excludeWeekdays.includes(3) ? 'checked' : ''}><span data-i18n-id="weekdayWed">${translations[currentLang].weekdayWed}</span></label>
+                    <label><input id="excludeWeekday-${id}-4" type="checkbox" ${planData && planData.excludeWeekdays.includes(4) ? 'checked' : ''}><span data-i18n-id="weekdayThu">${translations[currentLang].weekdayThu}</span></label>
+                    <label><input id="excludeWeekday-${id}-5" type="checkbox" ${planData && planData.excludeWeekdays.includes(5) ? 'checked' : ''}><span data-i18n-id="weekdayFri">${translations[currentLang].weekdayFri}</span></label>
+                    <label><input id="excludeWeekday-${id}-6" type="checkbox" ${planData && planData.excludeWeekdays.includes(6) ? 'checked' : ''}><span data-i18n-id="weekdaySat">${translations[currentLang].weekdaySat}</span></label>
+                </div>
+                
+                <label style="display: flex; align-items: center; margin-top: 15px; margin-bottom: 5px;">
+                    <input id="excludeCustomDates-${id}" type="checkbox" ${isExcludeDatesCustomChecked ? 'checked' : ''} onchange="toggleExcludeDatesInput(${id})" style="width: auto; margin: 0 5px 0 0;">
+                    <span data-i18n-id="excludeDatesLabel">${translations[currentLang].excludeDatesLabel}</span>
+                </label>
+                <div id="excludeDatesDiv-${id}" style="display: ${isExcludeDatesCustomChecked ? 'block' : 'none'};">
+                    <textarea id="excludeDates-${id}" data-i18n-placeholder="excludeDatesPlaceholder" placeholder="${translations[currentLang].excludeDatesPlaceholder}">${planData ? planData.excludeDates : ''}</textarea>
+                </div>
+
+                <hr>
+
+                <label data-i18n-id="rangeLabel" style="margin-bottom: 5px;">${translations[currentLang].rangeLabel}</label>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                    <label style="margin:0;"><input type="radio" name="rangeType-${id}" value="pages" ${rangeType === 'pages' ? 'checked' : ''} onchange="toggleRangeType(${id})"><span data-i18n-id="rangeTypePages">${translations[currentLang].rangeTypePages}</span></label>
+                    <label style="margin:0;"><input type="radio" name="rangeType-${id}" value="outline" ${rangeType === 'outline' ? 'checked' : ''} onchange="toggleRangeType(${id})"><span data-i18n-id="rangeTypeOutline">${translations[currentLang].rangeTypeOutline}</span></label>
+                </div>
+
+                <div id="pageRangeDiv-${id}" style="display: ${rangeType === 'pages' ? 'block' : 'none'};">
+                    <label data-i18n-id="pageRangeLabel"><span>${translations[currentLang].pageRangeLabel}</span>
+                        <input id="pageRange-${id}" type="text" placeholder="ex. 19~306" value="${planData ? planData.pageRange : ''}" oninput="updateRequiredDays(${id})">
+                    </label>
+                </div>
+
+                <div id="outlineDiv-${id}" style="display: ${rangeType === 'outline' ? 'block' : 'none'};">
+                    <label data-i18n-id="outlineLabel"><span>${translations[currentLang].outlineLabel}</span>
+                        <textarea id="outline-${id}" data-i18n-placeholder="outlinePlaceholder" placeholder="${translations[currentLang].outlinePlaceholder}" oninput="updateRequiredDays(${id})">${planData ? planData.outline : ''}</textarea>
+                    </label>
+                </div>
+                
+                <label data-i18n-id="dailyAmountLabel"><span>${translations[currentLang].dailyAmountLabel}</span>
+                    <input id="dailyAmount-${id}" type="number" min="1" value="${planData ? planData.dailyAmount : 1}" oninput="updateRequiredDays(${id})">
+                </label>
+
+                <label data-i18n-id="requiredDaysLabel" style="margin-top: 0;"><span>${translations[currentLang].requiredDaysLabel}</span>
+                    <span id="requiredDays-${id}" style="font-weight: normal;">-</span>
+                </label>
+
+                <label style="display: flex; align-items: center; margin-top: 15px;">
+                    <input id="reverseOrder-${id}" type="checkbox" ${planData && planData.reverseOrder ? 'checked' : ''} style="width: auto; margin: 0 5px 0 0;">
+                    <span>${translations[currentLang].reverseOrder}</span>
+                </label>
+
+                <hr>
+
+                <label data-i18n-id="showContentLabel" style="margin-bottom: 5px;">${translations[currentLang].showContentLabel}</label>
+                <div class="action-checkboxes" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                    <label style="margin:0;"><input id="showStudy-${id}" type="checkbox" ${showStudy ? 'checked' : ''}><span data-i18n-id="showStudy"> ${translations[currentLang].showStudy}</span></label>
+                    <label style="margin:0;"><input id="showReview-${id}" type="checkbox" ${showReview ? 'checked' : ''}><span data-i18n-id="showReview"> ${translations[currentLang].showReview}</span></label>
+                    <label style="margin:0;"><input id="showCustomCheckbox-${id}" type="checkbox" ${showCustom ? 'checked' : ''} onchange="toggleCustomText(${id})"><span data-i18n-id="showCustom"> ${translations[currentLang].showCustom}</span></label>
+                </div>
+                <div id="customTextDiv-${id}" style="display: ${showCustom ? 'block' : 'none'};">
+                    <label data-i18n-id="customTextLabel"><span>${translations[currentLang].customTextLabel}</span>
+                        <input id="customText-${id}" type="text" data-i18n-placeholder="customTextPlaceholder" placeholder="${translations[currentLang].customTextPlaceholder}" value="${customText}">
+                    </label>
+                </div>
+            </div>
+        `;
+        container.appendChild(newPlanGroup);
+
+        // 首次加載時更新標題和所需天數
+        updatePlanTitle(id);
+        updateRequiredDays(id);
+
+        // 設置事件監聽器以更新顏色和標題
+        document.getElementById(`colorPicker-${id}`).addEventListener('input', (e) => {
+            document.querySelector(`.plan-group[data-id="${id}"]`).style.backgroundColor = e.target.value;
+            planColors[id] = e.target.value; // 更新 in-memory map
+            savePlanData(id); // 儲存變更
+        });
+
+        // 確保加載時收合狀態正確
+        if (planData && planData.isCollapsed) {
+            const content = document.getElementById(`plan-content-${id}`);
+            const icon = document.querySelector(`.plan-header .toggle-icon[data-id="${id}"]`);
+            if (content && icon) {
+                 content.classList.add('collapsed');
+                 content.style.maxHeight = '0';
+                 icon.textContent = '▼';
+            }
+        }
+    }
+
+    // *** Function: 切換計畫內容收合狀態 (原有的) ***
+    function togglePlanContent(id) {
+        const content = document.getElementById(`plan-content-${id}`);
+        const icon = document.querySelector(`.plan-header .toggle-icon[data-id="${id}"]`);
+        if (content && icon) {
+            const isCollapsed = content.classList.toggle('collapsed');
+            if (isCollapsed) {
+                 content.style.maxHeight = '0';
+                 icon.textContent = '▼';
+            } else {
+                 content.style.maxHeight = content.scrollHeight + "px";
+                 icon.textContent = '▲';
+            }
+            // 更新狀態到 allPlansData 和 localStorage
+            allPlansData[id].isCollapsed = isCollapsed;
+            localStorage.setItem('learningPlans', JSON.stringify(allPlansData));
+        }
     }
     
+    // *** Function: 切換範圍類型 (頁數/大綱) (原有的) ***
+    function toggleRangeType(id) {
+        const pagesDiv = document.getElementById(`pageRangeDiv-${id}`);
+        const outlineDiv = document.getElementById(`outlineDiv-${id}`);
+        const rangeType = document.querySelector(`input[name="rangeType-${id}"]:checked`)?.value;
+
+        if (pagesDiv && outlineDiv) {
+            pagesDiv.style.display = rangeType === 'pages' ? 'block' : 'none';
+            outlineDiv.style.display = rangeType === 'outline' ? 'block' : 'none';
+        }
+
+        updateRequiredDays(id);
+        savePlanData(id);
+    }
+    
+    // *** Function: 產生計劃表的核心邏輯 (已修改 Study Task 顯示方式) ***
+    function generatePlan() {
+        const planData = {}; // 儲存任務，鍵為日期 (YYYY-MM-DD)
+        const allPlans = Object.values(allPlansData);
+        let earliestDate = null;
+        let latestDate = null;
+
+        allPlans.forEach(plan => {
+            const id = plan.id;
+            const startDateValue = plan.startDate;
+            const endDateValue = plan.endDate;
+            const dailyAmount = plan.dailyAmount;
+            const items = getItemsArray(id);
+            const itemsCount = items.length;
+
+            if (!startDateValue || itemsCount === 0) {
+                console.warn(`學習計劃 #${id} 已跳過：任務範圍為空。`);
+                return;
+            }
+
+            const unitContent = plan.unit || '';
+            const unitString = unitContent ? ` ${unitContent}` : ''; // Add leading space if content exists
+
+            const showStudy = plan.showStudy;
+            const showReview = plan.showReview;
+            const showCustom = plan.showCustom;
+            const customText = plan.customText;
+
+            // 決定任務前綴 (Prefix)
+            const studyText = translations[currentLang].studyText;
+            const reviewText = translations[currentLang].reviewText;
+            let studyPrefix = studyText;
+            let reviewPrefix = reviewText;
+            if (showCustom && customText) {
+                studyPrefix = customText;
+                reviewPrefix = customText;
+            }
+            // Fix #1: 決定是否要產生主要任務 (Study Task / Custom Task)
+            const shouldGeneratePrimaryTask = showStudy || (showCustom && customText.length > 0);
+
+            // 3. 排除日 (星期)
+            let excludeWeekdays = plan.excludeWeekdays;
+
+            // 4. 指定排除日 (自訂日期)
+            let excludeDates = [];
+            const isExcludeDatesCustomChecked = plan.useExcludeDates;
+            if (isExcludeDatesCustomChecked) {
+                const datesStr = plan.excludeDates || '';
+                const referenceYear = new Date(startDateValue).getFullYear();
+                datesStr.split(/[\n,]/).forEach(dateStr => {
+                    const yyyymmdd = parseDateInputToYYYYMMDD(dateStr, referenceYear);
+                    if (yyyymmdd) excludeDates.push(yyyymmdd);
+                });
+            }
+
+            // 5. 指定執行日 (自訂日期)
+            let executionDates = [];
+            const isExecutionDatesUsed = plan.useExecutionDates;
+            if (isExecutionDatesUsed) {
+                const datesStr = plan.executionDates || '';
+                const referenceYear = new Date(startDateValue).getFullYear();
+                datesStr.split(/[\n,]/).forEach(dateStr => {
+                    const yyyymmdd = parseDateInputToYYYYMMDD(dateStr, referenceYear);
+                    if (yyyymmdd) executionDates.push(yyyymmdd);
+                });
+                executionDates = [...new Set(executionDates)].sort(); // 去重並排序
+            }
+
+            const color = plan.color;
+            let itemIndex = 0;
+            let currentDate = new Date(startDateValue);
+            let limitDate = endDateValue ? new Date(endDateValue) : null;
+            
+            // 處理指定執行日期模式
+            if (isExecutionDatesUsed && executionDates.length > 0) {
+                executionDates.forEach(dateStr => {
+                    if (itemIndex >= itemsCount) return; // 任務已分配完畢
+
+                    const date = new Date(dateStr);
+                    // 如果指定執行日不在排除日中
+                    if (!isExcluded(date, excludeWeekdays, excludeDates)) {
+                        const dateKey = getDateStr(date);
+                        if (!planData[dateKey]) planData[dateKey] = [];
+                        
+                        // --- START MODIFICATION: 每日學習任務合併 ---
+                        const studiedItems = [];
+                        for (let i = 0; i < dailyAmount && itemIndex < itemsCount; i++) {
+                            const item = items[itemIndex++];
+                            studiedItems.push(item);
+                        }
+
+                        if (studiedItems.length > 0 && shouldGeneratePrimaryTask) {
+                             const rangeString = getRangeString(studiedItems);
+                             const studyTask = {
+                                 planId: id,
+                                 text: `${studyPrefix}: ${rangeString}${unitString}`,
+                                 color: color,
+                                 isStudy: true,
+                                 item: rangeString,
+                                 unit: unitContent,
+                             };
+                             planData[dateKey].push(studyTask);
+                        }
+                        // --- END MODIFICATION ---
+
+                        // 排程複習任務
+                        scheduleReviews(date, studiedItems, planData, id, reviewPrefix, showReview, excludeWeekdays, excludeDates, unitString);
+                        
+                        // 更新最早和最晚日期
+                        if (!earliestDate || date < earliestDate) earliestDate = date;
+                        if (!latestDate || date > latestDate) latestDate = date;
+                    }
+                });
+                
+            } else {
+                // 處理日期範圍模式
+                while (itemIndex < itemsCount) {
+                    const dateKey = getDateStr(currentDate);
+
+                    if (limitDate && currentDate > limitDate) break; // 超過結束日期
+
+                    // 檢查是否為排除日
+                    if (!isExcluded(currentDate, excludeWeekdays, excludeDates)) {
+                        if (!planData[dateKey]) planData[dateKey] = [];
+                        
+                        // --- START MODIFICATION: 每日學習任務合併 ---
+                        const studiedItems = [];
+                        for (let i = 0; i < dailyAmount && itemIndex < itemsCount; i++) {
+                            const item = items[itemIndex++];
+                            studiedItems.push(item);
+                        }
+
+                        if (studiedItems.length > 0 && shouldGeneratePrimaryTask) {
+                             const rangeString = getRangeString(studiedItems);
+                             const studyTask = {
+                                 planId: id,
+                                 text: `${studyPrefix}: ${rangeString}${unitString}`,
+                                 color: color,
+                                 isStudy: true,
+                                 item: rangeString,
+                                 unit: unitContent,
+                             };
+                             planData[dateKey].push(studyTask);
+                        }
+                        // --- END MODIFICATION ---
+
+                        // 排程複習任務
+                        scheduleReviews(currentDate, studiedItems, planData, id, reviewPrefix, showReview, excludeWeekdays, excludeDates, unitString);
+
+                        // 更新最早和最晚日期
+                        if (!earliestDate || currentDate < earliestDate) earliestDate = currentDate;
+                        if (!latestDate || currentDate > latestDate) latestDate = currentDate;
+                    }
+
+                    // 檢查是否所有任務已分配，如果是，則停止遞增日期以避免無謂的循環
+                    if (itemIndex >= itemsCount) break;
+
+                    // 遞增日期
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+            }
+        });
+        
+        latestPlan = planData;
+        renderCalendar(planData);
+        updateSelectAllCheckboxState(); // 更新全選狀態
+    }
+
     /**
-     * @description 控制月份內容收合的函式。(FIX: 展開 ▲ / 收合 ▼)
-     * @param {string} monthId 月份 ID (YYYY-MM)。
+     * @description 排程複習任務 (原有的)
+     * @param {Date} studyDate - The date the item was studied.
+     * @param {string[]} studyItems - The items studied on that day.
+     * @param {Object} allPlans - The overall plan map.
+     * @param {number} id - The ID of the plan.
+     * @param {string} reviewPrefix - The prefix for the review task (e.g., '複習').
+     * @param {boolean} showReview - Whether to generate review tasks.
+     * @param {number[]} excludeWeekdays - Excluded weekdays.
+     * @param {string[]} excludeDates - Excluded custom dates.
+     * @param {string} unitString - The unit content string (e.g., ' 韓語文法'). (MODIFIED)
      */
+    function scheduleReviews(studyDate, studyItems, allPlans, id, reviewPrefix, showReview, excludeWeekdays, excludeDates, unitString = '') {
+        if (!showReview || studyItems.length === 0) return;
+
+        // Ebbinghaus intervals (in days)
+        const intervals = [1, 2, 4, 7, 15];
+        const color = planColors[id];
+
+        intervals.forEach(offset => {
+            let reviewDate = new Date(studyDate);
+            reviewDate.setDate(reviewDate.getDate() + offset);
+
+            // Find the next available date, skipping excluded days
+            let rDate = new Date(reviewDate);
+            let maxReviewSearchDays = 60; // Limit search for review date
+            let searchCount = 0;
+            while (isExcluded(rDate, excludeWeekdays, excludeDates) && searchCount < maxReviewSearchDays) {
+                rDate.setDate(rDate.getDate() + 1);
+                searchCount++;
+            }
+            if (searchCount >= maxReviewSearchDays) return; // Skip if no available review date found
+
+            let rDateStr = getDateStr(rDate);
+
+            // MODIFIED: Insert unitString into the review task (Request 2)
+            const reviewTask = {
+                planId: id,
+                text: `${reviewPrefix}: ${getRangeString(studyItems)}${unitString}`, // 複習 [範圍] [單位]
+                color: color,
+                isStudy: false,
+                item: getRangeString(studyItems),
+                unit: unitString,
+            };
+
+            if (!allPlans[rDateStr]) allPlans[rDateStr] = [];
+            allPlans[rDateStr].push(reviewTask);
+        });
+    }
+
+
+    /**
+     * @description Helper function to check if a color is light (原有的)
+     * @param {string} hexColor - Color in hex format (#RRGGBB).
+     * @returns {boolean} True if the color is light.
+     */
+    function isLightColor(hexColor) {
+        const c = hexColor.substring(1); // strip #
+        const rgb = parseInt(c, 16); // convert rrggbb to decimal
+        const r = (rgb >> 16) & 0xff; // extract red
+        const g = (rgb >> 8) & 0xff; // extract green
+        const b = (rgb >> 0) & 0xff; // extract blue
+        // Perceived luminosity (ITU-R BT.709)
+        const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        return luma > 200; // Threshold can be adjusted (e.g., 170-200)
+    }
+
+    /**
+     * @description Renders the calendar view with tasks. (核心修改處)
+     * @param {Object} planData - The map of tasks by date (YYYY-MM-DD).
+     */
+    function renderCalendar(planData) {
+        const calendar = document.getElementById('calendar');
+        calendar.innerHTML = '';
+
+        // 找到計劃範圍的起始和結束日期
+        const dates = Object.keys(planData);
+        let startDate = new Date();
+        let endDate = new Date();
+        const todayKey = getDateStr(new Date());
+
+        if (dates.length > 0) {
+            dates.sort();
+            startDate = new Date(dates[0]);
+            endDate = new Date(dates[dates.length - 1]);
+        } else {
+            // Default to showing current month if no plans
+            startDate.setDate(1);
+            endDate.setMonth(endDate.getMonth() + 2); // Show next 3 months range
+            endDate.setDate(0);
+        }
+
+        // Adjust month range to show from the 1st of the starting month to the end of the ending month
+        startDate.setDate(1);
+        endDate.setMonth(endDate.getMonth() + 1);
+        endDate.setDate(0); // This sets it to the last day of the current month
+
+        let currentMonth = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+
+        while (currentMonth <= endDate) {
+            const monthId = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}`;
+            const monthContainer = document.createElement('div');
+            monthContainer.className = 'month-container';
+
+            const monthHeader = document.createElement('div');
+            monthHeader.className = 'month-header';
+            monthHeader.innerHTML = `
+                <div onclick="toggleMonthContent('${monthId}')">
+                    <span>${currentMonth.getFullYear()} 年 ${currentMonth.getMonth() + 1} 月</span>
+                    <span id="month-toggle-${monthId}" class="toggle-icon">▲</span>
+                </div>
+            `;
+            monthContainer.appendChild(monthHeader);
+
+            const contentWrapper = document.createElement('div');
+            contentWrapper.id = `month-content-${monthId}`;
+            contentWrapper.className = 'month-content-wrapper';
+            monthContainer.appendChild(contentWrapper);
+
+            const grid = createMonthGrid(currentMonth.getFullYear(), currentMonth.getMonth(), planData, todayKey, monthId);
+            contentWrapper.appendChild(grid);
+            calendar.appendChild(monthContainer);
+            
+            // 檢查 localStorage 中是否有收合狀態
+            if (localStorage.getItem(`month-collapsed-${monthId}`) === 'true') {
+                 contentWrapper.classList.add('collapsed');
+                 contentWrapper.style.maxHeight = '0';
+                 document.getElementById(`month-toggle-${monthId}`).textContent = '▼';
+            } else {
+                 // 確保展開時能計算出高度
+                 contentWrapper.style.maxHeight = contentWrapper.scrollHeight + "px";
+            }
+
+            // 移動到下個月
+            currentMonth.setMonth(currentMonth.getMonth() + 1);
+        }
+    }
+
+    /**
+     * @description Creates the HTML structure for a single month grid. (核心修改處)
+     */
+    function createMonthGrid(year, month, planData, todayKey, monthId) {
+        const grid = document.createElement('div');
+        grid.className = 'calendar-grid';
+
+        const weekdayNames = currentLang === 'zh' ? weekdayMap : weekdayMap_en;
+
+        // 1. Render day headers (Sun to Sat)
+        for (let i = 0; i < 7; i++) {
+            const dayHeader = document.createElement('div');
+            // MODIFIED: 移除星期五的特殊 class，改為將新 class 應用於星期日 (i=0) 和星期六 (i=6)
+            dayHeader.className = `weekday-header${(i === 0 || i === 6) ? ' weekday-weekend' : ''}`;
+            dayHeader.textContent = weekdayNames[i];
+            grid.appendChild(dayHeader);
+        }
+
+        // 2. Padding days at the start (empty cells before the 1st)
+        let firstDayOfMonth = new Date(year, month, 1);
+        let startOffset = firstDayOfMonth.getDay();
+        for (let i = 0; i < startOffset; i++) {
+            const emptyDiv = document.createElement('div');
+            emptyDiv.className = 'empty-day';
+            grid.appendChild(emptyDiv);
+        }
+
+        // 3. Render days
+        let dayCursor = firstDayOfMonth;
+        while (dayCursor.getMonth() === month) {
+            const d = dayCursor.getDate();
+            const dayOfWeek = dayCursor.getDay(); // 0=Sun, 5=Fri, 6=Sat
+            const dateKey = getDateStr(dayCursor);
+            const tasks = planData[dateKey] || [];
+            const hasTasks = tasks.length > 0;
+            const isToday = dateKey === todayKey;
+
+            // Create day div
+            const day = document.createElement("div");
+            // FIX 2: Class 'today' for border styling
+            day.className = `day ${isToday ? 'today' : ''}`;
+
+            // MODIFIED: 移除星期五高亮邏輯，改為週六日底色
+            if (dayOfWeek === 0 || dayOfWeek === 6) { // 星期日 (0) 或 星期六 (6)
+                // 將週六日底色改為 var(--bg-body);
+                day.style.backgroundColor = 'var(--bg-body)'; 
+            } 
+            // 星期五 (5) 和其他平日將繼承 .day 的 var(--bg-primary) (白色)
+
+
+            // 4. Date Header (Date number and Checkbox)
+            const dateHeaderContainer = document.createElement('div');
+            dateHeaderContainer.className = 'date-header-container';
+
+            // Date Number
+            const dateOnlySpan = document.createElement('span');
+            dateOnlySpan.className = 'date-only';
+            dateOnlySpan.textContent = d;
+
+            // Checkbox element
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'day-checkbox';
+            checkbox.dataset.date = dateKey;
+            checkbox.onchange = updateDaySelection; // Link to global selection update
+            
+            // Retrieve checked state from localStorage
+            const checkedState = JSON.parse(localStorage.getItem('checkedDays') || '{}');
+            if (checkedState[dateKey]) {
+                checkbox.checked = true;
+            }
+
+            // MODIFIED: 確保沒有任務的日期勾選框隱藏 (原有的邏輯)
+            if (!hasTasks) {
+                checkbox.style.visibility = 'hidden';
+            }
+
+            dateHeaderContainer.appendChild(dateOnlySpan);
+            dateHeaderContainer.appendChild(checkbox);
+            day.appendChild(dateHeaderContainer);
+
+
+            // 5. Task List
+            tasks.forEach(task => {
+                const taskDiv = document.createElement('div');
+                taskDiv.className = 'task';
+                taskDiv.textContent = task.text;
+
+                // 設置背景色並根據亮度調整文字顏色 (原有的邏輯)
+                const bgColor = task.color;
+                taskDiv.style.backgroundColor = bgColor;
+                if (isLightColor(bgColor)) {
+                    taskDiv.style.color = '#3B3E3D';
+                } else {
+                    taskDiv.style.color = '#FFFFFF';
+                }
+
+                day.appendChild(taskDiv);
+            });
+
+            grid.appendChild(day);
+
+            // 移動到下一天
+            dayCursor.setDate(dayCursor.getDate() + 1);
+        }
+
+        // 4. Padding days at the end (empty cells after the last day)
+        let endOffset = 7 - grid.children.length % 7;
+        if (endOffset < 7 && endOffset > 0) {
+            for (let i = 0; i < endOffset; i++) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'empty-day';
+                grid.appendChild(emptyDiv);
+            }
+        }
+
+        return grid;
+    }
+
+
+    // *** Function: 更新單個日期勾選狀態 (原有的) ***
+    function updateDaySelection(event) {
+        const checkbox = event.target;
+        const dateKey = checkbox.dataset.date;
+        let checkedDays = JSON.parse(localStorage.getItem('checkedDays') || '{}');
+
+        if (checkbox.checked) {
+            checkedDays[dateKey] = true;
+        } else {
+            delete checkedDays[dateKey];
+        }
+
+        // 更新 localStorage
+        localStorage.setItem('checkedDays', JSON.stringify(checkedDays));
+        // 更新全選 checkbox 的狀態
+        updateSelectAllCheckboxState();
+    }
+
+    // *** Function: 更新全選勾選框的狀態 (原有的) ***
+    function updateSelectAllCheckboxState() {
+        const allCheckboxes = document.querySelectorAll('.day-checkbox');
+        const visibleCheckboxes = Array.from(allCheckboxes).filter(cb => cb.style.visibility !== 'hidden');
+        let checkedCount = 0;
+        
+        visibleCheckboxes.forEach(checkbox => {
+             if (checkbox.checked) {
+                 checkedCount++;
+             }
+        });
+        
+        const selectAllCheckbox = document.getElementById('selectAllDays');
+        if (selectAllCheckbox) {
+            selectAllCheckbox.checked = visibleCheckboxes.length > 0 && checkedCount === visibleCheckboxes.length;
+        }
+    }
+
+
+    // *** Function: 控制月份內容收合的函式。(FIX: 展開 ▲ / 收合 ▼) (原有的) ***
     function toggleMonthContent(monthId) {
         const content = document.getElementById(`month-content-${monthId}`);
         const icon = document.getElementById(`month-toggle-${monthId}`);
         if (content && icon) {
-            content.classList.toggle('collapsed');
-            
-            // 修正：根據收合狀態切換圖標
-            if (content.classList.contains('collapsed')) {
+            const isCollapsed = content.classList.toggle('collapsed');
+            if (isCollapsed) {
                 // 已收合 -> 顯示向下三角形 (▼)
+                content.style.maxHeight = '0';
                 icon.textContent = '▼';
+                localStorage.setItem(`month-collapsed-${monthId}`, 'true');
             } else {
                 // 已展開 -> 顯示向上三角形 (▲)
+                // 臨時設置為 auto 以計算準確高度，然後設置為該高度以實現平滑過渡
+                content.style.maxHeight = content.scrollHeight + "px";
                 icon.textContent = '▲';
+                localStorage.removeItem(`month-collapsed-${monthId}`);
             }
         }
     }
 
-
-    /**
-     * @description Helper function to format the task object into the final event title string
-     */
-    function formatTaskForCalendar(taskObj) {
-        const planTitle = document.getElementById(`unit-${taskObj.planId}`) ? document.getElementById(`unit-${taskObj.planId}`).value : (currentLang === 'zh' ? `計劃 #${taskObj.planId}` : `Plan #${taskObj.planId}`);
-        // taskObj.text is: "[Prefix] [Range]"
-        const parts = taskObj.text.split(' ');
-        const prefix = parts[0]; 
-        const range = parts.slice(1).join(' '); 
-        // 格式：[顯示內容] [學習內容] [學習範圍]
-        return `${prefix} ${planTitle} ${range}`;
-    }
-
-    /**
-     * @description 根據 Google Caledar Import 格式，生成 CSV 檔案。
-     */
-    function downloadCSV() {
-      // 1. Get the selected export mode from the radio buttons
-      const titleOption = document.querySelector('input[name="gcTitleOption"]:checked').value;
-
-      // 2. Define the Google Calendar CSV header
-      // Header: Subject,Start Date,Start Time,End Date,End Time,All Day Event,Description,Location
-      let csv = "Subject,Start Date,Start Time,End Date,End Time,All Day Event,Description,Location\n";
-      
-      const rows = [];
-      const keys = Object.keys(latestPlan).sort();
-      
-      // Separator for merged tasks (same as used for Google Calendar URL generation)
-      const separator = currentLang === 'zh' ? ' ＆ ' : ' & '; 
-      
-      const getFormattedDate = (dateStr) => {
-          // dateStr is YYYY-MM-DD
-          // Google Calendar import prefers YYYY/MM/DD
-          const parts = dateStr.split('-');
-          return `${parts[0]}/${parts[1]}/${parts[2]}`; 
-      };
-
-      keys.forEach(dateStr => {
-          const tasks = latestPlan[dateStr];
-          if (!tasks || tasks.length === 0) return;
-
-          const formattedDate = getFormattedDate(dateStr);
-          const allDayEvent = 'TRUE'; // Always TRUE for all-day events
-          const emptyFields = ',,'; // Start Time, End Time
-
-          if (titleOption === 'merge') {
-              // Merge Mode: One row per day
-              const combinedTaskTexts = tasks.map(task => formatTaskForCalendar(task)).join(separator);
-              // Use CSV escaping for the Subject (replace " with "")
-              const subject = `"${combinedTaskTexts.replace(/"/g, '""')}"`;
-              
-              // CSV Row: Subject,Start Date,Start Time,End Date,End Time,All Day Event,Description,Location
-              const row = `${subject},${formattedDate}${emptyFields}${formattedDate}${emptyFields}${allDayEvent},,`;
-              rows.push(row);
-              
-          } else {
-              // Separate Mode: One row per task
-              tasks.forEach(taskObj => {
-                  const subjectText = formatTaskForCalendar(taskObj);
-                  // Use CSV escaping for the Subject
-                  const subject = `"${subjectText.replace(/"/g, '""')}"`;
-
-                  // CSV Row: Subject,Start Date,Start Time,End Date,End Time,All Day Event,Description,Location
-                  const row = `${subject},${formattedDate}${emptyFields}${formattedDate}${emptyFields}${allDayEvent},,`;
-                  rows.push(row);
-              });
-          }
-      });
-      
-      csv += rows.join("\n");
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement("a");
-      link.setAttribute("href", URL.createObjectURL(blob));
-      link.setAttribute("download", "google_calendar_import.csv");
-      link.click();
-    }
-    
-    // *** Added: 全選日期功能 ***
-    function toggleAllCheckboxes() {
-      const selectAll = document.getElementById('selectAllDays').checked;
-      document.querySelectorAll('.day-checkbox').forEach(checkbox => {
-        checkbox.checked = selectAll;
-      });
-    }
-
-    // Helper function to create the Google Calendar URL for a single event
-    function createCalendarUrl(dateStr, eventTitle) {
-        // Format date for Google Calendar: YYYYMMDD
-        const formatGCDate = (dStr) => dStr.replace(/-/g, '');
-        
-        // For All-Day event, the date range is StartDay/EndDay+1
-        const startDateGC = formatGCDate(dateStr);
-        
-        // Calculate End Date + 1
-        const dateParts = dateStr.split('-');
-        const year = parseInt(dateParts[0]);
-        const month = parseInt(dateParts[1]);
-        const day = parseInt(dateParts[2]);
-        const safeDate = new Date(year, month - 1, day);
-        safeDate.setDate(safeDate.getDate() + 1);
-        
-        const endDateStr = getDateStr(safeDate); // YYYY-MM-DD
-        const endDateGC = formatGCDate(endDateStr);
-        
-        const datesParam = `${startDateGC}/${endDateGC}`;
-        
-        const baseUrl = 'https://www.google.com/calendar/render?action=TEMPLATE';
-        const params = new URLSearchParams({
-            text: eventTitle,
-            details: '', // Description 留空
-            dates: datesParam,
-            sf: 'true',
-            output: 'xml'
-        });
-
-        return `${baseUrl}&${params.toString()}`;
-    }
-
-    // *** 加入 Google 行事曆 按鈕功能 ***
-    function addToGoogleCalendar() {
-      const selectedDates = [];
-      document.querySelectorAll('.day-checkbox:checked').forEach(checkbox => {
-        selectedDates.push(checkbox.value); // YYYY-MM-DD
-      });
-
-      if (selectedDates.length === 0) {
-        alert(currentLang === 'zh' ? '請先在計劃表上勾選要匯入行事曆的日期。' : 'Please select the dates on the plan you want to import to the calendar.');
-        return;
-      }
-      
-      const titleOption = document.querySelector('input[name="gcTitleOption"]:checked').value;
-      let eventsToOpen = [];
-      
-      selectedDates.forEach((dateStr) => {
-        const tasks = latestPlan[dateStr];
-        
-        if (tasks && tasks.length > 0) {
-          if (titleOption === 'merge') {
-            // A. 合併多個計劃 (Merged Mode)
-            
-            // 關鍵修正: 合併當日所有任務文本
-            const separator = currentLang === 'zh' ? ' ＆ ' : ' & ';
-            const combinedTaskTexts = tasks.map(task => formatTaskForCalendar(task)).join(separator);
-            
-            const eventTitle = combinedTaskTexts; 
-            const url = createCalendarUrl(dateStr, eventTitle);
-            eventsToOpen.push(url);
-            
-          } else if (titleOption === 'separate') {
-            // B. 將各計劃獨立顯示 (Separate Mode)
-            
-            tasks.forEach(task => {
-                const eventTitle = formatTaskForCalendar(task);
-                const url = createCalendarUrl(dateStr, eventTitle);
-                eventsToOpen.push(url);
-            });
-          }
-        }
-      });
-      
-      // B-4. 安全 Alert 視窗確認 (僅在獨立顯示模式下，且事件數超過 10 個時觸發)
-      if (titleOption === 'separate' && eventsToOpen.length > 10) {
-          const confirmationMessage = currentLang === 'zh' 
-              ? `您已選擇將各計劃獨立顯示，這將會開啟 ${eventsToOpen.length} 個 Google 行事曆視窗。是否確認執行？`
-              : `You have chosen to show each plan separately, which will open ${eventsToOpen.length} Google Calendar windows. Do you want to proceed?`;
-              
-          if (!confirm(confirmationMessage)) {
-              return; // 使用者取消，則停止執行
-          }
-      }
-
-      // Open all generated URLs
-      if (eventsToOpen.length > 0) {
-        eventsToOpen.forEach((url, index) => {
-            // 使用獨特的目標名稱 (target name) 來幫助瀏覽器識別為獨立的分頁
-            window.open(url, 'gc_event_day_' + index); 
-        });
-      }
-    }
-
-
-    function updatePlanTitle(id, content) {
-        const headerH3 = document.getElementById(`header-h3-${id}`);
-        const planHeader = translations[currentLang].planHeader;
-        if (headerH3) {
-            // content 來自 unit input value
-            headerH3.textContent = `${planHeader} #${id}${content ? ' ' + content : ''}`;
-        }
-    }
-
+    // *** Function: 點擊隨機顏色按鈕時觸發。(原有的) ***
     function randomizeColor(id) {
-        const colorPicker = document.getElementById(`colorPicker-${id}`);
-        const planGroup = document.querySelector(`.plan-group[data-id="${id}"]`);
-        
-        const randomIndex = Math.floor(Math.random() * randomPalette.length);
-        const newColor = randomPalette[randomIndex];
-        
-        colorPicker.value = newColor;
-        planGroup.style.backgroundColor = newColor;
+        const color = getRandomColor();
+        document.getElementById(`colorPicker-${id}`).value = color;
+        document.querySelector(`.plan-group[data-id="${id}"]`).style.backgroundColor = color;
+        // FIX 1B: 確保 in-memory map 在隨機化時也被更新
+        planColors[id] = color;
+        savePlanData(id); // 儲存隨機顏色
+    }
+
+    // *** Function: 更新計劃標題 (H3) 文本。(原有的) ***
+    function updatePlanTitle(id) {
+        const titleElement = document.getElementById(`plan-title-${id}`);
+        const unitInput = document.getElementById(`unit-${id}`);
+        if (titleElement) {
+            const unit = unitInput?.value?.trim();
+            const headerText = translations[currentLang].planHeader;
+            titleElement.textContent = unit ? `${unit}` : `${headerText} #${id}`;
+        }
+        savePlanData(id);
     }
     
-    // *** Function: 顯示/隱藏自訂文字輸入框 ***
+    // *** Function: 顯示/隱藏自訂文字輸入框 (原有的) ***
     function toggleCustomText(id) {
         const customDiv = document.getElementById(`customTextDiv-${id}`);
-        const checkbox = document.getElementById(`showCustom-${id}`);
-        if (customDiv) {
+        const checkbox = document.getElementById(`showCustomCheckbox-${id}`);
+        if (customDiv && checkbox) {
             customDiv.style.display = checkbox.checked ? 'block' : 'none';
+            savePlanData(id); // 儲存變更
+        }
+    }
+
+    // *** Function: 顯示/隱藏指定排除日輸入框 (原有的) ***
+    function toggleExcludeDatesInput(id) {
+        const customDiv = document.getElementById(`excludeDatesDiv-${id}`);
+        const checkbox = document.getElementById(`excludeCustomDates-${id}`);
+        if (customDiv && checkbox) {
+            customDiv.style.display = checkbox.checked ? 'block' : 'none';
+            savePlanData(id); // 儲存變更
+        }
+    }
+
+    // *** Function: 顯示/隱藏指定執行日輸入框 (原有的) ***
+    function toggleExecutionDatesInput(id) {
+        const customDiv = document.getElementById(`executionDatesDiv-${id}`);
+        const checkbox = document.getElementById(`useExecutionDatesCheckbox-${id}`);
+        if (customDiv && checkbox) {
+            customDiv.style.display = checkbox.checked ? 'block' : 'none';
+            savePlanData(id); // 儲存變更
+        }
+    }
+
+    // --- Google Calendar & CSV Logic (From L1) ---
+    function formatTaskForCalendar(taskObj) {
+        const planTitle = document.getElementById(`unit-${taskObj.planId}`)?.value.trim() || (currentLang === 'zh' ? `記憶計劃 #${taskObj.planId}` : `Memory Plan #${taskObj.planId}`);
+        return `${planTitle}: ${taskObj.text}`;
+    }
+
+    function addToGoogleCalendar() {
+        if (Object.keys(latestPlan).length === 0) {
+            alert(currentLang === 'zh' ? '請先產生記憶計劃！' : 'Please generate the memory plan first!');
+            return;
+        }
+
+        const gcTitleOption = document.querySelector('input[name="gcTitleOption"]:checked').value;
+        const keys = Object.keys(latestPlan).sort();
+        const checkedDays = JSON.parse(localStorage.getItem('checkedDays') || '{}');
+        let mergedTitle = '';
+        let mergedDescription = '';
+        let eventCount = 0;
+
+        keys.forEach(dateStr => {
+            // 檢查該日期的勾選框狀態，只處理被選中的日期
+            if (checkedDays[dateStr]) {
+                const tasks = latestPlan[dateStr];
+
+                if (gcTitleOption === 'merge') {
+                    // --- Merge Mode: One event per day, merging all tasks ---
+                    const mergedTasksText = tasks.map(t => t.text).join(' / ');
+                    const representativeTask = tasks.find(t => t.isStudy) || tasks[0];
+                    if (!representativeTask) return;
+                    
+                    const unitInput = document.getElementById(`unit-${representativeTask.planId}`);
+                    const planTitle = unitInput ? unitInput.value : (currentLang === 'zh' ? `記憶計劃` : `Memory Plan`);
+
+                    mergedTitle = `${planTitle} - ${mergedTasksText}`;
+                    mergedDescription = tasks.map(t => `• ${t.text}`).join('\n');
+                
+                    const date = new Date(dateStr);
+                    const startYear = date.getFullYear();
+                    const startMonth = date.getMonth() + 1;
+                    const startDate = date.getDate();
+                    
+                    const title = encodeURIComponent(mergedTitle);
+                    const details = encodeURIComponent(mergedDescription);
+                    const dates = `${startYear}${String(startMonth).padStart(2, '0')}${String(startDate).padStart(2, '0')}`;
+                    
+                    // 導向 Google Calendar 創建頁面
+                    window.open(`https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&dates=${dates}/${dates}&sf=true&output=xml`, '_blank');
+                    eventCount++;
+
+                } else {
+                    // --- Separate Mode: Multiple events per day, one for each task ---
+                    tasks.forEach(taskObj => {
+                        const date = new Date(dateStr);
+                        const startYear = date.getFullYear();
+                        const startMonth = date.getMonth() + 1;
+                        const startDate = date.getDate();
+                        
+                        const title = encodeURIComponent(formatTaskForCalendar(taskObj));
+                        const details = encodeURIComponent(taskObj.text);
+                        const dates = `${startYear}${String(startMonth).padStart(2, '0')}${String(startDate).padStart(2, '0')}`;
+                        
+                        // 導向 Google Calendar 創建頁面
+                        window.open(`https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&dates=${dates}/${dates}&sf=true&output=xml`, '_blank');
+                        eventCount++;
+                    });
+                }
+            }
+        });
+
+        if (eventCount === 0) {
+             alert(currentLang === 'zh' ? '請勾選至少一個日期，或先產生記憶計劃！' : 'Please check at least one day or generate the memory plan first!');
+        } else {
+            alert(currentLang === 'zh' ? `已嘗試為 ${eventCount} 個事件開啟 Google Calendar 頁面。請允許彈出視窗。` : `Attempted to open Google Calendar pages for ${eventCount} events. Please allow pop-ups.`);
         }
     }
 
 
-    function addPlan(planData = null) {
-      planCount++;
-      const id = planCount;
-      const container = document.getElementById('plan-container');
-      const newPlanGroup = document.createElement('div');
-      newPlanGroup.className = 'plan-group';
-      newPlanGroup.dataset.id = id;
+    function downloadCSV() {
+        if (Object.keys(latestPlan).length === 0) {
+            alert(currentLang === 'zh' ? '請先產生記憶計劃！' : 'Please generate the memory plan first!');
+            return;
+        }
 
-      const colorValue = planData ? planData.color : defaultColors[(id - 1) % defaultColors.length];
-      const excludedDays = planData && planData.excludeWeekdays ? planData.excludeWeekdays : [];
-      
-      const showStudy = planData && planData.showStudy !== undefined ? planData.showStudy : true;
-      const showReview = planData && planData.showReview !== undefined ? planData.showReview : true;
-      const showCustom = planData && planData.showCustom !== undefined ? planData.showCustom : false;
-      const customText = planData && planData.customText ? planData.customText : '';
-      const executionDates = planData && planData.executionDates ? planData.executionDates : '';
-      const excludeDates = planData && planData.excludeDates ? planData.excludeDates : ''; 
-      
-      const initialUnitValue = planData ? planData.unit : ''; 
-      const planHeader = translations[currentLang].planHeader;
+        const gcTitleOption = document.querySelector('input[name="gcTitleOption"]:checked').value;
+        const keys = Object.keys(latestPlan).sort();
+        const checkedDays = JSON.parse(localStorage.getItem('checkedDays') || '{}');
 
-      newPlanGroup.style.backgroundColor = colorValue;
+        // Google Calendar CSV Header
+        let csv = "Subject,Start Date,Start Time,End Date,End Time,All Day Event,Description,Location\n";
+        const rows = [];
+        const emptyFields = ',,'; // Start Time, End Date, End Time (All-Day Event)
+        const allDayEvent = 'TRUE';
 
-      newPlanGroup.innerHTML = `
-        <div class="plan-header" id="plan-header-${id}">
-          <div style="display: flex; align-items: center;">
-            <h3 id="header-h3-${id}" placeholder="111">${planHeader} #${id}${initialUnitValue ? ' ' + initialUnitValue : ''}</h3>
-          </div>
-          <div class="btn-group">
-            <span class="toggle-icon" id="toggle-icon-${id}">▲</span> <button class="delete-btn" onclick="deletePlan(${id})" data-i18n-id="deleteBtn">${translations[currentLang].deleteBtn}</button>
-          </div>
-        </div>
-        <div id="plan-content-${id}" class="plan-content">
-          <label class="color-label">
-            <span data-i18n-id="colorLabel">${translations[currentLang].colorLabel}</span>
-            <input type="color" id="colorPicker-${id}" value="${colorValue}">
-            <button onclick="randomizeColor(${id})" type="button" data-i18n-id="randomColorBtn">${translations[currentLang].randomColorBtn}</button>
-          </label>
-          
-          <label><span data-i18n-id="unitLabel">${translations[currentLang].unitLabel}</span><input id="unit-${id}" type="text" value="${planData ? planData.unit : ''}"></label>
-          <label><span data-i18n-id="startDateLabel">${translations[currentLang].startDateLabel}</span><input id="startDate-${id}" type="date" value="${planData ? planData.startDate : ''}"></label>
-          <label><span data-i18n-id="endDateLabel">${translations[currentLang].endDateLabel}</span><input id="endDate-${id}" type="date" value="${planData ? planData.endDate : ''}"></label>
-          
-          <label><span data-i18n-id="executionDatesLabel">${translations[currentLang].executionDatesLabel}</span><textarea id="executionDates-${id}" data-i18n-placeholder="executionDatesPlaceholder" placeholder="${translations[currentLang].executionDatesPlaceholder}">${executionDates}</textarea></label>
+        if (gcTitleOption === 'merge') {
+            keys.forEach(dateStr => {
+                if (checkedDays[dateStr]) { // 檢查勾選狀態
+                    const tasks = latestPlan[dateStr];
+                    const mergedTasksText = tasks.map(t => t.text).join(' / ');
+                    const representativeTask = tasks.find(t => t.isStudy) || tasks[0];
+                    if (!representativeTask) return;
 
-          <label data-i18n-id="excludeDaysLabel">${translations[currentLang].excludeDaysLabel}</label>
-          <div class="weekday-checkboxes">
-            <label><input id="excludeWeekday-${id}-0" type="checkbox" ${excludedDays.includes(0) ? 'checked' : ''}><span data-i18n-id="weekdaySun"> ${translations[currentLang].weekdaySun}</span></label>
-            <label><input id="excludeWeekday-${id}-1" type="checkbox" ${excludedDays.includes(1) ? 'checked' : ''}><span data-i18n-id="weekdayMon"> ${translations[currentLang].weekdayMon}</span></label>
-            <label><input id="excludeWeekday-${id}-2" type="checkbox" ${excludedDays.includes(2) ? 'checked' : ''}><span data-i18n-id="weekdayTue"> ${translations[currentLang].weekdayTue}</span></label>
-            <label><input id="excludeWeekday-${id}-3" type="checkbox" ${excludedDays.includes(3) ? 'checked' : ''}><span data-i18n-id="weekdayWed"> ${translations[currentLang].weekdayWed}</span></label>
-            <label><input id="excludeWeekday-${id}-4" type="checkbox" ${excludedDays.includes(4) ? 'checked' : ''}><span data-i18n-id="weekdayThu"> ${translations[currentLang].weekdayThu}</span></label>
-            <label><input id="excludeWeekday-${id}-5" type="checkbox" ${excludedDays.includes(5) ? 'checked' : ''}><span data-i18n-id="weekdayFri"> ${translations[currentLang].weekdayFri}</span></label>
-            <label><input id="excludeWeekday-${id}-6" type="checkbox" ${excludedDays.includes(6) ? 'checked' : ''}><span data-i18n-id="weekdaySat"> ${translations[currentLang].weekdaySat}</span></label>
-          </div>
-          
-          <label><span data-i18n-id="excludeDatesLabel">${translations[currentLang].excludeDatesLabel}</span><textarea id="excludeDates-${id}" data-i18n-placeholder="excludeDatesPlaceholder" placeholder="${translations[currentLang].excludeDatesPlaceholder}">${excludeDates}</textarea></label>
-          
-          <label data-i18n-id="rangeLabel">${translations[currentLang].rangeLabel}</label>
-          <div style="margin-bottom: 8px;">
-            <input type="radio" id="rangeTypePages-${id}" name="rangeType-${id}" value="pages" ${planData && planData.rangeType === 'outline' ? '' : 'checked'} onchange="toggleRangeInput(${id})">
-            <label for="rangeTypePages-${id}" style="display: inline;" data-i18n-id="rangeTypePages">${translations[currentLang].rangeTypePages}</label>
-            <input type="radio" id="rangeTypeOutline-${id}" name="rangeType-${id}" value="outline" ${planData && planData.rangeType === 'outline' ? 'checked' : ''} onchange="toggleRangeInput(${id})">
-            <label for="rangeTypeOutline-${id}" style="display: inline;" data-i18n-id="rangeTypeOutline">${translations[currentLang].rangeTypeOutline}</label>
-          </div>
-          <div id="pageRangeDiv-${id}" style="display: ${planData && planData.rangeType === 'outline' ? 'none' : 'block'};">
-            <label><span data-i18n-id="pageRangeLabel">${translations[currentLang].pageRangeLabel}</span><input id="pageRange-${id}" type="text" value="${planData ? planData.pageRange : ''}"></label>
-          </div>
-          <div id="outlineDiv-${id}" style="display: ${planData && planData.rangeType === 'outline' ? 'block' : 'none'};">
-            <label><span data-i18n-id="outlineLabel">${translations[currentLang].outlineLabel}</span><textarea id="outline-${id}" data-i18n-placeholder="outlinePlaceholder" placeholder="${translations[currentLang].outlinePlaceholder}">${planData ? planData.outline : ''}</textarea></label>
-          </div>
-          
-          <label><span data-i18n-id="dailyAmountLabel">${translations[currentLang].dailyAmountLabel}</span><input id="dailyAmount-${id}" type="number" min="1" value="${planData ? planData.dailyAmount : ''}"></label>
-          
-          <label><input id="reverseOrder-${id}" type="checkbox" ${planData && planData.reverseOrder ? 'checked' : ''}><span data-i18n-id="reverseOrder"> ${translations[currentLang].reverseOrder}</span></label>
-          
-          <label data-i18n-id="showContentLabel">${translations[currentLang].showContentLabel}</label>
-          <div>
-            <label style="display: inline-block; margin-right: 15px;"><input id="showStudy-${id}" type="checkbox" ${showStudy ? 'checked' : ''}><span data-i18n-id="showStudy"> ${translations[currentLang].showStudy}</span></label>
-            <label style="display: inline-block; margin-right: 15px;"><input id="showReview-${id}" type="checkbox" ${showReview ? 'checked' : ''}><span data-i18n-id="showReview"> ${translations[currentLang].reviewText}</span></label>
-            <label style="display: inline-block;"><input id="showCustom-${id}" type="checkbox" ${showCustom ? 'checked' : ''} onchange="toggleCustomText(${id})"><span data-i18n-id="showCustom"> ${translations[currentLang].showCustom}</span></label>
-          </div>
-          <div id="customTextDiv-${id}" style="display: ${showCustom ? 'block' : 'none'};">
-            <label><span data-i18n-id="customTextLabel">${translations[currentLang].customTextLabel}</span>
-            <input id="customText-${id}" type="text" data-i18n-placeholder="customTextPlaceholder" placeholder="${translations[currentLang].customTextPlaceholder}" value="${customText}"></label>
-          </div>
-        </div>
-      `;
-      container.appendChild(newPlanGroup);
+                    const unitInput = document.getElementById(`unit-${representativeTask.planId}`);
+                    const planTitle = unitInput ? unitInput.value : (currentLang === 'zh' ? `記憶計劃` : `Memory Plan`);
 
-      // 實時更新標題功能：改為監聽 Unit 欄位
-      const unitInput = document.getElementById(`unit-${id}`);
-      unitInput.addEventListener('input', (event) => {
-          updatePlanTitle(id, event.target.value);
-      });
+                    const subject = `"${planTitle} - ${mergedTasksText}"`;
+                    // CSV日期格式需要 M/D/YYYY
+                    const dateParts = dateStr.split('-');
+                    const csvDateStr = `${parseInt(dateParts[1])}/${parseInt(dateParts[2])}/${dateParts[0]}`;
 
-      // 顏色選擇器功能
-      const colorPicker = document.getElementById(`colorPicker-${id}`);
-      colorPicker.addEventListener('input', (event) => {
-        newPlanGroup.style.backgroundColor = event.target.value;
-      });
+                    const row = `${subject},${csvDateStr}${emptyFields}${csvDateStr}${emptyFields}${allDayEvent},,`;
+                    rows.push(row);
+                }
+            });
+        } else {
+            keys.forEach(dateStr => {
+                if (checkedDays[dateStr]) { // 檢查勾選狀態
+                    latestPlan[dateStr].forEach(taskObj => {
+                        const subject = `"${formatTaskForCalendar(taskObj)}"`;
+                        // CSV日期格式需要 M/D/YYYY
+                        const dateParts = dateStr.split('-');
+                        const csvDateStr = `${parseInt(dateParts[1])}/${parseInt(dateParts[2])}/${dateParts[0]}`;
 
-      // 收合功能 (FIXED: 點擊事件監聽 Plan Header)
-      const header = newPlanGroup.querySelector('.plan-header');
-      header.addEventListener('click', (event) => {
-          // 確保點擊的不是刪除按鈕
-          if (!event.target.classList.contains('delete-btn') && !event.target.closest('.delete-btn')) {
-              togglePlanContent(id);
-          }
-      });
-    }
-    
-    function toggleRangeInput(id) {
-      const rangeType = document.querySelector(`input[name="rangeType-${id}"]:checked`).value;
-      document.getElementById(`pageRangeDiv-${id}`).style.display = rangeType === 'pages' ? 'block' : 'none';
-      document.getElementById(`outlineDiv-${id}`).style.display = rangeType === 'outline' ? 'block' : 'none';
+                        const row = `${subject},${csvDateStr}${emptyFields}${csvDateStr}${emptyFields}${allDayEvent},,`;
+                        rows.push(row);
+                    });
+                }
+            });
+        }
+
+        csv += rows.join("\n");
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.setAttribute("href", URL.createObjectURL(blob));
+        link.setAttribute("download", "google_calendar_import.csv");
+        link.click();
     }
 
-    /**
-     * @description 控制計劃內容收合的函式。(FIX: 展開 ▲ / 收合 ▼)
-     * @param {number} id 計劃 ID。
-     */
-    function togglePlanContent(id) {
-      const content = document.getElementById(`plan-content-${id}`);
-      const icon = document.getElementById(`toggle-icon-${id}`);
-      if (content && icon) {
-          content.classList.toggle('collapsed');
-          
-          // 修正：根據收合狀態切換圖標
-          if (content.classList.contains('collapsed')) {
-              // 已收合 -> 顯示向下三角形 (▼)
-              icon.textContent = '▼';
-          } else {
-              // 已展開 -> 顯示向上三角形 (▲)
-              icon.textContent = '▲';
-          }
-      }
+
+    // *** Added: 全選日期功能 (原有的) ***
+    function toggleAllCheckboxes() {
+        const selectAll = document.getElementById('selectAllDays').checked;
+        const checkedDays = JSON.parse(localStorage.getItem('checkedDays') || '{}');
+
+        document.querySelectorAll('.day-checkbox').forEach(checkbox => {
+            // 只操作可見的（有任務的）勾選框
+            if (checkbox.style.visibility !== 'hidden') {
+                checkbox.checked = selectAll;
+                if (selectAll) {
+                    checkedDays[checkbox.dataset.date] = true;
+                } else {
+                    delete checkedDays[checkbox.dataset.date];
+                }
+            }
+        });
+
+        // 更新 localStorage
+        localStorage.setItem('checkedDays', JSON.stringify(checkedDays));
     }
 
-    function deletePlan(id) {
-      const planGroup = document.querySelector(`.plan-group[data-id="${id}"]`);
-      if (planGroup) {
-        planGroup.remove();
-        delete planColors[id];
-      }
-    }
 
-    // --- 國際化/語言切換邏輯 ---
-    function setLanguage(lang) {
-      currentLang = lang;
-      document.documentElement.lang = lang; // 設定 html 標籤的 lang 屬性
+    // --- Language and Theme Toggles (From L1) ---
 
-      // 1. 更新所有 data-i18n 屬性的元素 (用於 Header/Title 等)
-      document.querySelectorAll('[data-i18n]').forEach(element => {
-          const key = element.getAttribute('data-i18n');
-          if (translations[lang][key]) {
-              element.textContent = translations[lang][key];
-          }
-      });
-
-      // 2. 更新所有 data-i18n-id 屬性的元素 (用於 Label/Button/Span 等)
-      document.querySelectorAll('[data-i18n-id]').forEach(element => {
-          const key = element.getAttribute('data-i18n-id');
-          const translation = translations[lang][key];
-          if (translation) {
-              // 針對 checkbox/radio 的標籤文本 (已經用 span 包裹)
-              if (element.tagName === 'SPAN' && element.closest('.weekday-checkboxes, .plan-content div, #addToCalendarBtn, .sidebar label')) {
-                 element.textContent = ` ${translation}`; // 保留一個空格與前面的 checkbox/icon 分開
-              } 
-              else {
-                 element.textContent = translation; // 其他純文本元素
-              }
-          }
-      });
-      
-      // 3. 更新所有 placeholder 屬性 (用於 Input/Textarea)
-      document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
-          const key = element.getAttribute('data-i18n-placeholder');
-          if (translations[lang][key]) {
-              element.placeholder = translations[lang][key];
-          }
-      });
-
-      // 4. 針對計劃標題做特別處理 (因為它包含 ID 和使用者輸入)
-      document.querySelectorAll('.plan-group').forEach(group => {
-        const id = group.dataset.id;
-        // *** 調整：標題更新改為抓取 unit 的值 ***
-        const unit = document.getElementById(`unit-${id}`) ? document.getElementById(`unit-${id}`).value : '';
-        updatePlanTitle(id, unit); 
-      });
-
-      // ************* 針對圖標按鈕的新增邏輯 *************
-
-      // 5. 更新語言切換按鈕內容 (保留 icon + 顯示語言縮寫)
-      const langBtn = document.getElementById('lang-toggle-btn');
-      if (langBtn) {
-        const langAbbrText = lang === 'zh' ? 'EN' : 'CH';
-        // 使用 innerHTML 確保 Font Awesome 圖標 <i class="fa-solid fa-language"></i> 永遠存在
-        langBtn.innerHTML = `<i class="fa-solid fa-language"></i> ${langAbbrText}`;
-      }
-      
-      // 6. 重新設定主題切換按鈕圖標和文本
-      const themeIcon = document.getElementById('theme-icon');
-      const themeTextSpan = document.getElementById('theme-toggle-btn') ? document.getElementById('theme-toggle-btn').querySelector('[data-i18n-id="toggleThemeBtn"]') : null;
-
-      if (themeIcon && themeTextSpan) {
-          const isDarkMode = document.body.classList.contains('dark-mode');
-          
-          // 更新 Icon
-          if (isDarkMode) {
-              themeIcon.classList.remove('fa-moon');
-              themeIcon.classList.add('fa-sun');
-              // 更新文本
-              themeTextSpan.textContent = lang === 'zh' ? '日間模式' : 'Light';
-          } else {
-              themeIcon.classList.remove('fa-sun');
-              themeIcon.classList.add('fa-moon');
-              // 更新文本
-              themeTextSpan.textContent = lang === 'zh' ? '夜間模式' : 'Dark';
-          }
-      }
-
-      // ************* 針對圖標按鈕的新增邏輯 End *************
-
-
-      // 7. 重新生成行事曆以更新學習/複習文本 (如果已生成)
-      if (Object.keys(latestPlan).length > 0) {
-          generatePlan(); // 重新生成會調用 renderCalendar
-      }
-    }
-
-    function toggleLanguage() {
-      const newLang = currentLang === 'zh' ? 'en' : 'zh';
-      setLanguage(newLang);
-      localStorage.setItem('lang', newLang);
-    }
-
-    function loadLanguage() {
-      const savedLang = localStorage.getItem('lang') || 'zh';
-      setLanguage(savedLang);
-    }
-    // --- END 國際化/語言切換邏輯 ---
-
-
-    // Dark/Light Mode 邏輯
     function toggleTheme() {
         const body = document.body;
         const button = document.getElementById('theme-toggle-btn');
-        const themeIcon = document.getElementById('theme-icon'); 
-        const themeTextSpan = button.querySelector('[data-i18n-id="toggleThemeBtn"]');
-
-        body.classList.toggle('dark-mode');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeTextSpan = button ? button.querySelector('[data-i18n-id="toggleThemeBtn"]') : null;
         
-        const isDarkMode = body.classList.contains('dark-mode');
+        const isDark = body.classList.toggle('dark-mode');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
 
-        localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-
-        if (isDarkMode) {
-            // 切換為 Dark Mode (顯示切換回 Light Mode 的選項)
-            themeIcon.classList.remove('fa-moon');
-            themeIcon.classList.add('fa-sun');
-            themeTextSpan.textContent = currentLang === 'zh' ? '日間模式' : 'Light';
-        } else {
-            // 切換為 Light Mode (顯示切換到 Dark Mode 的選項)
-            themeIcon.classList.remove('fa-sun');
-            themeIcon.classList.add('fa-moon');
-            themeTextSpan.textContent = currentLang === 'zh' ? '夜間模式' : 'Dark';
+        if(themeIcon) {
+            themeIcon.classList.remove(isDark ? 'fa-moon' : 'fa-sun');
+            themeIcon.classList.add(isDark ? 'fa-sun' : 'fa-moon');
         }
+        if(themeTextSpan) {
+            themeTextSpan.textContent = isDark 
+                ? (currentLang === 'zh' ? '日間' : 'Light') 
+                : (currentLang === 'zh' ? '夜間' : 'Dark');
+        }
+        
+        // 重新渲染日曆以應用新的主題色
+        renderCalendar(latestPlan);
+    }
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'zh' ? 'en' : 'zh';
+        localStorage.setItem('language', currentLang);
+        applyTranslation(currentLang);
+        // 重新渲染計劃列表以更新內容
+        renderPlans(); 
+        // 重新產生並渲染日曆以更新任務文本
+        generatePlan(); 
+        // 確保主題切換按鈕文本正確更新
+        loadTheme();
+    }
+
+    function applyTranslation(lang) {
+        const t = translations[lang];
+
+        // 1. 更新 <title>
+        const titleElement = document.querySelector('title');
+        const titleKey = titleElement.getAttribute('data-i18n');
+        if (t[titleKey]) titleElement.textContent = t[titleKey];
+
+        // 2. 更新所有 data-i18n 和 data-i18n-id 的 span/label/p
+        document.querySelectorAll('[data-i18n], [data-i18n-id]').forEach(element => {
+            const key = element.getAttribute('data-i18n') || element.getAttribute('data-i18n-id');
+            if (element.tagName === 'BUTTON' || element.tagName === 'H1') {
+                if (t[key]) element.textContent = t[key];
+            } 
+            // 處理 span/label/p
+            else if (element.tagName === 'SPAN' || element.tagName === 'LABEL' || element.tagName === 'P') {
+                if (t[key]) {
+                    // 只更新沒有子元素(Input, Checkbox)的純文字部分
+                    if (element.children.length === 0) {
+                        element.textContent = t[key];
+                    } else if (element.tagName === 'LABEL' && element.querySelector('span')) {
+                        // 處理 <label><span>文字</span><input/></label> 結構
+                        const textSpan = element.querySelector('span');
+                        if (textSpan) textSpan.textContent = t[key];
+                    } else {
+                        // 對於其他複雜結構的元素，可能需要更精確的邏輯
+                        if (t[key]) element.childNodes[0].nodeValue = t[key];
+                    }
+                }
+            }
+        });
+
+        // 3. 更新所有 data-i18n-placeholder 屬性
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+            const key = element.getAttribute('data-i18n-placeholder');
+            if (t[key]) {
+                element.placeholder = t[key];
+            }
+        });
+
+        // 4. 更新計劃表中的標題和所需天數
+        renderPlans();
+        Object.keys(allPlansData).map(Number).forEach(id => {
+            updatePlanTitle(id);
+            updateRequiredDays(id);
+        });
+
+        // 5. 更新主題按鈕文字
+        loadTheme();
+    }
+
+    function loadLanguage() {
+        const savedLang = localStorage.getItem('language');
+        if (savedLang && translations[savedLang]) {
+            currentLang = savedLang;
+        }
+        applyTranslation(currentLang);
     }
 
     function loadTheme() {
@@ -1520,24 +2052,30 @@
                 themeIcon.classList.remove('fa-moon');
                 themeIcon.classList.add('fa-sun');
             }
-            if(themeTextSpan) themeTextSpan.textContent = currentLang === 'zh' ? '日間模式' : 'Light';
+            if(themeTextSpan) themeTextSpan.textContent = currentLang === 'zh' ? '日間' : 'Light'; // L2 簡化文本
         } else {
             body.classList.remove('dark-mode');
             if(themeIcon) {
                 themeIcon.classList.remove('fa-sun');
                 themeIcon.classList.add('fa-moon');
             }
-            if(themeTextSpan) themeTextSpan.textContent = currentLang === 'zh' ? '夜間模式' : 'Dark';
+            if(themeTextSpan) themeTextSpan.textContent = currentLang === 'zh' ? '夜間' : 'Dark'; // L2 簡化文本
         }
     }
 
     // Initialize with one plan and load theme and language
+    loadPlansData();
     loadLanguage();
     loadTheme();
-    // 首次載入時，先確保語言已設定，再新增計劃，這樣計劃內的文本才會是正確語言
-    if (planCount === 0) {
-      addPlan();
+    // 首次載入時，先確保語言已設定，再新增或載入計劃
+    if (Object.keys(allPlansData).length === 0) {
+        addPlan(); // 新增一個預設計劃
     }
-  </script>
+    // 載入完成後渲染日曆
+    generatePlan(); 
+    // 確保日曆加載後更新全選狀態
+    setTimeout(updateSelectAllCheckboxState, 100); 
+
+</script>
 </body>
 </html>
