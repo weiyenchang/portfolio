@@ -7,51 +7,50 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
   <title data-i18n="pageTitle">學習計劃表</title>
   <style>
-    /* CSS Variables for Theme - Refined for "Clean SaaS" Look */
-
+    /* CSS Variables for Theme - Clean SaaS Look */
     :root {
       /* Light Mode */
-      --bg-body: #F5F7FA; /* 參考圖的淺灰背景 */
-      --bg-gradient-start: #DCE5F9; /* 頂部藍紫色光暈 */
+      --bg-body: #F5F7FA;
+      --bg-gradient-start: #DCE5F9;
       --bg-gradient-end: rgba(255,255,255,0);
       
-      --bg-card: #FFFFFF; /* 卡片白底 */
-      --bg-input: #F0F2F5; /* 輸入框淺灰底 */
+      --bg-card: #FFFFFF;
+      --bg-input: #F0F2F5;
       
-      --text-main: #111111; /* 主要文字全黑 */
-      --text-secondary: #6B7280; /* 次要文字深灰 */
+      --text-main: #111111;
+      --text-secondary: #6B7280;
       
-      --accent-black: #111111; /* 主要按鈕黑 */
+      --accent-black: #111111;
       --accent-hover: #333333;
       
-      --border-color: #E5E7EB; /* 極淡的邊框，大部分用陰影取代 */
+      --border-color: #E5E7EB;
       --border-focus: #111;
       
       --shadow-sm: 0 1px 2px rgba(0,0,0,0.03);
       --shadow-md: 0 4px 12px rgba(0,0,0,0.03);
       --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.05);
 
-      --radius-lg: 24px; /* 卡片大圓角 */
-      --radius-md: 16px; /* 輸入框圓角 */
-      --radius-sm: 12px; /* 小元件圓角 */
-      --radius-pill: 100px; /* 按鈕圓角 */
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --radius-pill: 100px;
 
-      --highlight-color: #FF7043; /* 週末/重點色 */
+      --highlight-color: #FF7043;
       --calendar-grid-line: #F0F0F0;
     }
 
     .dark-mode {
-      /* Dark Mode - Apple/Modern Dark Style */
+      /* Dark Mode */
       --bg-body: #050505;
-      --bg-gradient-start: #1a1b2e; /* 深色模式下的微光 */
+      --bg-gradient-start: #1a1b2e;
       
-      --bg-card: #1C1C1E; /* 深灰卡片 */
+      --bg-card: #1C1C1E;
       --bg-input: #2C2C2E;
       
       --text-main: #FFFFFF;
       --text-secondary: #A1A1AA;
       
-      --accent-black: #FFFFFF; /* 反轉按鈕顏色 */
+      --accent-black: #FFFFFF;
       --accent-hover: #E5E5E5;
       
       --border-color: #333;
@@ -74,10 +73,10 @@
       min-height: 100vh;
       transition: background-color 0.3s ease, color 0.3s ease;
       position: relative;
-      overflow-x: hidden; /* 防止光暈造成捲軸 */
+      overflow-x: hidden;
     }
 
-    /* 背景頂部光暈效果 (模擬參考圖) */
+    /* Ambient Background Glow */
     body::before {
       content: '';
       position: absolute;
@@ -98,19 +97,6 @@
         min-height: 100vh;
     }
 
-    /* 導航側邊欄 (左側小圖標) */
-    .nav-sidebar {
-        display: none !important; /* 原需求隱藏 */
-        background-color: var(--bg-card);
-        border-right: 1px solid var(--border-color);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding-top: 20px;
-        width: 80px;
-        flex-shrink: 0;
-    }
-
     .main-content {
         flex: 1;
         padding: 40px;
@@ -118,7 +104,7 @@
         margin: 0 auto;
     }
 
-    /* Header 區 */
+    /* Header */
     .header-main {
         display: flex;
         justify-content: space-between;
@@ -131,8 +117,6 @@
         align-items: center;
         gap: 15px;
     }
-    
-    /* Logo / Icon 容器 - 圓形白底陰影 */
     .svg_icon {
         background: var(--bg-card);
         width: 50px;
@@ -149,7 +133,6 @@
         width: 24px;
         height: 24px;
     }
-
     h1 {
       font-size: 28px;
       letter-spacing: -0.5px; 
@@ -163,25 +146,22 @@
         color: var(--text-secondary);
     }
 
-    /* Header Controls (Right side) */
+    /* Controls */
     .calendar-controls {
         display: flex;
         align-items: center;
         gap: 12px;
     }
-    
-    /* 圓形或藥丸形按鈕樣式 */
     .header_btn{
         display:flex;
     }
     .header_btn button {
-        margin: 5px;
         border-radius: var(--radius-pill); 
         padding: 8px 16px; 
         font-size: 14px;
         font-weight: 500;
         background-color: var(--bg-card);
-        border: 1px solid transparent; /* 移除邊框，改用陰影 */
+        border: 1px solid transparent; 
         box-shadow: var(--shadow-sm);
         color: var(--text-main);
         cursor: pointer;
@@ -200,7 +180,7 @@
         border: 1px solid var(--border-color);
     }
 
-    /* 主體佈局 (側邊欄和日曆) */
+    /* Layout */
     .container {
       display: flex;
       gap: 30px;
@@ -218,27 +198,24 @@
       flex: 3;
     }
 
-    /* 輸入區卡片化 */
+    /* Cards */
     .plan-group {
       background-color: var(--bg-card);
       border: none;
       padding: 20px;
-      border-radius: var(--radius-lg); /* 大圓角 */
-      box-shadow: var(--shadow-md); /* 柔和陰影 */
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
       margin-bottom: 20px;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .plan-group:hover {
-        /*box-shadow: var(--shadow-lg);*/
-    }
     
-    /* 設定區塊 (底下那個 Google Calendar 設定) */
-    #gc-title-setting {
+    #gc-title-setting, #backup-restore-setting {
         background-color: var(--bg-card) !important;
         border-radius: var(--radius-lg) !important;
         border: none !important;
         box-shadow: var(--shadow-md);
         padding: 20px !important;
+        margin-bottom: 20px;
     }
 
     .plan-header {
@@ -268,7 +245,7 @@
         color: var(--text-main);
     }
 
-    /* 輸入框樣式優化 - 參考圖的 "Fill Out Vision" 樣式 */
+    /* Inputs */
     label {
       margin: 12px 0 6px;
       font-size: 13px;
@@ -276,7 +253,6 @@
       color: var(--text-secondary);
       display: block;
     }
-    
     input[type="text"], input[type="number"], input[type="date"], textarea {
       width: 100%;
       padding: 12px 16px;
@@ -284,7 +260,7 @@
       border: 1px solid transparent;
       border-radius: var(--radius-md);
       font-size: 14px;
-      background-color: var(--bg-input); /* 淺灰背景 */
+      background-color: var(--bg-input);
       color: var(--text-main);
       box-sizing: border-box;
       transition: all 0.2s;
@@ -296,7 +272,7 @@
         box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
     }
     
-    /* 側邊欄主要操作按鈕 */
+    /* Sidebar Buttons */
     .sidebar-actions {
         display: flex; 
         gap: 10px;
@@ -307,29 +283,38 @@
       color: var(--text-main);
       border: 1px solid var(--border-color);
       cursor: pointer;
-      width: 100%;
       justify-content: center;
       padding: 12px;
-      border-radius: var(--radius-pill); /* 藥丸形 */
+      border-radius: var(--radius-pill);
       font-weight: 600;
       box-shadow: var(--shadow-sm);
       margin-bottom: 10px;
     }
-    
-    /* "新增計劃" & "產生" 按鈕 - 黑色強調色 */
     .sidebar-actions button {
         background-color: var(--accent-black);
-        color: var(--bg-card); /* 反轉色 */
+        color: var(--bg-card);
         border: none;
     }
     .dark-mode .sidebar-actions button {
-        color: #000; /* Dark mode 下按鈕文字為黑 */
+        color: #000;
     }
     .sidebar-actions button:hover {
         background-color: var(--accent-hover);
     }
 
-    /* 刪除按鈕 - 小圓形 Icon */
+    /* Utility Buttons (Calendar/CSV/Backup) */
+    .utility-btn {
+        background: transparent !important;
+        border: 1px solid var(--border-color) !important;
+        color: var(--text-main) !important;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .utility-btn:hover {
+        background-color: var(--bg-input) !important;
+    }
+
     .delete-btn {
       width: 30px;
       height: 30px;
@@ -352,6 +337,16 @@
     .color-label { 
         display: flex;
         align-items: center;
+        margin-bottom: 10px;
+    }
+    input[type="color"]::-webkit-color-swatch {
+        position:absolute;
+        top:-1px;
+        left:-1px;
+        right:-1px;
+        bottom:-1px;
+        box-sizing: border-box;
+        border:1px solid transparent;
     }
     .color-label input[type="color"] {
          -webkit-appearance: none;
@@ -363,20 +358,92 @@
         border:0.5px solid gray;
         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     }
-    input[type="color"]::-webkit-color-swatch {
-        position:absolute;
-        top:-1px;
-        left:-1px;
-        right:-1px;
-        bottom:-1px;
-        box-sizing: border-box;
-        border:1px solid transparent;
-    }
     .color-label button {
         width: auto; padding: 5px 12px; margin: 0; font-size: 12px;
     }
 
-    /* Checkbox & Radio 優化 */
+    /* Palette Suggestion Styles */
+    .palette-section {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--border-color);
+        background: var(--bg-input);
+        padding: 15px;
+        border-radius: var(--radius-md);
+    }
+    .palette-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .palette-header span {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .palette-controls {
+        display: flex;
+        min-width: 150px ;
+        gap: 6px;
+    }
+    .palette-btn {
+        width: auto;
+        padding: 4px 10px;
+        font-size: 12px;
+        background: var(--bg-card);
+        border: 1px solid rgba(0,0,0,0.05);
+        border-radius: 20px;
+        box-shadow: var(--shadow-sm);
+        color: var(--text-main);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .palette-btn:hover {
+        background: var(--bg-card);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+    }
+    .palette-btn.apply-all {
+        background: var(--accent-black);
+        color: var(--bg-card);
+        border: none;
+    }
+    .dark-mode .palette-btn.apply-all {
+        color: #000;
+    }
+    .palette-btn.apply-all:hover {
+        opacity: 0.9;
+    }
+    
+    .palette-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .palette-row {
+        display: flex;
+        gap: 8px;
+        justify-content: space-between;
+        height: 35px;
+    }
+    .palette-swatch {
+        flex: 1;
+        height: 100%;
+        border-radius: 8px;
+        cursor: default;
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: 1px solid rgba(0,0,0,0.05);
+        position: relative;
+    }
+
+    /* Checkbox & Radio */
     input[type="checkbox"], input[type="radio"] {
         accent-color: var(--text-main);
         width: 16px; height: 16px; cursor: pointer;
@@ -392,24 +459,19 @@
         font-size: 10px; cursor: pointer; color: var(--text-main);
     }
 
-    /* --- 日曆樣式優化 (Card Style) --- */
-
+    /* Calendar */
     #calendar {
       display: flex; 
       flex-direction: column;
       gap: 30px; 
     }
-    
-    /* 月份容器 - 卡片化 */
     .month-container {
         background-color: var(--bg-card);
         border-radius: var(--radius-lg);
-        border: none; /* 移除邊框 */
-        box-shadow: var(--shadow-md); /* 增加陰影 */
+        border: none;
+        box-shadow: var(--shadow-md);
         overflow: hidden;
     }
-
-    /* Month Header */
     .month-header {
         font-size: 20px;
         font-weight: 700;
@@ -422,8 +484,6 @@
         color: var(--text-secondary);
         font-size: 16px;
     }
-    
-    /* Calendar Grid */
     .calendar-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
@@ -431,7 +491,6 @@
         border: none;
         background: var(--bg-card);
     }
-
     .weekday-header {
       font-weight: 600;
       color: var(--text-secondary);
@@ -442,51 +501,27 @@
       letter-spacing: 1px;
       border-bottom: 1px solid var(--border-color);
     }
-    .weekday-weekend {
-        color: var(--highlight-color) !important;
-    }
+    .weekday-weekend { color: var(--highlight-color) !important; }
 
-    /* Day Cell */
     .day {
       border: none;
-      /*border-right: 1px solid var(--calendar-grid-line);*/
-      /*border-bottom: 1px solid var(--calendar-grid-line);*/
+      box-shadow: inset -1px -1px 0 var(--calendar-grid-line);
       background-color: var(--bg-card);
       padding: 10px 15px;
-      min-height: 120px; /* 增加高度 */
+      min-height: 120px;
       position: relative;
       transition: background-color 0.2s;
     }
-    /* 增加網格線 (用偽元素或 shadow 模擬更乾淨) */
-    .day {
-        box-shadow: inset -1px -1px 0 var(--calendar-grid-line);
-    }
-    
-    .day:hover {
-        background-color: rgba(0,0,0,0.01);
-    }
-    .dark-mode .day:hover {
-        background-color: rgba(255,255,255,0.02);
-    }
-
-    /* 週末背景微調 */
-    .calendar-grid > .day:nth-child(7n), 
-    .calendar-grid > .day:nth-child(7n+1) {
-       /* background-color: rgba(0,0,0,0.005); */
-    }
-
-    /* Today Highlight */
+    .day:hover { background-color: rgba(0,0,0,0.01); }
+    .dark-mode .day:hover { background-color: rgba(255,255,255,0.02); }
     .day.today {
         border: none !important;
         box-shadow: inset 0 0 0 2px var(--highlight-color), inset -1px -1px 0 var(--calendar-grid-line);
     }
-    
     .empty-day {
         background-color: transparent;
         box-shadow: inset -1px -1px 0 var(--calendar-grid-line);
     }
-    
-    /* Date Number - Big & Bold */
     .date-only {
       font-weight: 700;
       font-size: 24px;
@@ -494,8 +529,6 @@
       opacity: 0.8;
       margin-bottom: 8px;
     }
-    
-    /* Task Item - Pill Style */
     .task {
       padding: 4px 10px;
       margin-top: 5px;
@@ -504,10 +537,12 @@
       font-weight: 600;
       line-height: 1.4;
       box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-      border-left: 3px solid rgba(0,0,0,0.1); /* 增加一個左側強調線 */
+      border-left: 3px solid rgba(0,0,0,0.1);
+    }
+    label span{
+        margin-bottom: 5px;
     }
 
-    /* RWD */
     @media (max-width: 768px) {
       .app-container { flex-direction: column; }
       .nav-sidebar { display: none; }
@@ -552,12 +587,25 @@
         <div class="sidebar">
           <div class="sidebar-actions"> 
              <button onclick="addPlan()" data-i18n="addPlanBtn"><i class="fa-solid fa-plus"></i> 新增學習計劃</button>
-             <button onclick="generatePlan()" data-i18n="generatePlanBtn"> <i class="fa-solid fa-bolt"></i> &nbsp產生記憶計劃</button>
+             <button onclick="generatePlan()" data-i18n="generatePlanBtn"><i class="fa-solid fa-bolt"></i> 產生記憶計劃</button>
           </div>
 
           <div id="plan-container">
             </div>
           
+          <div id="backup-restore-setting" class="plan-group">
+            <label style="font-weight: bold; margin-bottom: 8px;" data-i18n-id="backupRestoreLabel">Backup / Restore:</label>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button onclick="exportPlanSettingsCSV()" class="sidebar-btn utility-btn" style="flex:1;">
+                    <i class="fa-solid fa-download"></i> <span data-i18n-id="exportSettingsBtn">匯出設定 CSV</span>
+                </button>
+                <button onclick="document.getElementById('importFile').click()" class="sidebar-btn utility-btn" style="flex:1;">
+                    <i class="fa-solid fa-upload"></i> <span data-i18n-id="importSettingsBtn">匯入設定 CSV</span>
+                </button>
+                <input type="file" id="importFile" accept=".csv" style="display: none;" onchange="handleImportFile(this)">
+            </div>
+          </div>
+
           <div id="gc-title-setting" class="plan-group"> 
             <label style="font-weight: bold; margin-bottom: 8px;" data-i18n-id="gcTitleSettingLabel">Google Caledar 設定:</label>
             <div style="margin-bottom: 5px;">
@@ -569,10 +617,10 @@
               <label for="separatePlans" style="display: inline; font-weight: 500;" data-i18n-id="separatePlansLabel">獨立顯示 (Separate)</label>
             </div>
             <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 15px 0;">
-            <button onclick="addToGoogleCalendar()" id="addToCalendarBtn" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-main);">
+            <button onclick="addToGoogleCalendar()" id="addToCalendarBtn" class="utility-btn" style="width:100%; justify-content:center;">
                 <i class="fa-brands fa-google"></i> <span data-i18n-id="addToCalendarBtnText">加入行事曆</span>
             </button>
-            <button onclick="downloadCSV()" data-i18n="downloadCSVBtn" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-main);">
+            <button onclick="downloadCSV()" data-i18n="downloadCSVBtn" class="utility-btn" style="width:100%; justify-content:center; margin-top:10px;">
                 <i class="fa-solid fa-file-csv"></i> 下載 CSV
             </button>
           </div>
@@ -594,15 +642,15 @@
     <script>
     const weekdayMap = ['日', '一', '二', '三', '四', '五', '六'];
     const weekdayMap_en = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    // 使用更柔和的莫蘭迪色系/Pastel Colors
+    // Default fallback colors
     const defaultColors = ['#E3F2FD', '#F3E5F5', '#E8F5E9', '#FFF3E0', '#FBE9E7', '#E0F2F1'];
+    
     let latestPlan = {};
     let allPlansData = {}; 
     let planCount = 0;
     let planColors = {}; 
     let currentLang = 'zh'; 
 
-    // 國際化文本
     const translations = {
       zh: {
         pageTitle: '學習計劃表產生器',
@@ -612,16 +660,22 @@
         toggleLangBtn: '中/En',
         addPlanBtn: '新增計劃',
         generatePlanBtn: '產生計劃',
-        downloadCSVBtn: '下載 CSV',
+        downloadCSVBtn: '下載 Google Calendar CSV',
         selectAllDays: '全選日期', 
         addToCalendarBtnText: '加入 Google 行事曆', 
         gcTitleSettingLabel: 'Google Caledar 顯示設定:', 
         mergePlansLabel: '合併顯示多個計劃',
         separatePlansLabel: '將計劃各自獨立顯示',
+        backupRestoreLabel: '設定檔 備份/還原:',
+        exportSettingsBtn: '匯出設定 CSV',
+        importSettingsBtn: '匯入設定 CSV',
         planHeader: '任務', 
         titleLabel: '計劃名稱：',
         colorLabel: '標籤顏色',
-        randomColorBtn: '隨機',
+        paletteLabel: 'AI 配色建議',
+        applyAllBtn: '✨ 套用',
+        shuffleBtnTitle: '換一組配色',
+        randomColorBtn: '重置',
         unitLabel: '任務名稱/單位',
         startDateLabel: '開始日',
         endDateLabel: '結束日 (選填)',
@@ -658,15 +712,21 @@
         toggleLangBtn: 'Zh/En',
         addPlanBtn: 'Add Plan',
         generatePlanBtn: 'Generate',
-        downloadCSVBtn: 'Download CSV',
+        downloadCSVBtn: 'Download Google Calendar CSV',
         selectAllDays: 'Select All', 
         addToCalendarBtnText: 'Google Calendar', 
         gcTitleSettingLabel: 'Calendar Title Setting:',
         mergePlansLabel: 'Merge Plans',
         separatePlansLabel: 'Separate Plans',
+        backupRestoreLabel: 'Config Backup / Restore:',
+        exportSettingsBtn: 'Export Config CSV',
+        importSettingsBtn: 'Import Config CSV',
         planHeader: 'Plan', 
         titleLabel: 'Plan Name:',
         colorLabel: 'Color Tag',
+        paletteLabel: 'Smart Palette',
+        applyAllBtn: '✨ Apply',
+        shuffleBtnTitle: 'Shuffle Palette',
         randomColorBtn: 'Reset',
         unitLabel: 'Task Name/Unit',
         startDateLabel: 'Start Date',
@@ -700,6 +760,287 @@
 
     function getRandomColor() {
       return defaultColors[Math.floor(Math.random() * defaultColors.length)];
+    }
+
+    // --- COLOR HARMONY GENERATOR ALGORITHM ---
+    function hslToHex(h, s, l) {
+        l /= 100;
+        const a = s * Math.min(l, 1 - l) / 100;
+        const f = n => {
+            const k = (n + h / 30) % 12;
+            const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+            return Math.round(255 * color).toString(16).padStart(2, '0');
+        };
+        return `#${f(0)}${f(8)}${f(4)}`;
+    }
+
+    function generateHarmoniousPalette(isDarkMode) {
+        const baseHue = Math.floor(Math.random() * 360);
+        let sRange, lRange;
+        if (isDarkMode) {
+            sRange = [70, 100]; 
+            lRange = [60, 80];  
+        } else {
+            sRange = [60, 90];  
+            lRange = [70, 90];  
+        }
+        
+        const getSL = () => {
+            const s = Math.floor(Math.random() * (sRange[1] - sRange[0])) + sRange[0];
+            const l = Math.floor(Math.random() * (lRange[1] - lRange[0])) + lRange[0];
+            return {s, l};
+        };
+
+        const rules = ['analogous', 'complementary', 'triadic', 'split-complementary', 'monochromatic'];
+        const rule = rules[Math.floor(Math.random() * rules.length)];
+        
+        const colors = [];
+        let hues = [];
+
+        switch(rule) {
+            case 'analogous': hues = [baseHue, baseHue + 30, baseHue + 60, baseHue - 30, baseHue - 60]; break;
+            case 'complementary': hues = [baseHue, baseHue, baseHue + 180, baseHue + 180, baseHue]; break;
+            case 'triadic': hues = [baseHue, baseHue + 120, baseHue + 240, baseHue + 120, baseHue + 240]; break;
+            case 'split-complementary': hues = [baseHue, baseHue + 150, baseHue + 210, baseHue + 150, baseHue + 210]; break;
+            case 'monochromatic': hues = [baseHue, baseHue, baseHue, baseHue, baseHue]; break;
+        }
+
+        for (let i = 0; i < 5; i++) {
+            let h = (hues[i] + 360) % 360; 
+            let {s, l} = getSL();
+            if (rule === 'monochromatic' || rule === 'complementary') {
+                l = l - (i * 10) + 20; 
+                if (l > 95) l = 95;
+                if (l < 40) l = 40;
+            }
+            colors.push(hslToHex(h, s, l));
+        }
+        return colors; 
+    }
+    
+    function applyPaletteToAll(paletteColors) {
+        const allIds = Object.keys(allPlansData).map(Number).sort((a,b) => a-b);
+        if (allIds.length === 0) return;
+
+        allIds.forEach((planId, index) => {
+            const color = paletteColors[index % paletteColors.length];
+            if (allPlansData[planId]) {
+                allPlansData[planId].color = color;
+            }
+            planColors[planId] = color; 
+            const picker = document.getElementById(`colorPicker-${planId}`);
+            if (picker) picker.value = color;
+            const group = document.querySelector(`.plan-group[data-id="${planId}"]`);
+            if (group) group.style.borderLeft = `5px solid ${color}`;
+            savePlanData(planId);
+        });
+        generatePlan();
+    }
+
+    function renderPaletteSuggestions(id) {
+        const container = document.getElementById(`palette-grid-${id}`);
+        if(!container) return;
+        
+        container.innerHTML = ''; 
+        const isDark = document.body.classList.contains('dark-mode');
+        const palette = generateHarmoniousPalette(isDark);
+        
+        const headerContainer = document.getElementById(`palette-header-${id}`);
+        if (headerContainer) {
+            headerContainer.innerHTML = '';
+            const labelSpan = document.createElement('span');
+            labelSpan.textContent = translations[currentLang].paletteLabel;
+            
+            const controlsDiv = document.createElement('div');
+            controlsDiv.className = 'palette-controls';
+            
+            const shuffleBtn = document.createElement('button');
+            shuffleBtn.className = 'palette-btn';
+            shuffleBtn.title = translations[currentLang].shuffleBtnTitle;
+            shuffleBtn.innerHTML = '<i class="fa-solid fa-rotate"></i>';
+            shuffleBtn.onclick = () => renderPaletteSuggestions(id);
+            
+            const applyBtn = document.createElement('button');
+            applyBtn.className = 'palette-btn apply-all';
+            applyBtn.textContent = translations[currentLang].applyAllBtn;
+            applyBtn.onclick = () => applyPaletteToAll(palette); 
+            
+            controlsDiv.appendChild(shuffleBtn);
+            controlsDiv.appendChild(applyBtn);
+            headerContainer.appendChild(labelSpan);
+            headerContainer.appendChild(controlsDiv);
+        }
+
+        const row = document.createElement('div');
+        row.className = 'palette-row';
+        palette.forEach(color => {
+            const swatch = document.createElement('div');
+            swatch.className = 'palette-swatch';
+            swatch.style.backgroundColor = color;
+            swatch.title = color;
+            row.appendChild(swatch);
+        });
+        container.appendChild(row);
+    }
+
+    // --- IMPORT / EXPORT LOGIC ---
+
+    function exportPlanSettingsCSV() {
+        if (Object.keys(allPlansData).length === 0) {
+            alert(currentLang === 'zh' ? '沒有計畫可匯出' : 'No plans to export');
+            return;
+        }
+
+        // Define Headers
+        const headers = [
+            "id", "color", "unit", "startDate", "endDate", 
+            "executionDates", "useExecutionDates", 
+            "excludeWeekdays", "excludeDates", "useExcludeDates",
+            "rangeType", "dailyAmount", "pageRange", "outline",
+            "reverseOrder", "showStudy", "showReview", "showCustom", "customText"
+        ];
+
+        let csvContent = headers.join(",") + "\n";
+
+        Object.values(allPlansData).forEach(plan => {
+            let row = [];
+            
+            // Helper to escape commas and quotes in CSV
+            const safe = (val) => {
+                if (val === null || val === undefined) return "";
+                const str = String(val);
+                // If contains comma, quote, or newline, wrap in quotes and escape quotes
+                if (str.includes(",") || str.includes("\"") || str.includes("\n")) {
+                    return `"${str.replace(/"/g, '""')}"`;
+                }
+                return str;
+            };
+
+            row.push(plan.id);
+            row.push(plan.color);
+            row.push(safe(plan.unit));
+            row.push(plan.startDate);
+            row.push(plan.endDate);
+            row.push(safe(plan.executionDates)); // encode/safe newlines
+            row.push(plan.useExecutionDates);
+            row.push(safe(plan.excludeWeekdays.join("|"))); // Join array with pipe
+            row.push(safe(plan.excludeDates));
+            row.push(plan.useExcludeDates);
+            row.push(plan.rangeType);
+            row.push(plan.dailyAmount);
+            row.push(safe(plan.pageRange));
+            row.push(safe(plan.outline)); // Outline likely contains commas
+            row.push(plan.reverseOrder);
+            row.push(plan.showStudy);
+            row.push(plan.showReview);
+            row.push(plan.showCustom);
+            row.push(safe(plan.customText));
+
+            csvContent += row.join(",") + "\n";
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", `plan_config_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function handleImportFile(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const text = e.target.result;
+            parseSettingsCSV(text);
+            input.value = ''; // Reset input
+        };
+        reader.readAsText(file);
+    }
+
+    function parseSettingsCSV(text) {
+        // Clear current plans
+        allPlansData = {};
+        planColors = {};
+        planCount = 0;
+        document.getElementById('plan-container').innerHTML = '';
+
+        const rows = text.trim().split("\n");
+        if (rows.length < 2) return; // Only header or empty
+
+        // Basic CSV Parser that handles quoted strings
+        const parseRow = (rowStr) => {
+            const result = [];
+            let current = '';
+            let inQuote = false;
+            for (let i = 0; i < rowStr.length; i++) {
+                const char = rowStr[i];
+                if (char === '"') {
+                    if (inQuote && rowStr[i+1] === '"') {
+                        current += '"';
+                        i++; // Skip next quote
+                    } else {
+                        inQuote = !inQuote;
+                    }
+                } else if (char === ',' && !inQuote) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);
+            return result;
+        };
+
+        // Skip header (index 0)
+        for (let i = 1; i < rows.length; i++) {
+            const cols = parseRow(rows[i]);
+            // Columns mapping matches export function:
+            // 0:id, 1:color, 2:unit, 3:startDate, 4:endDate, 
+            // 5:executionDates, 6:useExecutionDates, 
+            // 7:excludeWeekdays, 8:excludeDates, 9:useExcludeDates,
+            // 10:rangeType, 11:dailyAmount, 12:pageRange, 13:outline,
+            // 14:reverseOrder, 15:showStudy, 16:showReview, 17:showCustom, 18:customText
+
+            if (cols.length < 10) continue; // Invalid row
+
+            const id = parseInt(cols[0]) || 0;
+            const planData = {
+                id: id,
+                color: cols[1],
+                unit: cols[2],
+                startDate: cols[3],
+                endDate: cols[4],
+                executionDates: cols[5],
+                useExecutionDates: cols[6] === 'true',
+                excludeWeekdays: cols[7] ? cols[7].split('|').map(Number) : [],
+                excludeDates: cols[8],
+                useExcludeDates: cols[9] === 'true',
+                rangeType: cols[10],
+                dailyAmount: parseInt(cols[11]) || 1,
+                pageRange: cols[12],
+                outline: cols[13],
+                reverseOrder: cols[14] === 'true',
+                showStudy: cols[15] === 'true',
+                showReview: cols[16] === 'true',
+                showCustom: cols[17] === 'true',
+                customText: cols[18],
+                isCollapsed: false
+            };
+
+            allPlansData[id] = planData;
+            planColors[id] = planData.color;
+            if (id >= planCount) planCount = id + 1;
+
+            addPlan(planData, id);
+        }
+
+        generatePlan();
     }
 
     function formatDate(date) {
@@ -813,24 +1154,11 @@
         return reverse ? items.reverse() : items;
     }
 
+    // --- MODIFIED: NO PERSISTENCE ---
     function loadPlansData() {
-        try {
-            const savedPlans = localStorage.getItem('learningPlans');
-            if (savedPlans) {
-                allPlansData = JSON.parse(savedPlans);
-                const ids = Object.keys(allPlansData).map(Number);
-                if (ids.length > 0) planCount = Math.max(...ids) + 1;
-                Object.values(allPlansData).forEach(planData => {
-                    if (planData.color) planColors[planData.id] = planData.color;
-                });
-            } else {
-                allPlansData = {};
-                planCount = 0;
-            }
-        } catch (e) {
-            allPlansData = {};
-            planCount = 0;
-        }
+        // Originally loaded from localStorage. Now initializes empty.
+        allPlansData = {};
+        planCount = 0;
     }
 
     function savePlanData(id) {
@@ -884,7 +1212,7 @@
         };
 
         allPlansData[id] = planData;
-        localStorage.setItem('learningPlans', JSON.stringify(allPlansData));
+        // REMOVED: localStorage.setItem('learningPlans', JSON.stringify(allPlansData));
     }
 
     function deletePlan(id) {
@@ -895,7 +1223,7 @@
         if (planGroup) planGroup.remove();
         delete allPlansData[id];
         delete planColors[id];
-        localStorage.setItem('learningPlans', JSON.stringify(allPlansData));
+        // REMOVED: localStorage.setItem('learningPlans', JSON.stringify(allPlansData));
         generatePlan();
     }
 
@@ -930,9 +1258,6 @@
         const newPlanGroup = document.createElement('div');
         newPlanGroup.className = 'plan-group';
         newPlanGroup.dataset.id = id;
-        
-        // 側邊欄卡片不隨顏色改變背景，僅改變 border 或標籤，保持整潔白底
-        // 但我們可以用左側邊框來標示顏色
         newPlanGroup.style.borderLeft = `5px solid ${colorValue}`;
 
         newPlanGroup.innerHTML = `
@@ -941,7 +1266,6 @@
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <span class="toggle-icon" data-id="${id}">▲</span>
                     <button class="delete-btn" onclick="event.stopPropagation(); deletePlan(${id})" title="${translations[currentLang].deleteBtn}"><i class="fa-solid fa-trash"></i></button>
-
                 </div>
             </div>
             <div id="plan-content-${id}" class="plan-content" onchange="savePlanData(${id})">
@@ -952,11 +1276,20 @@
                     </label>
                 </div>
 
-                <div class="color-label" style="margin-bottom:12px;">
-                    <label data-i18n-id="colorLabel" style="margin:0;"><span>${translations[currentLang].colorLabel}</span></label>
-                    <div style="display:flex; align-items:center;">
-                        <input id="colorPicker-${id}" class="color_picker" type="color" value="${colorValue}">
-                        <button onclick="randomizeColor(${id})" data-i18n-id="randomColorBtn">${translations[currentLang].randomColorBtn}</button>
+                <div style="margin-bottom:12px;">
+                    <div class="color-label">
+                        <label data-i18n-id="colorLabel" style="margin:0;"><span>${translations[currentLang].colorLabel}</span></label>
+                        <div style="display:flex; align-items:center;">
+                            <input id="colorPicker-${id}" class="color_picker" type="color" value="${colorValue}">
+                            <button onclick="randomizeColor(${id})" data-i18n-id="randomColorBtn">${translations[currentLang].randomColorBtn}</button>
+                        </div>
+                    </div>
+                    
+                    <div class="palette-section">
+                        <div id="palette-header-${id}" class="palette-header">
+                             </div>
+                        <div id="palette-grid-${id}" class="palette-grid">
+                            </div>
                     </div>
                 </div>
 
@@ -965,7 +1298,7 @@
                     <label style="flex:1;"><span data-i18n-id="endDateLabel">${translations[currentLang].endDateLabel}</span><input id="endDate-${id}" type="date" value="${planData ? planData.endDate : ''}"></label>
                 </div>
 
-                <label style="display: flex; align-items: center; margin-bottom: 5px; cursor: pointer;">
+                <label style="display: flex; align-items: center; margin-top: 5px; cursor: pointer;">
                     <input id="useExecutionDatesCheckbox-${id}" type="checkbox" ${isExecutionDatesUsed ? 'checked' : ''} onchange="toggleExecutionDatesInput(${id})" style="width: auto; margin: 0 5px 0 0;">
                     <span data-i18n-id="executionDatesLabel">${translations[currentLang].executionDatesLabel}</span>
                 </label>
@@ -1050,6 +1383,9 @@
         updatePlanTitle(id);
         updateRequiredDays(id);
 
+        // Render Initial Palette Suggestions
+        renderPaletteSuggestions(id);
+
         document.getElementById(`colorPicker-${id}`).addEventListener('input', (e) => {
             const group = document.querySelector(`.plan-group[data-id="${id}"]`);
             group.style.borderLeft = `5px solid ${e.target.value}`;
@@ -1090,7 +1426,7 @@
                  icon.textContent = '▲';
             }
             allPlansData[id].isCollapsed = isCollapsed;
-            localStorage.setItem('learningPlans', JSON.stringify(allPlansData));
+            // REMOVED: localStorage.setItem('learningPlans', JSON.stringify(allPlansData));
         }
     }
     
@@ -1322,7 +1658,7 @@
                  contentWrapper.style.maxHeight = '0';
                  document.getElementById(`month-toggle-${monthId}`).textContent = '▼';
             } else {
-                 contentWrapper.style.maxHeight = '3000px'; // 估計值，保持展開
+                 contentWrapper.style.maxHeight = '3000px'; 
             }
             currentMonth.setMonth(currentMonth.getMonth() + 1);
         }
@@ -1360,9 +1696,6 @@
             const day = document.createElement("div");
             day.className = `day ${isToday ? 'today' : ''}`;
 
-            // 週六日背景 (已移除，改用統一白底)
-            // if (dayOfWeek === 0 || dayOfWeek === 6) { day.style.backgroundColor = 'var(--bg-body)'; } 
-
             const dateHeaderContainer = document.createElement('div');
             dateHeaderContainer.className = 'date-header-container';
             dateHeaderContainer.style.display = 'flex';
@@ -1378,8 +1711,7 @@
             checkbox.dataset.date = dateKey;
             checkbox.onchange = updateDaySelection; 
             
-            const checkedState = JSON.parse(localStorage.getItem('checkedDays') || '{}');
-            if (checkedState[dateKey]) checkbox.checked = true;
+            // Checkboxes NOT retrieved from storage in this version
             if (!hasTasks) checkbox.style.visibility = 'hidden';
 
             dateHeaderContainer.appendChild(dateOnlySpan);
@@ -1392,7 +1724,6 @@
                 taskDiv.textContent = task.text;
                 const bgColor = task.color;
                 taskDiv.style.backgroundColor = bgColor;
-                // 使用左側 border 來增加層次感
                 taskDiv.style.borderLeftColor = shadeColor(bgColor, -20);
                 
                 if (isLightColor(bgColor)) taskDiv.style.color = '#3B3E3D';
@@ -1415,7 +1746,6 @@
         return grid;
     }
     
-    // 輔助函數：調整顏色深淺 (用於 Task 左側線條)
     function shadeColor(color, percent) {
         var R = parseInt(color.substring(1,3),16);
         var G = parseInt(color.substring(3,5),16);
@@ -1433,12 +1763,7 @@
     }
 
     function updateDaySelection(event) {
-        const checkbox = event.target;
-        const dateKey = checkbox.dataset.date;
-        let checkedDays = JSON.parse(localStorage.getItem('checkedDays') || '{}');
-        if (checkbox.checked) checkedDays[dateKey] = true;
-        else delete checkedDays[dateKey];
-        localStorage.setItem('checkedDays', JSON.stringify(checkedDays));
+        // Selection is transient (not saved to storage)
         updateSelectAllCheckboxState();
     }
 
@@ -1475,7 +1800,6 @@
     function randomizeColor(id) {
         const color = getRandomColor();
         document.getElementById(`colorPicker-${id}`).value = color;
-        // document.querySelector(`.plan-group[data-id="${id}"]`).style.backgroundColor = color; 
         document.querySelector(`.plan-group[data-id="${id}"]`).style.borderLeft = `5px solid ${color}`;
         planColors[id] = color;
         savePlanData(id); 
@@ -1531,13 +1855,19 @@
         }
         const gcTitleOption = document.querySelector('input[name="gcTitleOption"]:checked').value;
         const keys = Object.keys(latestPlan).sort();
-        const checkedDays = JSON.parse(localStorage.getItem('checkedDays') || '{}');
+        // Since no persistence, we only check DOM status for selection
+        const checkboxes = document.querySelectorAll('.day-checkbox');
+        let selectedDates = {};
+        checkboxes.forEach(cb => {
+            if(cb.checked) selectedDates[cb.dataset.date] = true;
+        });
+
         let mergedTitle = '';
         let mergedDescription = '';
         let eventCount = 0;
 
         keys.forEach(dateStr => {
-            if (checkedDays[dateStr]) {
+            if (selectedDates[dateStr]) {
                 const tasks = latestPlan[dateStr];
                 if (gcTitleOption === 'merge') {
                     const mergedTasksText = tasks.map(t => t.text).join(' / ');
@@ -1581,7 +1911,14 @@
         }
         const gcTitleOption = document.querySelector('input[name="gcTitleOption"]:checked').value;
         const keys = Object.keys(latestPlan).sort();
-        const checkedDays = JSON.parse(localStorage.getItem('checkedDays') || '{}');
+        
+        // DOM selection check
+        const checkboxes = document.querySelectorAll('.day-checkbox');
+        let selectedDates = {};
+        checkboxes.forEach(cb => {
+            if(cb.checked) selectedDates[cb.dataset.date] = true;
+        });
+
         let csv = "Subject,Start Date,Start Time,End Date,End Time,All Day Event,Description,Location\n";
         const rows = [];
         const emptyFields = ',,'; 
@@ -1589,7 +1926,7 @@
 
         if (gcTitleOption === 'merge') {
             keys.forEach(dateStr => {
-                if (checkedDays[dateStr]) { 
+                if (selectedDates[dateStr]) { 
                     const tasks = latestPlan[dateStr];
                     const mergedTasksText = tasks.map(t => t.text).join(' / ');
                     const representativeTask = tasks.find(t => t.isStudy) || tasks[0];
@@ -1605,7 +1942,7 @@
             });
         } else {
             keys.forEach(dateStr => {
-                if (checkedDays[dateStr]) { 
+                if (selectedDates[dateStr]) { 
                     latestPlan[dateStr].forEach(taskObj => {
                         const subject = `"${formatTaskForCalendar(taskObj)}"`;
                         const dateParts = dateStr.split('-');
@@ -1626,15 +1963,11 @@
 
     function toggleAllCheckboxes() {
         const selectAll = document.getElementById('selectAllDays').checked;
-        const checkedDays = JSON.parse(localStorage.getItem('checkedDays') || '{}');
         document.querySelectorAll('.day-checkbox').forEach(checkbox => {
             if (checkbox.style.visibility !== 'hidden') {
                 checkbox.checked = selectAll;
-                if (selectAll) checkedDays[checkbox.dataset.date] = true;
-                else delete checkedDays[checkbox.dataset.date];
             }
         });
-        localStorage.setItem('checkedDays', JSON.stringify(checkedDays));
     }
 
     function toggleTheme() {
@@ -1655,6 +1988,11 @@
                 ? (currentLang === 'zh' ? '日間' : 'Light') 
                 : (currentLang === 'zh' ? '夜間' : 'Dark');
         }
+
+        // Update palettes when theme changes
+        Object.keys(allPlansData).forEach(id => {
+            renderPaletteSuggestions(id);
+        });
     }
 
     function toggleLanguage() {
@@ -1676,12 +2014,8 @@
             const key = element.getAttribute('data-i18n') || element.getAttribute('data-i18n-id');
             if (element.tagName === 'BUTTON' || element.tagName === 'H1') {
                 if (t[key]) {
-                    // 保留 icon
                     const icon = element.querySelector('i');
                     if(icon) {
-                         // 簡單處理，直接更新文字節點
-                         // element.innerHTML = ''; element.appendChild(icon); element.append(" " + t[key]);
-                         // 這裡偷懶一下，只更新 span
                          const span = element.querySelector('span');
                          if(span) span.textContent = t[key];
                          else element.childNodes[element.childNodes.length-1].nodeValue = t[key];
