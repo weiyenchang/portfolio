@@ -42,26 +42,26 @@
 
     .dark-mode {
       /* Dark Mode */
-      --bg-body: #050505;
-      --bg-gradient-start: #1a1b2e;
+      --bg-body: #000000; /* Apple Pure Black body */
+      --bg-gradient-start: #1C1C1E;
       
-      --bg-card: #1C1C1E;
+      --bg-card: #1C1C1E; /* Apple Dark Gray Card */
       --bg-input: #2C2C2E;
       
       --text-main: #FFFFFF;
-      --text-secondary: #A1A1AA;
+      --text-secondary: #8E8E93; /* Apple System Gray */
       
       --accent-black: #FFFFFF;
       --accent-hover: #E5E5E5;
       
-      --border-color: #333;
+      --border-color: #38383A;
       --border-focus: #fff;
       
       --shadow-sm: none;
       --shadow-md: none;
       --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.5);
 
-      --highlight-color: #FF8A65;
+      --highlight-color: #FF9F0A; /* Apple System Orange */
       --calendar-grid-line: #2C2C2E;
     }
     
@@ -115,10 +115,10 @@
         margin: 0 auto;
         width: 100%;
         box-sizing: border-box;
-        padding-top: 0; /* Padding handled by sticky header margin */
+        padding-top: 0; 
     }
 
-    /* Header - Sticky Top Implementation */
+    /* Header - Sticky Top & Glassmorphism */
     .header-main {
         display: flex;
         justify-content: space-between;
@@ -128,30 +128,27 @@
         flex-wrap: wrap;
         gap: 20px;
         
-        /* Sticky Settings */
         position: sticky;
         top: 0;
         z-index: 1000;
-        background-color: var(--bg-body); /* Ensure text doesn't overlap */
-        /* Optional: Add blur for glassmorphism effect */
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        /* Add transition for background color */
+        
+        /* Default Light Mode Glass */
+        background-color: rgba(245, 247, 250, 0.85); 
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        
         transition: background-color 0.3s ease;
-        /* Add some padding x to match container if needed, or rely on main-content padding */
-        padding-left: 20px; /* Compensation for mobile padding reduction */
+        padding-left: 20px; 
         padding-right: 20px;
-        margin-left: -20px; /* Extend to full width on mobile */
+        margin-left: -20px; 
         margin-right: -20px;
+        border-bottom: 1px solid transparent;
     }
     
-    /* Ensure header background matches dark mode */
+    /* Dark Mode Glassmorphism - Apple Style */
     .dark-mode .header-main {
-        background-color: rgba(5, 5, 5, 0.85); /* Semi-transparent for blur */
-    }
-    /* Light mode background with transparency */
-    :root:not(.dark-mode) .header-main {
-        background-color: rgba(245, 247, 250, 0.85);
+        background-color: rgba(28, 28, 30, 0.8); /* Dark translucent */
+        border-bottom: 0.5px solid rgba(255,255,255,0.1); /* Subtle separator */
     }
 
     .header-title-area {
@@ -159,6 +156,8 @@
         align-items: center;
         gap: 15px;
     }
+    
+    /* Logo - No Animation */
     .svg_icon {
         width: 55px;
         height: 55px;
@@ -169,6 +168,8 @@
         box-shadow: var(--shadow-sm);
         flex-shrink: 0;
         background-color: var(--bg-card);
+        cursor: pointer;
+        transition: box-shadow 0.3s ease; 
     }
     .svg_icon svg {
         fill: var(--text-main);
@@ -176,6 +177,11 @@
         width: 40px;
         height: 40px;
     }
+    /* Hover Effect */
+    .svg_icon:hover {
+        box-shadow: var(--shadow-md);
+    }
+
     h1 {
       font-size: 28px;
       letter-spacing: -0.5px; 
@@ -201,8 +207,7 @@
         gap: 10px;
         position: relative;
     }
-    
-    /* Standard Button Style */
+    /* Header Buttons */
     .header_btn > button, .dropdown-btn {
         border-radius: var(--radius-pill); 
         padding: 8px 16px; 
@@ -224,14 +229,21 @@
         transform: translateY(-1px);
         box-shadow: var(--shadow-md);
     }
+    
+    /* Dark Mode Header Buttons - Apple Style */
     .dark-mode .header_btn > button, .dark-mode .dropdown-btn {
-        background-color: rgba(255,255,255,0.1);
-        border: 1px solid var(--border-color);
+        background-color: rgba(255, 255, 255, 0.1); /* Translucent fill */
+        border: none; /* Remove border */
+        color: #FFFFFF;
+        box-shadow: none; /* Cleaner look */
+    }
+    .dark-mode .header_btn > button:hover, .dark-mode .dropdown-btn:hover {
+        background-color: rgba(255, 255, 255, 0.2);
     }
 
-    /* Hamburger Menu Button (Default Hidden on Desktop) */
+    /* Hamburger Menu Button */
     .hamburger-btn {
-        display: none; /* Hidden on desktop */
+        display: none; 
         font-size: 20px;
         background: transparent;
         border: none;
@@ -331,15 +343,6 @@
       margin-bottom: 20px;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    
-    #gc-title-setting, #backup-restore-setting {
-        background-color: var(--bg-card) !important;
-        border-radius: var(--radius-lg) !important;
-        border: none !important;
-        box-shadow: var(--shadow-md);
-        padding: 20px !important;
-        margin-bottom: 20px;
-    }
 
     .plan-header {
       cursor: pointer;
@@ -417,10 +420,18 @@
         display: flex;
         align-items: center;
         gap: 8px;
+        transition: background-color 0.2s;
     }
+    
+    /* Dark Mode Sidebar Buttons: #F2F2F7 Background with Black Text */
     .dark-mode .sidebar-actions button {
-        color: #000;
+        background-color: #F2F2F7 !important; /* Specific Request */
+        color: #000000 !important; /* Ensure readability on light gray */
     }
+    .dark-mode .sidebar-actions button:hover {
+        background-color: #E5E5EA !important; /* Slightly darker on hover */
+    }
+
     .sidebar-actions button:hover {
         background-color: var(--accent-hover);
     }
@@ -698,7 +709,7 @@
       .main-content { padding: 15px; padding-top: 0; } 
       
       .header-main { 
-          flex-wrap: nowrap; /* Keep title and hamburger in one line */
+          flex-wrap: nowrap; 
           padding-left: 15px;
           padding-right: 15px;
           margin-left: -15px;
@@ -708,7 +719,6 @@
           flex-grow: 1;
       }
       
-      /* Hide standard controls on mobile */
       .calendar-controls {
           display: none;
           position: absolute;
@@ -723,12 +733,10 @@
           border-bottom: 1px solid var(--border-color);
           z-index: 999;
       }
-      /* Show when active */
       .calendar-controls.active {
           display: flex;
       }
       
-      /* Adjust buttons inside mobile menu */
       .header_btn {
           flex-direction: column;
           width: 100%;
@@ -739,12 +747,11 @@
           justify-content: center;
       }
       
-      /* Mobile dropdown content (e.g. Export/GC) should expand relatively */
       .dropdown {
           width: 100%;
       }
       .dropdown-content {
-          position: static; /* Flow naturally in mobile menu */
+          position: static; 
           width: 100%;
           box-shadow: none;
           border: 1px solid var(--border-color);
@@ -753,7 +760,6 @@
           box-sizing: border-box;
       }
 
-      /* Show Hamburger */
       .hamburger-btn {
           display: block;
       }
@@ -960,7 +966,7 @@
         downloadExcelBtn: 'Checklist',
         importBtnLabel: 'Import',
         selectAllDays: 'Select All', 
-        addToCalendarBtnText: 'Google Calendar', 
+        addToCalendarBtnText: 'Add to Calendar', 
         gcTitleSettingLabel: 'Display Settings:',
         mergePlansLabel: 'Merge',
         separatePlansLabel: 'Separate',
@@ -1664,7 +1670,7 @@
                 
                 <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 12px;">
                     <label data-i18n-id="unitLabel" style="flex:1; margin-right:10px; margin-bottom:10px"><span>${translations[currentLang].unitLabel}</span>
-                        <input id="unit-${id}" type="text" placeholder="" value="${planData ? planData.unit : ''}">
+                        <input id="unit-${id}" type="text" placeholder="" value="${planData ? planData.unit : ''}" oninput="updatePlanTitle(${id})">
                     </label>
                 </div>
 
