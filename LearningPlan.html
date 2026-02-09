@@ -42,14 +42,14 @@
 
     .dark-mode {
       /* Dark Mode */
-      --bg-body: #000000; /* Apple Pure Black body */
+      --bg-body: #000000;
       --bg-gradient-start: #1C1C1E;
       
-      --bg-card: #1C1C1E; /* Apple Dark Gray Card */
+      --bg-card: #1C1C1E;
       --bg-input: #2C2C2E;
       
       --text-main: #FFFFFF;
-      --text-secondary: #8E8E93; /* Apple System Gray */
+      --text-secondary: #8E8E93;
       
       --accent-black: #FFFFFF;
       --accent-hover: #E5E5E5;
@@ -61,11 +61,10 @@
       --shadow-md: none;
       --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.5);
 
-      --highlight-color: #FF9F0A; /* Apple System Orange */
+      --highlight-color: #FF9F0A;
       --calendar-grid-line: #2C2C2E;
     }
     
-    /* Dark Mode Date Picker Icon Fix */
     .dark-mode input[type="date"]::-webkit-calendar-picker-indicator {
         filter: invert(1);
         cursor: pointer;
@@ -132,7 +131,6 @@
         top: 0;
         z-index: 1000;
         
-        /* Default Light Mode Glass */
         background-color: rgba(245, 247, 250, 0.85); 
         backdrop-filter: blur(20px) saturate(180%);
         -webkit-backdrop-filter: blur(20px) saturate(180%);
@@ -145,10 +143,9 @@
         border-bottom: 1px solid transparent;
     }
     
-    /* Dark Mode Glassmorphism - Apple Style */
     .dark-mode .header-main {
-        background-color: rgba(28, 28, 30, 0.8); /* Dark translucent */
-        border-bottom: 0.5px solid rgba(255,255,255,0.1); /* Subtle separator */
+        background-color: rgba(28, 28, 30, 0.8);
+        border-bottom: 0.5px solid rgba(255,255,255,0.1);
     }
 
     .header-title-area {
@@ -157,7 +154,6 @@
         gap: 15px;
     }
     
-    /* Logo - No Animation */
     .svg_icon {
         width: 55px;
         height: 55px;
@@ -169,7 +165,7 @@
         flex-shrink: 0;
         background-color: var(--bg-card);
         cursor: pointer;
-        transition: box-shadow 0.3s ease; 
+        transition: box-shadow 0.3s ease;
     }
     .svg_icon svg {
         fill: var(--text-main);
@@ -177,14 +173,13 @@
         width: 40px;
         height: 40px;
     }
-    /* Hover Effect */
     .svg_icon:hover {
         box-shadow: var(--shadow-md);
     }
 
     h1 {
-      font-size: 28px;
-      letter-spacing: -0.5px; 
+      font-size: 19px;
+      letter-spacing: 3px; 
       font-weight: 700; 
       margin: 0;
       color: var(--text-main);
@@ -207,7 +202,6 @@
         gap: 10px;
         position: relative;
     }
-    /* Header Buttons */
     .header_btn > button, .dropdown-btn {
         border-radius: var(--radius-pill); 
         padding: 8px 16px; 
@@ -230,18 +224,16 @@
         box-shadow: var(--shadow-md);
     }
     
-    /* Dark Mode Header Buttons - Apple Style */
     .dark-mode .header_btn > button, .dark-mode .dropdown-btn {
-        background-color: rgba(255, 255, 255, 0.1); /* Translucent fill */
-        border: none; /* Remove border */
+        background-color: rgba(255, 255, 255, 0.1); 
+        border: none;
         color: #FFFFFF;
-        box-shadow: none; /* Cleaner look */
+        box-shadow: none; 
     }
     .dark-mode .header_btn > button:hover, .dark-mode .dropdown-btn:hover {
         background-color: rgba(255, 255, 255, 0.2);
     }
 
-    /* Hamburger Menu Button */
     .hamburger-btn {
         display: none; 
         font-size: 20px;
@@ -423,13 +415,12 @@
         transition: background-color 0.2s;
     }
     
-    /* Dark Mode Sidebar Buttons: #F2F2F7 Background with Black Text */
     .dark-mode .sidebar-actions button {
-        background-color: #F2F2F7 !important; /* Specific Request */
-        color: #000000 !important; /* Ensure readability on light gray */
+        background-color: #F2F2F7 !important; 
+        color: #000000 !important; 
     }
     .dark-mode .sidebar-actions button:hover {
-        background-color: #E5E5EA !important; /* Slightly darker on hover */
+        background-color: #E5E5EA !important; 
     }
 
     .sidebar-actions button:hover {
@@ -714,6 +705,8 @@
           padding-right: 15px;
           margin-left: -15px;
           margin-right: -15px;
+          border-bottom-left-radius: 15px;  /* 左下角 */
+          border-bottom-right-radius: 15px; /* 右下角 */
       }
       .header-title-area { 
           flex-grow: 1;
@@ -841,9 +834,19 @@
                       </div>
                   </div>
 
-                  <button onclick="downloadExcelChecklist()" class="dropdown-btn">
-                      <i class="fa-solid fa-table-list"></i> <span data-i18n-id="downloadExcelBtn">追蹤檢核表</span>
-                  </button>
+                  <div class="dropdown">
+                      <button onclick="toggleDropdown('checklistDropdown')" class="dropdown-btn">
+                          <i class="fa-solid fa-table-list"></i> <span data-i18n="checklistBtnLabel">追蹤檢核表</span>
+                      </button>
+                      <div id="checklistDropdown" class="dropdown-content">
+                          <button onclick="openInGoogleSheets()">
+                              <i class="fa-solid fa-file-excel"></i> <span data-i18n-id="openGoogleSheetBtn">使用 Google Sheet 建立</span>
+                          </button>
+                          <button onclick="downloadExcelChecklist()">
+                              <i class="fa-solid fa-download"></i> <span data-i18n-id="downloadExcelBtn">下載 Excel (.xlsx)</span>
+                          </button>
+                      </div>
+                  </div>
 
                   <button onclick="toggleLanguage()" id="lang-toggle-btn">
                       <i class="fa-solid fa-language"></i>
@@ -909,7 +912,9 @@
         addPlanBtn: '新增計劃',
         generatePlanBtn: '產生計劃',
         downloadGCcsv: '下載 CSV',
-        downloadExcelBtn: '追蹤檢核表',
+        checklistBtnLabel: '追蹤檢核表',
+        openGoogleSheetBtn: '使用 Google Sheet 建立',
+        downloadExcelBtn: '下載 Excel (.xlsx)',
         importBtnLabel: '匯入',
         selectAllDays: '全選日期', 
         addToCalendarBtnText: '加入行事曆', 
@@ -963,7 +968,9 @@
         addPlanBtn: 'Add Plan',
         generatePlanBtn: 'Generate',
         downloadGCcsv: 'Download CSV',
-        downloadExcelBtn: 'Checklist',
+        checklistBtnLabel: 'Checklist',
+        openGoogleSheetBtn: 'Create in Google Sheets',
+        downloadExcelBtn: 'Download Excel (.xlsx)',
         importBtnLabel: 'Import',
         selectAllDays: 'Select All', 
         addToCalendarBtnText: 'Add to Calendar', 
@@ -1333,7 +1340,110 @@
         generatePlan();
     }
 
-    // --- NEW: EXCEL CHECKLIST DOWNLOAD FUNCTION (MODIFIED) ---
+    // --- NEW: OPEN IN GOOGLE SHEETS (VIA CLIPBOARD) ---
+    function openInGoogleSheets() {
+        if (Object.keys(latestPlan).length === 0) {
+            alert(currentLang === 'zh' ? '目前沒有產生任何計畫資料' : 'No generated plan data available');
+            return;
+        }
+
+        // 1. Prepare Data (TSV Format) for Clipboard
+        const sortedDates = Object.keys(latestPlan).sort();
+        if (sortedDates.length === 0) return;
+        
+        const minDate = new Date(sortedDates[0]);
+        const maxDate = new Date(sortedDates[sortedDates.length - 1]);
+        
+        // Generate Dates
+        const timelineDates = [];
+        const timelineWeekdays = [];
+        const dateIterator = new Date(minDate);
+        while (dateIterator <= maxDate) {
+            const dateStr = getDateStr(dateIterator).replace(/-/g, '/');
+            timelineDates.push(dateStr);
+            const wd = currentLang === 'zh' ? weekdayMap[dateIterator.getDay()] : weekdayMap_en[dateIterator.getDay()];
+            timelineWeekdays.push(wd);
+            dateIterator.setDate(dateIterator.getDate() + 1);
+        }
+
+        // Headers
+        const headers = [
+            "計畫名稱 (Plan)", "開始時間 (Start)", "結束時間 (End)", "實際完成日 (Actual)", 
+            "任務內容 (Task)", "任務狀態 (Status)", "已完成數量 (Done)", "任務總數 (Total)", 
+            "完成率 (Rate)", "完成率圖 (Chart)"
+        ];
+        
+        // Build TSV Rows
+        let tsvContent = "";
+        
+        // Row 0: Dates starting at K (10 tabs before)
+        tsvContent += "\t".repeat(10) + timelineDates.join("\t") + "\n";
+        
+        // Row 1: Headers + Weekdays
+        tsvContent += headers.join("\t") + "\t" + timelineWeekdays.join("\t") + "\n";
+
+        // Data Rows
+        let rowCounter = 2; // Starting data row (Excel row 3)
+
+        sortedDates.forEach(dateStr => {
+            const tasks = latestPlan[dateStr];
+            tasks.forEach(task => {
+                const planInfo = allPlansData[task.planId];
+                const planName = planInfo && planInfo.unit ? planInfo.unit : `Plan #${task.planId}`;
+                const formattedDateStr = dateStr.replace(/-/g, '/');
+                const excelRow = rowCounter + 1; // 1-based index for formulas
+
+                // Excel/Google Sheets Column Letter for K is 'K'
+                // Formula Logic: =IF(AND(K$1>=$B3, K$1<=$C3), "■", "")
+                // Note: When pasting TSV, relative references in formulas usually work if structure matches.
+                // However, copying raw formulas like "=IF(...)" works best in Excel/Sheets.
+                
+                // Construct Row Data
+                const rowData = [
+                    planName,
+                    formattedDateStr,
+                    formattedDateStr,
+                    "",
+                    task.text,
+                    "Not Start",
+                    0,
+                    1,
+                    `=G${excelRow}/H${excelRow}`, // Rate Formula
+                    `=SPARKLINE(G${excelRow}:H${excelRow},{"charttype","bar";"max",1;"color1","#FFBC5A";"color2","wheat"})` // Sparkline
+                ];
+
+                // Timeline Cells (Formula)
+                // We generate the formula string for each cell.
+                // Start Date is Col B ($B), End is Col C ($C).
+                // Current Date is Row 1 ($1).
+                // K is column 11.
+                
+                const timelineCells = timelineDates.map((_, idx) => {
+                    const colIdx = 10 + idx; 
+                    const colLetter = XLSX.utils.encode_col(colIdx);
+                    // Standard Google Sheets/Excel Formula
+                    return `=IF(AND(${colLetter}$1>=$B${excelRow}, ${colLetter}$1<=$C${excelRow}), "■", "")`;
+                });
+
+                tsvContent += rowData.join("\t") + "\t" + timelineCells.join("\t") + "\n";
+                rowCounter++;
+            });
+        });
+
+        // 2. Copy to Clipboard & Open
+        navigator.clipboard.writeText(tsvContent).then(() => {
+            const msg = currentLang === 'zh' 
+                ? "✅ 資料已複製到剪貼簿！\n\n即將開啟 Google Sheets，請在建立新試算表後按下 [Ctrl + V] 貼上。" 
+                : "✅ Data copied to clipboard!\n\nOpening Google Sheets... Please press [Ctrl + V] to paste into the new sheet.";
+            alert(msg);
+            window.open("https://sheets.new", "_blank");
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            alert("Copy failed. Please try using the 'Download Excel' option instead.");
+        });
+    }
+
+    // --- EXISTING: EXCEL CHECKLIST DOWNLOAD FUNCTION ---
     function downloadExcelChecklist() {
         if (Object.keys(latestPlan).length === 0) {
             alert(currentLang === 'zh' ? '目前沒有產生任何計畫資料' : 'No generated plan data available');
