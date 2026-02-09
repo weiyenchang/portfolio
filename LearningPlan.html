@@ -141,6 +141,8 @@
         margin-left: -20px; 
         margin-right: -20px;
         border-bottom: 1px solid transparent;
+        border-bottom-left-radius: 15px;  /* 左下角 */
+        border-bottom-right-radius: 15px; /* 右下角 */
     }
     
     .dark-mode .header-main {
@@ -474,6 +476,8 @@
     }
     .color-label button {
         width: auto; padding: 5px 12px; margin: 0; font-size: 12px;
+        border-radius: 20px;
+        border: none;
     }
 
     /* Palette Suggestion Styles */
@@ -907,14 +911,14 @@
         mainHeader: '學習計劃表產生器',
         headerSubtitle: 'Visual Learning Planner',
         toggleThemeBtn: '夜間', 
-        toggleLangBtn: '中/En',
+        toggleLangBtn: '中/EN',
         addPlanBtn: '新增計劃',
         generatePlanBtn: '產生計劃',
         downloadGCcsv: '下載 CSV',
-        checklistBtnLabel: '追蹤檢核表',
+        checklistBtnLabel: '下載追蹤檢核表',
         openGoogleSheetBtn: '使用 Google Sheet 建立',
         downloadExcelBtn: '下載 Excel (.xlsx)',
-        importBtnLabel: '匯入',
+        importBtnLabel: '匯出/匯入設定',
         selectAllDays: '全選日期', 
         addToCalendarBtnText: '加入行事曆', 
         gcTitleSettingLabel: '顯示設定:', 
@@ -942,7 +946,7 @@
         rangeLabel: '任務範圍',
         rangeTypePages: '頁數',
         rangeTypeOutline: '大綱',
-        pageRangeLabel: '頁數範圍 (ex. 19~306)',
+        pageRangeLabel: '頁數範圍',
         outlineLabel: '任務清單/大綱',
         outlinePlaceholder: '主題一,主題二,主題三',
         dailyAmountLabel: '每日執行量',
@@ -1800,7 +1804,7 @@
                     </div>
                 </div>
 
-                <div style="display:flex; gap:10px;">
+                <div style="display:flex; gap:5px;">
                     <label style="flex:1;"><span data-i18n-id="startDateLabel">${translations[currentLang].startDateLabel}</span><input id="startDate-${id}" type="date" value="${planData ? planData.startDate : formatDate(new Date())}"></label>
                     <label style="flex:1;"><span data-i18n-id="endDateLabel">${translations[currentLang].endDateLabel}</span><input id="endDate-${id}" type="date" value="${planData ? planData.endDate : ''}"></label>
                 </div>
