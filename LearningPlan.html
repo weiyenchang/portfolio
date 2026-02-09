@@ -8,7 +8,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <title data-i18n="pageTitle">學習計劃表</title>
   <style>
-    /* CSS Variables for Theme - Clean SaaS Look */
+    /* CSS Variables for Theme */
     :root {
       /* Light Mode */
       --bg-body: #F5F7FA;
@@ -64,11 +64,12 @@
       --highlight-color: #FF8A65;
       --calendar-grid-line: #2C2C2E;
     }
-    /* 在 style 標籤內加入這段 */
+    
+    /* Dark Mode Date Picker Icon Fix */
     .dark-mode input[type="date"]::-webkit-calendar-picker-indicator {
-        filter: invert(1); /* 將黑色圖示反轉為白色 */
+        filter: invert(1);
         cursor: pointer;
-        opacity: 0.8;      /*稍微調整透明度讓它柔和一點 */
+        opacity: 0.8;
     }
 
     body {
@@ -78,6 +79,8 @@
       background-color: var(--bg-body); 
       color: var(--text-main);
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
       transition: background-color 0.3s ease, color 0.3s ease;
       position: relative;
       overflow-x: hidden;
@@ -100,8 +103,9 @@
     }
     
     .app-container {
+        flex: 1;
         display: flex;
-        min-height: 100vh;
+        flex-direction: column;
     }
 
     .main-content {
@@ -109,20 +113,47 @@
         padding: 40px;
         max-width: 1600px;
         margin: 0 auto;
-        width: 100%; /* Ensure width doesn't overflow */
+        width: 100%;
         box-sizing: border-box;
+        padding-top: 0; /* Padding handled by sticky header margin */
     }
 
-    /* Header */
+    /* Header - Sticky Top Implementation */
     .header-main {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding-bottom: 20px;
+        padding: 20px 0;
         margin-bottom: 20px;
-        flex-wrap: wrap; /* Allow wrapping on small screens */
+        flex-wrap: wrap;
         gap: 20px;
+        
+        /* Sticky Settings */
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background-color: var(--bg-body); /* Ensure text doesn't overlap */
+        /* Optional: Add blur for glassmorphism effect */
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        /* Add transition for background color */
+        transition: background-color 0.3s ease;
+        /* Add some padding x to match container if needed, or rely on main-content padding */
+        padding-left: 20px; /* Compensation for mobile padding reduction */
+        padding-right: 20px;
+        margin-left: -20px; /* Extend to full width on mobile */
+        margin-right: -20px;
     }
+    
+    /* Ensure header background matches dark mode */
+    .dark-mode .header-main {
+        background-color: rgba(5, 5, 5, 0.85); /* Semi-transparent for blur */
+    }
+    /* Light mode background with transparency */
+    :root:not(.dark-mode) .header-main {
+        background-color: rgba(245, 247, 250, 0.85);
+    }
+
     .header-title-area {
         display: flex;
         align-items: center;
@@ -136,7 +167,8 @@
         align-items: center;
         justify-content: center;
         box-shadow: var(--shadow-sm);
-        flex-shrink: 0; /* Prevent shrinking */
+        flex-shrink: 0;
+        background-color: var(--bg-card);
     }
     .svg_icon svg {
         fill: var(--text-main);
@@ -158,7 +190,7 @@
         color: var(--text-secondary);
     }
 
-    /* Controls */
+    /* Controls & Dropdowns */
     .calendar-controls {
         display: flex;
         align-items: center;
@@ -167,8 +199,11 @@
     .header_btn {
         display: flex;
         gap: 10px;
+        position: relative;
     }
-    .header_btn button {
+    
+    /* Standard Button Style */
+    .header_btn > button, .dropdown-btn {
         border-radius: var(--radius-pill); 
         padding: 8px 16px; 
         font-size: 14px;
@@ -183,14 +218,87 @@
         align-items: center;
         gap: 8px;
         height: 40px;
+        white-space: nowrap;
     }
-    .header_btn button:hover {
+    .header_btn > button:hover, .dropdown-btn:hover {
         transform: translateY(-1px);
         box-shadow: var(--shadow-md);
     }
-    .dark-mode .header_btn button {
+    .dark-mode .header_btn > button, .dark-mode .dropdown-btn {
         background-color: rgba(255,255,255,0.1);
         border: 1px solid var(--border-color);
+    }
+
+    /* Hamburger Menu Button (Default Hidden on Desktop) */
+    .hamburger-btn {
+        display: none; /* Hidden on desktop */
+        font-size: 20px;
+        background: transparent;
+        border: none;
+        color: var(--text-main);
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    /* Dropdown Logic */
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 45px;
+        background-color: var(--bg-card);
+        min-width: 240px;
+        box-shadow: var(--shadow-lg);
+        border-radius: var(--radius-md);
+        padding: 10px;
+        z-index: 1000;
+        border: 1px solid var(--border-color);
+        flex-direction: column;
+        gap: 5px;
+    }
+    .dropdown-content.show {
+        display: flex;
+    }
+    .dropdown-content button {
+        width: 100%;
+        text-align: left;
+        padding: 10px;
+        background: transparent;
+        border: none;
+        color: var(--text-main);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .dropdown-content button:hover {
+        background-color: var(--bg-input);
+    }
+    .dropdown-divider {
+        height: 1px;
+        background-color: var(--border-color);
+        margin: 5px 0;
+    }
+    .dropdown-radio-group {
+        padding: 5px 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    .dropdown-radio-group label {
+        font-size: 13px;
+        color: var(--text-main);
+        cursor: pointer;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
     /* Layout */
@@ -198,19 +306,19 @@
       display: flex;
       gap: 30px;
       margin-top: 20px;
-      align-items: flex-start; /* Align top */
+      align-items: flex-start;
     }
     .sidebar {
       flex: 1;
       max-width: 370px;
-      min-width: 370px; /* Fixed: Reduced from 400px to avoid breaking small tablets */
+      min-width: 370px; 
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
     .main {
       flex: 3;
-      min-width: 0; /* Critical for grid inside flex container */
+      min-width: 0;
     }
 
     /* Cards */
@@ -293,44 +401,28 @@
         gap: 10px;
         flex-wrap: wrap;
     }
-    .sidebar button {
-      background-color: var(--bg-card);
-      color: var(--text-main);
-      border: 1px solid var(--border-color);
-      cursor: pointer;
-      justify-content: center;
-      padding: 12px;
-      border-radius: var(--radius-pill);
-      font-weight: 600;
-      box-shadow: var(--shadow-sm);
-      margin-bottom: 10px;
-    }
     .sidebar-actions button {
         background-color: var(--accent-black);
         color: var(--bg-card);
         border: none;
-        flex: 1; /* Distribute space */
+        flex: 1;
         min-width: 140px;
+        cursor: pointer;
+        justify-content: center;
+        padding: 12px;
+        border-radius: var(--radius-pill);
+        font-weight: 600;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
     .dark-mode .sidebar-actions button {
         color: #000;
     }
     .sidebar-actions button:hover {
         background-color: var(--accent-hover);
-    }
-
-    /* Utility Buttons (Calendar/CSV/Backup) */
-    .utility-btn {
-        background: transparent !important;
-        border: 1px solid var(--border-color) !important;
-        color: var(--text-main) !important;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-    .utility-btn:hover {
-        background-color: var(--bg-input) !important;
     }
 
     .delete-btn {
@@ -490,12 +582,11 @@
         border: none;
         box-shadow: var(--shadow-md);
         overflow: hidden;
-        /* Ensure horizontal scroll on tiny screens without breaking layout */
         min-width: 0; 
     }
     
     .month-content-wrapper {
-        overflow-x: auto; /* Allow calendar to scroll horizontally if needed */
+        overflow-x: auto;
         -webkit-overflow-scrolling: touch;
     }
 
@@ -517,7 +608,7 @@
         gap: 0;
         border: none;
         background: var(--bg-card);
-        min-width: 600px; /* Ensure grid doesn't squash too much on mobile, trigger scroll */
+        min-width: 600px;
     }
     .weekday-header {
       font-weight: 600;
@@ -574,7 +665,19 @@
        margin-right: 10px; 
     }
 
-    /* RWD - Tablet & Mobile Optimization */
+    /* Footer */
+    .app-footer {
+        background-color: #2d2d2d;
+        color: #f5f5f5;
+        text-align: center;
+        padding: 20px;
+        margin-top: 40px;
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+
+    /* RWD */
     @media (max-width: 900px) {
         .container {
             flex-direction: column;
@@ -582,35 +685,82 @@
         .sidebar {
             width: 100%;
             max-width: 100%;
-            min-width: 0; /* Override */
+            min-width: 0;
         }
         .main {
             width: 100%;
         }
     }
 
+    /* Mobile Header & Hamburger Menu */
     @media (max-width: 768px) {
       .app-container { flex-direction: column; }
-      .main-content { padding: 15px; } /* Reduce padding */
+      .main-content { padding: 15px; padding-top: 0; } 
       
       .header-main { 
-          flex-direction: column; 
-          align-items: flex-start; 
-          gap: 15px; 
+          flex-wrap: nowrap; /* Keep title and hamburger in one line */
+          padding-left: 15px;
+          padding-right: 15px;
+          margin-left: -15px;
+          margin-right: -15px;
       }
       .header-title-area { 
-          width: 100%; 
-          justify-content: flex-start; 
-      }
-      .calendar-controls {
-          width: 100%;
-          justify-content: flex-end;
+          flex-grow: 1;
       }
       
-      /* Calendar Adjustments for Mobile */
+      /* Hide standard controls on mobile */
+      .calendar-controls {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background-color: var(--bg-card);
+          box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+          flex-direction: column;
+          align-items: stretch;
+          padding: 15px;
+          border-bottom: 1px solid var(--border-color);
+          z-index: 999;
+      }
+      /* Show when active */
+      .calendar-controls.active {
+          display: flex;
+      }
+      
+      /* Adjust buttons inside mobile menu */
+      .header_btn {
+          flex-direction: column;
+          width: 100%;
+          gap: 10px;
+      }
+      .header_btn > button, .dropdown-btn {
+          width: 100%;
+          justify-content: center;
+      }
+      
+      /* Mobile dropdown content (e.g. Export/GC) should expand relatively */
+      .dropdown {
+          width: 100%;
+      }
+      .dropdown-content {
+          position: static; /* Flow naturally in mobile menu */
+          width: 100%;
+          box-shadow: none;
+          border: 1px solid var(--border-color);
+          background-color: var(--bg-input);
+          margin-top: 5px;
+          box-sizing: border-box;
+      }
+
+      /* Show Hamburger */
+      .hamburger-btn {
+          display: block;
+      }
+      
       .day {
           padding: 5px;
-          min-height: 80px; /* Reduce height on mobile */
+          min-height: 80px;
       }
       .date-only {
           font-size: 18px;
@@ -619,16 +769,12 @@
           font-size: 11px;
           padding: 3px 6px;
       }
-      
-      /* Allow calendar to scroll horizontally if needed */
       .calendar-grid {
-          /* min-width: 100%; Let it shrink if possible, or keep min-width to force scroll */
           min-width: 100%; 
       }
-      /* If 7 cols is too tight (e.g. < 350px width), use scroll */
       @media (max-width: 400px) {
           .calendar-grid {
-              min-width: 500px; /* Force horizontal scroll */
+              min-width: 500px;
           }
       }
     }
@@ -648,8 +794,51 @@
                 <p data-i18n-id="headerSubtitle">Visual Learning Planner</p>
               </div>
           </div>
-          <div class="calendar-controls">
+          
+          <button class="hamburger-btn" onclick="toggleMobileMenu()">
+              <i class="fa-solid fa-bars"></i>
+          </button>
+
+          <div class="calendar-controls" id="mobileMenu">
               <div class="header_btn">
+                  <div class="dropdown">
+                      <button onclick="toggleDropdown('backupDropdown')" class="dropdown-btn">
+                          <i class="fa-solid fa-file-import"></i> <span data-i18n="importBtnLabel">匯入</span>
+                      </button>
+                      <div id="backupDropdown" class="dropdown-content">
+                          <button onclick="exportPlanSettingsCSV()"><i class="fa-solid fa-download"></i> <span data-i18n-id="exportSettingsBtn">匯出設定 CSV</span></button>
+                          <div class="dropdown-divider"></div>
+                          <button onclick="document.getElementById('importFile').click()"><i class="fa-solid fa-upload"></i> <span data-i18n-id="importSettingsBtn">匯入設定 CSV</span></button>
+                          <input type="file" id="importFile" accept=".csv" style="display: none;" onchange="handleImportFile(this)">
+                      </div>
+                  </div>
+
+                  <div class="dropdown">
+                      <button onclick="toggleDropdown('gcDropdown')" class="dropdown-btn">
+                          <i class="fa-brands fa-google"></i> <span>Google Calendar</span>
+                      </button>
+                      <div id="gcDropdown" class="dropdown-content">
+                           <div class="dropdown-radio-group">
+                                <label style="font-weight: 600; margin-bottom: 5px;" data-i18n-id="gcTitleSettingLabel">顯示設定:</label>
+                                <label>
+                                    <input type="radio" id="mergePlans" name="gcTitleOption" value="merge" checked>
+                                    <span data-i18n-id="mergePlansLabel">合併顯示</span>
+                                </label>
+                                <label>
+                                    <input type="radio" id="separatePlans" name="gcTitleOption" value="separate">
+                                    <span data-i18n-id="separatePlansLabel">獨立顯示</span>
+                                </label>
+                           </div>
+                           <div class="dropdown-divider"></div>
+                           <button onclick="addToGoogleCalendar()"><i class="fa-regular fa-calendar-plus"></i> <span data-i18n-id="addToCalendarBtnText">加入行事曆</span></button>
+                           <button onclick="downloadCSV()"><i class="fa-solid fa-file-csv"></i> <span data-i18n="downloadGCcsv">下載 CSV</span></button>
+                      </div>
+                  </div>
+
+                  <button onclick="downloadExcelChecklist()" class="dropdown-btn">
+                      <i class="fa-solid fa-table-list"></i> <span data-i18n-id="downloadExcelBtn">追蹤檢核表</span>
+                  </button>
+
                   <button onclick="toggleLanguage()" id="lang-toggle-btn">
                       <i class="fa-solid fa-language"></i>
                       <span data-i18n="toggleLangBtn">中/En</span>
@@ -672,41 +861,6 @@
 
           <div id="plan-container">
             </div>
-          
-          <div id="backup-restore-setting" class="plan-group">
-            <label style="font-weight: bold; margin-bottom: 8px;" data-i18n-id="backupRestoreLabel">Backup / Restore:</label>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <button onclick="exportPlanSettingsCSV()" class="sidebar-btn utility-btn" style="flex:1; min-width: 140px;">
-                    <i class="fa-solid fa-download"></i> <span data-i18n-id="exportSettingsBtn">匯出設定 CSV</span>
-                </button>
-                <button onclick="document.getElementById('importFile').click()" class="sidebar-btn utility-btn" style="flex:1; min-width: 140px;">
-                    <i class="fa-solid fa-upload"></i> <span data-i18n-id="importSettingsBtn">匯入設定 CSV</span>
-                </button>
-                <input type="file" id="importFile" accept=".csv" style="display: none;" onchange="handleImportFile(this)">
-            </div>
-          </div>
-
-          <div id="gc-title-setting" class="plan-group"> 
-            <label style="font-weight: bold; margin-bottom: 8px;" data-i18n-id="gcTitleSettingLabel">Google Caledar 設定:</label>
-            <div style="margin-bottom: 5px;">
-              <input type="radio" id="mergePlans" name="gcTitleOption" value="merge" checked>
-              <label for="mergePlans" style="display: inline; font-weight: 500;" data-i18n-id="mergePlansLabel">合併顯示 (Merge)</label>
-            </div>
-            <div>
-              <input type="radio" id="separatePlans" name="gcTitleOption" value="separate">
-              <label for="separatePlans" style="display: inline; font-weight: 500;" data-i18n-id="separatePlansLabel">獨立顯示 (Separate)</label>
-            </div>
-            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 15px 0;">
-            <button onclick="addToGoogleCalendar()" id="addToCalendarBtn" class="utility-btn" style="width:100%; justify-content:center;">
-                <i class="fa-brands fa-google"></i> <span data-i18n-id="addToCalendarBtnText">加入行事曆</span>
-            </button>
-            <button onclick="downloadCSV()" data-i18n="downloadCSVBtn" class="utility-btn" style="width:100%; justify-content:center; margin-top:10px;">
-                <i class="fa-solid fa-file-csv"></i> 下載 Google Calendar CSV
-            </button>
-            <button onclick="downloadExcelChecklist()" class="utility-btn" style="width:100%; justify-content:center; margin-top:10px;">
-                <i class="fa-solid fa-table-list"></i> <span data-i18n-id="downloadExcelBtn">下載追蹤檢核表 (.xlsx)</span>
-            </button>
-          </div>
         </div>
         
         <div class="main">
@@ -720,7 +874,12 @@
           <div id="calendar"></div>
         </div>
       </div>
-    </div> </div> 
+    </div> 
+    
+    <footer class="app-footer">
+        WEI-YEN,CHANG © 2026 All Rights Reserved.
+    </footer>
+  </div> 
     
     <script>
     const weekdayMap = ['日', '一', '二', '三', '四', '五', '六'];
@@ -743,13 +902,14 @@
         toggleLangBtn: '中/En',
         addPlanBtn: '新增計劃',
         generatePlanBtn: '產生計劃',
-        downloadCSVBtn: '下載 Google Calendar CSV',
-        downloadExcelBtn: '下載追蹤檢核表 (.xlsx)',
+        downloadGCcsv: '下載 CSV',
+        downloadExcelBtn: '追蹤檢核表',
+        importBtnLabel: '匯入',
         selectAllDays: '全選日期', 
-        addToCalendarBtnText: '加入 Google 行事曆', 
-        gcTitleSettingLabel: 'Google Caledar 顯示設定:', 
-        mergePlansLabel: '合併顯示多個計劃',
-        separatePlansLabel: '將計劃各自獨立顯示',
+        addToCalendarBtnText: '加入行事曆', 
+        gcTitleSettingLabel: '顯示設定:', 
+        mergePlansLabel: '合併顯示',
+        separatePlansLabel: '獨立顯示',
         backupRestoreLabel: '設定檔 備份/還原:',
         exportSettingsBtn: '匯出設定 CSV',
         importSettingsBtn: '匯入設定 CSV',
@@ -796,13 +956,14 @@
         toggleLangBtn: 'Zh/En',
         addPlanBtn: 'Add Plan',
         generatePlanBtn: 'Generate',
-        downloadCSVBtn: 'Download Google Calendar CSV',
-        downloadExcelBtn: 'Download Checklist (.xlsx)',
+        downloadGCcsv: 'Download CSV',
+        downloadExcelBtn: 'Checklist',
+        importBtnLabel: 'Import',
         selectAllDays: 'Select All', 
         addToCalendarBtnText: 'Google Calendar', 
-        gcTitleSettingLabel: 'Calendar Title Setting:',
-        mergePlansLabel: 'Merge Plans',
-        separatePlansLabel: 'Separate Plans',
+        gcTitleSettingLabel: 'Display Settings:',
+        mergePlansLabel: 'Merge',
+        separatePlansLabel: 'Separate',
         backupRestoreLabel: 'Config Backup / Restore:',
         exportSettingsBtn: 'Export Config CSV',
         importSettingsBtn: 'Import Config CSV',
@@ -845,6 +1006,44 @@
 
     function getRandomColor() {
       return defaultColors[Math.floor(Math.random() * defaultColors.length)];
+    }
+
+    // --- Toggle Mobile Menu ---
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobileMenu');
+        menu.classList.toggle('active');
+    }
+
+    // --- Dropdown Logic ---
+    function toggleDropdown(id) {
+        // Close all other dropdowns first
+        const dropdowns = document.getElementsByClassName("dropdown-content");
+        for (let i = 0; i < dropdowns.length; i++) {
+            if(dropdowns[i].id !== id) {
+                dropdowns[i].classList.remove('show');
+            }
+        }
+        document.getElementById(id).classList.toggle("show");
+    }
+
+    // Close dropdowns if clicked outside
+    window.onclick = function(event) {
+        if (!event.target.matches('.dropdown-btn') && !event.target.closest('.dropdown-btn')) {
+            const dropdowns = document.getElementsByClassName("dropdown-content");
+            for (let i = 0; i < dropdowns.length; i++) {
+                const openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show') && !event.target.closest('.dropdown-content')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+        // Also close mobile menu if clicked outside header
+        if (!event.target.closest('.header-main')) {
+            const menu = document.getElementById('mobileMenu');
+            if (menu && menu.classList.contains('active')) {
+                menu.classList.remove('active');
+            }
+        }
     }
 
     // --- COLOR HARMONY GENERATOR ALGORITHM ---
@@ -1147,7 +1346,7 @@
         const timelineWeekdays = [];
         const dateIterator = new Date(minDate);
         while (dateIterator <= maxDate) {
-            const dateStr = getDateStr(dateIterator);
+            const dateStr = getDateStr(dateIterator).replace(/-/g, '/'); // Use / for Excel friendly
             timelineDates.push(dateStr);
             const wd = currentLang === 'zh' ? weekdayMap[dateIterator.getDay()] : weekdayMap_en[dateIterator.getDay()];
             timelineWeekdays.push(wd);
@@ -1183,15 +1382,15 @@
             tasks.forEach(task => {
                 const planInfo = allPlansData[task.planId];
                 const planName = planInfo && planInfo.unit ? planInfo.unit : `Plan #${task.planId}`;
-                
-                // Current row index for formula (1-based) = dataRows.length + 1 (since array is 0-based, Excel is 1-based, and we already pushed 2 header rows)
-                // However, we push to array first, so the row index for THIS row will be (dataRows.length + 1).
+                const formattedDateStr = dateStr.replace(/-/g, '/');
+
+                // Current row index for formula (1-based) = dataRows.length + 1
                 const rowIndex = dataRows.length + 1;
 
                 const row = [
                     planName,           // A
-                    dateStr,            // B
-                    dateStr,            // C (Same as Start)
+                    formattedDateStr,            // B
+                    formattedDateStr,            // C (Same as Start)
                     "",                 // D (User fill)
                     task.text,          // E
                     "Not Start",        // F (Default)
@@ -1206,12 +1405,9 @@
                 const timelineCells = timelineDates.map((tDate, idx) => {
                     const colIdx = 10 + idx; // 0->K, 1->L...
                     // Helper to get Excel Column Letter (Simple version for A-Z, AA-AZ...)
-                    // But XLSX utils has it.
                     const colLetter = XLSX.utils.encode_col(colIdx);
                     
                     // Formula: IF( AND( CurrentDate >= Start, CurrentDate <= End ), "■", "")
-                    // Note: Start is B{rowIndex}, End is C{rowIndex}. CurrentDate is {colLetter}$1 (Row 1 fixed)
-                    // Actually, date headers are in Row 1 (Index 0). So it is row 1.
                     const f = `IF(AND(${colLetter}$1>=$B${rowIndex}, ${colLetter}$1<=$C${rowIndex}), "■", "")`;
                     return { t: 's', f: f };
                 });
