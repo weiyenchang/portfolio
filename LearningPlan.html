@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.min.js"></script>
+  
   <title data-i18n="pageTitle">學習計劃表</title>
   <style>
     /* CSS Variables for Theme */
@@ -65,6 +67,7 @@
       --calendar-grid-line: #2C2C2E;
     }
     
+    /* Dark Mode Date Picker Icon Fix */
     .dark-mode input[type="date"]::-webkit-calendar-picker-indicator {
         filter: invert(1);
         cursor: pointer;
@@ -141,8 +144,6 @@
         margin-left: -20px; 
         margin-right: -20px;
         border-bottom: 1px solid transparent;
-        border-bottom-left-radius: 15px;  /* 左下角 */
-        border-bottom-right-radius: 15px; /* 右下角 */
     }
     
     .dark-mode .header-main {
@@ -165,6 +166,7 @@
         justify-content: center;
         box-shadow: var(--shadow-sm);
         flex-shrink: 0;
+        background-color: var(--bg-card);
         cursor: pointer;
         transition: box-shadow 0.3s ease;
     }
@@ -179,8 +181,8 @@
     }
 
     h1 {
-      font-size: 19px;
-      letter-spacing: 3px; 
+      font-size: 28px;
+      letter-spacing: -0.5px; 
       font-weight: 700; 
       margin: 0;
       color: var(--text-main);
@@ -476,8 +478,6 @@
     }
     .color-label button {
         width: auto; padding: 5px 12px; margin: 0; font-size: 12px;
-        border-radius: 20px;
-        border: none;
     }
 
     /* Palette Suggestion Styles */
@@ -708,8 +708,6 @@
           padding-right: 15px;
           margin-left: -15px;
           margin-right: -15px;
-          border-bottom-left-radius: 15px;  /* 左下角 */
-          border-bottom-right-radius: 15px; /* 右下角 */
       }
       .header-title-area { 
           flex-grow: 1;
@@ -911,14 +909,14 @@
         mainHeader: '學習計劃表產生器',
         headerSubtitle: 'Visual Learning Planner',
         toggleThemeBtn: '夜間', 
-        toggleLangBtn: '中/EN',
+        toggleLangBtn: '中/En',
         addPlanBtn: '新增計劃',
         generatePlanBtn: '產生計劃',
         downloadGCcsv: '下載 CSV',
-        checklistBtnLabel: '下載追蹤檢核表',
+        checklistBtnLabel: '追蹤檢核表',
         openGoogleSheetBtn: '使用 Google Sheet 建立',
         downloadExcelBtn: '下載 Excel (.xlsx)',
-        importBtnLabel: '匯出/匯入設定',
+        importBtnLabel: '匯入',
         selectAllDays: '全選日期', 
         addToCalendarBtnText: '加入行事曆', 
         gcTitleSettingLabel: '顯示設定:', 
@@ -946,9 +944,9 @@
         rangeLabel: '任務範圍',
         rangeTypePages: '頁數',
         rangeTypeOutline: '大綱',
-        pageRangeLabel: '頁數範圍',
+        pageRangeLabel: '頁數範圍 (ex. 19~25,20[4])',
         outlineLabel: '任務清單/大綱',
-        outlinePlaceholder: '主題一,主題二,主題三',
+        outlinePlaceholder: '主題一,主題二[4],主題三',
         dailyAmountLabel: '每日執行量',
         requiredDaysLabel: '預估天數', 
         reverseOrder: '逆序',
@@ -1002,9 +1000,9 @@
         rangeLabel: 'Scope',
         rangeTypePages: 'Pages',
         rangeTypeOutline: 'Outline',
-        pageRangeLabel: 'Range (e.g. 19~306)',
+        pageRangeLabel: 'Range (e.g. 19~25,20[4])',
         outlineLabel: 'Outline (comma separated)',
-        outlinePlaceholder: 'Topic 1, Topic 2',
+        outlinePlaceholder: 'Topic 1, Topic 2[4], Topic 3',
         dailyAmountLabel: 'Daily Amount',
         requiredDaysLabel: 'Est. Days', 
         reverseOrder: 'Reverse',
@@ -1060,6 +1058,15 @@
                 menu.classList.remove('active');
             }
         }
+    }
+
+    // --- Helper to parse Weight ---
+    function parseWeight(str) {
+        const match = str.match(/^(.*?)\[(\d+)\]$/);
+        if (match) {
+            return { text: match[1].trim(), weight: parseInt(match[2]) };
+        }
+        return { text: str.trim(), weight: 1 };
     }
 
     // --- COLOR HARMONY GENERATOR ALGORITHM ---
@@ -1343,14 +1350,14 @@
         generatePlan();
     }
 
-    // --- NEW: OPEN IN GOOGLE SHEETS (VIA CLIPBOARD) ---
+    // --- NEW: OPEN IN GOOGLE SHEETS (VIA CLIPBOARD HTML) ---
     function openInGoogleSheets() {
         if (Object.keys(latestPlan).length === 0) {
             alert(currentLang === 'zh' ? '目前沒有產生任何計畫資料' : 'No generated plan data available');
             return;
         }
 
-        // 1. Prepare Data (TSV Format) for Clipboard
+        // 1. Prepare Data (HTML Table Format for Rich Paste)
         const sortedDates = Object.keys(latestPlan).sort();
         if (sortedDates.length === 0) return;
         
@@ -1369,21 +1376,31 @@
             dateIterator.setDate(dateIterator.getDate() + 1);
         }
 
-        // Headers
+        // Build HTML String with Arial Font
+        let html = '<html xmlns:x="urn:schemas-microsoft-com:office:excel">';
+        html += '<head><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head>';
+        html += '<body><table border="1" style="font-family: Arial, sans-serif;">';
+
+        // Row 0: Dates starting at L (Index 11) - Wait, Timeline Starts at K (Index 10)
+        
+        html += '<tr>';
+        for(let i=0; i<11; i++) html += '<td></td>'; // 11 Empty Cells (A-K reserved for data/chart, wait... K is Chart)
+        // A:Color, B:Plan, C:Start, D:End, E:Actual, F:Task, G:Status, H:Done, I:Total, J:Rate, K:Chart
+        // So timeline starts at L (12th column, index 11).
+        
+        timelineDates.forEach(d => html += `<td style="background-color:#EFEFEF; font-weight:bold; text-align:center;">${d}</td>`);
+        html += '</tr>';
+        
+        // Row 1: Headers
         const headers = [
-            "計畫名稱 (Plan)", "開始時間 (Start)", "結束時間 (End)", "實際完成日 (Actual)", 
+            "Color", "計畫名稱 (Plan)", "開始時間 (Start)", "結束時間 (End)", "實際完成日 (Actual)", 
             "任務內容 (Task)", "任務狀態 (Status)", "已完成數量 (Done)", "任務總數 (Total)", 
             "完成率 (Rate)", "完成率圖 (Chart)"
         ];
-        
-        // Build TSV Rows
-        let tsvContent = "";
-        
-        // Row 0: Dates starting at K (10 tabs before)
-        tsvContent += "\t".repeat(10) + timelineDates.join("\t") + "\n";
-        
-        // Row 1: Headers + Weekdays
-        tsvContent += headers.join("\t") + "\t" + timelineWeekdays.join("\t") + "\n";
+        html += '<tr>';
+        headers.forEach(h => html += `<td style="font-weight:bold; background-color:#E0E0E0;">${h}</td>`);
+        timelineWeekdays.forEach(w => html += `<td style="background-color:#F5F5F5; text-align:center;">${w}</td>`);
+        html += '</tr>';
 
         // Data Rows
         let rowCounter = 2; // Starting data row (Excel row 3)
@@ -1394,47 +1411,63 @@
                 const planInfo = allPlansData[task.planId];
                 const planName = planInfo && planInfo.unit ? planInfo.unit : `Plan #${task.planId}`;
                 const formattedDateStr = dateStr.replace(/-/g, '/');
+                const color = planInfo ? planInfo.color : "#CCCCCC";
                 const excelRow = rowCounter + 1; // 1-based index for formulas
 
-                // Excel/Google Sheets Column Letter for K is 'K'
-                // Formula Logic: =IF(AND(K$1>=$B3, K$1<=$C3), "■", "")
-                // Note: When pasting TSV, relative references in formulas usually work if structure matches.
-                // However, copying raw formulas like "=IF(...)" works best in Excel/Sheets.
+                html += '<tr>';
                 
-                // Construct Row Data
-                const rowData = [
-                    planName,
-                    formattedDateStr,
-                    formattedDateStr,
-                    "",
-                    task.text,
-                    "Not Start",
-                    0,
-                    1,
-                    `=G${excelRow}/H${excelRow}`, // Rate Formula
-                    `=SPARKLINE(G${excelRow}:H${excelRow},{"charttype","bar";"max",1;"color1","#FFBC5A";"color2","wheat"})` // Sparkline
-                ];
+                // A: Color
+                html += `<td style="background-color:${color};"></td>`;
+                
+                // B-E
+                html += `<td>${planName}</td>`;
+                html += `<td>${formattedDateStr}</td>`;
+                html += `<td>${formattedDateStr}</td>`;
+                html += `<td></td>`;
+                
+                // F: Task
+                html += `<td>${task.text}</td>`;
+                
+                // G: Status
+                html += `<td>Not Start</td>`;
+                
+                // H: Done
+                html += `<td>0</td>`;
+                
+                // I: Total
+                html += `<td>1</td>`;
+                
+                // J: Rate Formula
+                html += `<td>=H${excelRow}/I${excelRow}</td>`;
+                
+                // K: Chart Formula
+                html += `<td>=SPARKLINE(H${excelRow}:I${excelRow},{"charttype","bar";"max",1;"color1","#FFBC5A";"color2","wheat"})</td>`;
 
-                // Timeline Cells (Formula)
-                // We generate the formula string for each cell.
-                // Start Date is Col B ($B), End is Col C ($C).
-                // Current Date is Row 1 ($1).
-                // K is column 11.
-                
-                const timelineCells = timelineDates.map((_, idx) => {
-                    const colIdx = 10 + idx; 
-                    const colLetter = XLSX.utils.encode_col(colIdx);
-                    // Standard Google Sheets/Excel Formula
-                    return `=IF(AND(${colLetter}$1>=$B${excelRow}, ${colLetter}$1<=$C${excelRow}), "■", "")`;
+                // L+: Timeline (Color Background)
+                // Use Conditional Logic in HTML? No, Google Sheets pastes static style.
+                // But user wants "background color". 
+                // We can set background color IF the date matches.
+                timelineDates.forEach((tDate, idx) => {
+                   const colIdx = 11 + idx; // Start at L
+                   const colLetter = XLSX.utils.encode_col(colIdx);
+                   // Dynamic Formula for Gantt
+                   // Font color is plan color
+                   const f = `=IF(AND(${colLetter}$1>=$C${excelRow}, ${colLetter}$1<=$D${excelRow}), "■", "")`;
+                   html += `<td style="color:${color}; font-weight:900; text-align:center;">${f}</td>`;
                 });
 
-                tsvContent += rowData.join("\t") + "\t" + timelineCells.join("\t") + "\n";
+                html += '</tr>';
                 rowCounter++;
             });
         });
 
-        // 2. Copy to Clipboard & Open
-        navigator.clipboard.writeText(tsvContent).then(() => {
+        html += '</table></body></html>';
+
+        // 2. Copy to Clipboard
+        const blob = new Blob([html], { type: "text/html" });
+        const data = [new ClipboardItem({ "text/html": blob })];
+
+        navigator.clipboard.write(data).then(() => {
             const msg = currentLang === 'zh' 
                 ? "✅ 資料已複製到剪貼簿！\n\n即將開啟 Google Sheets，請在建立新試算表後按下 [Ctrl + V] 貼上。" 
                 : "✅ Data copied to clipboard!\n\nOpening Google Sheets... Please press [Ctrl + V] to paste into the new sheet.";
@@ -1442,11 +1475,11 @@
             window.open("https://sheets.new", "_blank");
         }).catch(err => {
             console.error('Failed to copy: ', err);
-            alert("Copy failed. Please try using the 'Download Excel' option instead.");
+            alert("Copy failed. Please use the Download Excel option.");
         });
     }
 
-    // --- EXISTING: EXCEL CHECKLIST DOWNLOAD FUNCTION ---
+    // --- EXISTING: EXCEL CHECKLIST DOWNLOAD FUNCTION (UPDATED) ---
     function downloadExcelChecklist() {
         if (Object.keys(latestPlan).length === 0) {
             alert(currentLang === 'zh' ? '目前沒有產生任何計畫資料' : 'No generated plan data available');
@@ -1460,12 +1493,11 @@
         const minDate = new Date(sortedDates[0]);
         const maxDate = new Date(sortedDates[sortedDates.length - 1]);
         
-        // Generate Date Headers (Row 0) and Weekday Headers (Row 1)
         const timelineDates = [];
         const timelineWeekdays = [];
         const dateIterator = new Date(minDate);
         while (dateIterator <= maxDate) {
-            const dateStr = getDateStr(dateIterator).replace(/-/g, '/'); // Use / for Excel friendly
+            const dateStr = getDateStr(dateIterator).replace(/-/g, '/'); 
             timelineDates.push(dateStr);
             const wd = currentLang === 'zh' ? weekdayMap[dateIterator.getDay()] : weekdayMap_en[dateIterator.getDay()];
             timelineWeekdays.push(wd);
@@ -1476,20 +1508,27 @@
         const dataRows = [];
         
         // Header Row 1 (Titles)
-        // A: Plan Name, B: Start, C: End, D: Actual, E: Task, F: Status, G: Done, H: Total, I: Rate, J: Chart
         const headers = [
-            "計畫名稱 (Plan)", "開始時間 (Start)", "結束時間 (End)", "實際完成日 (Actual)", 
-            "任務內容 (Task)", "任務狀態 (Status)", "已完成數量 (Done)", "任務總數 (Total)", 
-            "完成率 (Rate)", "完成率圖 (Chart)"
+            { v: "Color", s: { font: { bold: true, name: "Arial" } } },
+            { v: "計畫名稱 (Plan)", s: { font: { bold: true, name: "Arial" } } },
+            { v: "開始時間 (Start)", s: { font: { bold: true, name: "Arial" } } },
+            { v: "結束時間 (End)", s: { font: { bold: true, name: "Arial" } } },
+            { v: "實際完成日 (Actual)", s: { font: { bold: true, name: "Arial" } } },
+            { v: "任務內容 (Task)", s: { font: { bold: true, name: "Arial" } } },
+            { v: "任務狀態 (Status)", s: { font: { bold: true, name: "Arial" } } },
+            { v: "已完成數量 (Done)", s: { font: { bold: true, name: "Arial" } } },
+            { v: "任務總數 (Total)", s: { font: { bold: true, name: "Arial" } } },
+            { v: "完成率 (Rate)", s: { font: { bold: true, name: "Arial" } } },
+            { v: "完成率圖 (Chart)", s: { font: { bold: true, name: "Arial" } } }
         ];
         
-        // No Padding. Timeline starts immediately at K (Index 10)
-        
-        // Row 0: Date Headers starting at K (Index 10)
-        const row0 = new Array(10).fill("").concat(timelineDates);
+        // Row 0: Date Headers starting at L (Index 11)
+        const row0 = new Array(11).fill("");
+        timelineDates.forEach(d => row0.push({ v: d, s: { font: { name: "Arial" }, alignment: { horizontal: "center" } } }));
         
         // Row 1: Column Titles + Weekdays
-        const row1 = headers.concat(timelineWeekdays);
+        const row1 = [...headers];
+        timelineWeekdays.forEach(w => row1.push({ v: w, s: { font: { name: "Arial" }, alignment: { horizontal: "center" } } }));
         
         dataRows.push(row0);
         dataRows.push(row1);
@@ -1502,33 +1541,35 @@
                 const planInfo = allPlansData[task.planId];
                 const planName = planInfo && planInfo.unit ? planInfo.unit : `Plan #${task.planId}`;
                 const formattedDateStr = dateStr.replace(/-/g, '/');
+                const color = planInfo ? planInfo.color : "#CCCCCC";
+                const fgColor = color.replace('#', '');
 
-                // Current row index for formula (1-based) = dataRows.length + 1
                 const rowIndex = dataRows.length + 1;
 
                 const row = [
-                    planName,           // A
-                    formattedDateStr,            // B
-                    formattedDateStr,            // C (Same as Start)
-                    "",                 // D (User fill)
-                    task.text,          // E
-                    "Not Start",        // F (Default)
-                    0,                  // G
-                    1,                  // H
-                    { t: 'n', f: `G${rowIndex}/H${rowIndex}`, z: '0%' }, // I (Formula)
-                    { t: 's', f: `SPARKLINE(G${rowIndex}:H${rowIndex},{"charttype","bar";"max",1;"color1","#FFBC5A";"color2","wheat"})` } // J (Sparkline Formula)
+                    { v: "", s: { fill: { fgColor: { rgb: fgColor } } } }, // A: Color
+                    { v: planName, s: { font: { name: "Arial" } } },
+                    { v: formattedDateStr, s: { font: { name: "Arial" } } },
+                    { v: formattedDateStr, s: { font: { name: "Arial" } } },
+                    { v: "", s: { font: { name: "Arial" } } },
+                    { v: task.text, s: { font: { name: "Arial" } } },
+                    { v: "Not Start", s: { font: { name: "Arial" } } }, // Dropdown (Simulated via Text)
+                    { v: 0, s: { font: { name: "Arial" } } },
+                    { v: 1, s: { font: { name: "Arial" } } },
+                    { t: 'n', f: `H${rowIndex}/I${rowIndex}`, z: '0%', s: { font: { name: "Arial" } } }, 
+                    // Chart: REPT formula
+                    { t: 's', f: `REPT("█",H${rowIndex}/I${rowIndex}*20)&REPT("░",20-H${rowIndex}/I${rowIndex}*20)`, s: { font: { name: "Arial", color: { rgb: "FFBC5A" } } } }
                 ];
                 
-                // Add Dynamic Timeline Formulas starting at K
-                // Excel Column K is index 10.
+                // Dynamic Timeline with Formula + Colored Text
                 const timelineCells = timelineDates.map((tDate, idx) => {
-                    const colIdx = 10 + idx; // 0->K, 1->L...
-                    // Helper to get Excel Column Letter (Simple version for A-Z, AA-AZ...)
+                    const colIdx = 11 + idx; // Start at L
                     const colLetter = XLSX.utils.encode_col(colIdx);
                     
-                    // Formula: IF( AND( CurrentDate >= Start, CurrentDate <= End ), "■", "")
-                    const f = `IF(AND(${colLetter}$1>=$B${rowIndex}, ${colLetter}$1<=$C${rowIndex}), "■", "")`;
-                    return { t: 's', f: f };
+                    // Formula to check date range against C and D
+                    const f = `IF(AND(${colLetter}$1>=$C${rowIndex}, ${colLetter}$1<=$D${rowIndex}), "■", "")`;
+                    
+                    return { t: 's', f: f, s: { font: { name: "Arial", color: { rgb: fgColor }, sz: 14, bold: true }, alignment: { horizontal: "center" } } };
                 });
 
                 dataRows.push(row.concat(timelineCells));
@@ -1541,12 +1582,11 @@
 
         // Set Col Widths
         const wscols = [
+            {wch:5},  // Color
             {wch:20}, {wch:12}, {wch:12}, {wch:15}, {wch:40}, 
-            {wch:12}, {wch:10}, {wch:10}, {wch:10}, {wch:20}
+            {wch:15}, {wch:10}, {wch:10}, {wch:10}, {wch:20}
         ];
-        // Timeline cols width
         timelineDates.forEach(() => wscols.push({wch:4}));
-        
         ws['!cols'] = wscols;
 
         XLSX.utils.book_append_sheet(wb, ws, "Checklist");
@@ -1598,26 +1638,32 @@
         return excludeWeekdays.includes(dayOfWeek) || excludeDates.includes(dateStr);
     }
     
+    // --- UPDATED CORE LOGIC: Optimized Range String (Handling duplicate items) ---
     function getRangeString(items) {
         if (!items || items.length === 0) return '';
-        const isNumeric = items.every(item => /^\d+$/.test(item));
-        if (isNumeric) {
-            const numbers = items.map(Number).sort((a, b) => a - b);
-            const start = numbers[0];
-            const end = numbers[numbers.length - 1];
+        
+        // Remove consecutive duplicates for the display string (Example 1: 20,20,20,20 -> 20)
+        const uniqueSequence = [];
+        items.forEach((item, idx) => {
+            if (idx === 0 || item !== items[idx - 1]) {
+                uniqueSequence.push(item);
+            }
+        });
+
+        const isAllNumeric = uniqueSequence.every(item => /^\d+$/.test(item));
+        if (isAllNumeric && uniqueSequence.length > 1) {
+            const nums = uniqueSequence.map(Number);
+            // Check if sequential
             let isConsecutive = true;
-            for (let i = 0; i < numbers.length - 1; i++) {
-                if (numbers[i] + 1 !== numbers[i + 1]) {
+            for (let i = 0; i < nums.length - 1; i++) {
+                if (nums[i] + 1 !== nums[i + 1] && nums[i] - 1 !== nums[i + 1]) {
                     isConsecutive = false;
                     break;
                 }
             }
-            if (start === end) return String(start);
-            else if (isConsecutive) return `${start}~${end}`;
-            else return items.join(', ');
-        } else {
-            return items.join(', ');
+            if (isConsecutive) return `${uniqueSequence[0]}~${uniqueSequence[uniqueSequence.length - 1]}`;
         }
+        return uniqueSequence.join(',');
     }
     
     function updateRequiredDays(id) {
@@ -1639,28 +1685,39 @@
         return items.length;
     }
 
+    // --- UPDATED CORE LOGIC: Parsing Weight [n] ---
     function getItemsArray(id) {
         let items = [];
         const rangeType = document.querySelector(`input[name="rangeType-${id}"]:checked`)?.value || 'pages';
         const reverse = document.getElementById(`reverseOrder-${id}`)?.checked || false;
+        
         if (rangeType === 'pages') {
             const pageRangeInput = document.getElementById(`pageRange-${id}`);
             if (!pageRangeInput) return [];
-            const rangeStr = pageRangeInput.value.trim();
-            const match = rangeStr.match(/^(\d+)~(\d+)$/);
-            if (match) {
-                let start = parseInt(match[1]);
-                let end = parseInt(match[2]);
-                if (start > end) [start, end] = [end, start];
-                for (let i = start; i <= end; i++) items.push(String(i));
-            } else if (/^\d+$/.test(rangeStr)) {
-                 items.push(rangeStr);
-            }
-        } else if (rangeType === 'outline') {
+            const rawParts = pageRangeInput.value.split(',').map(s => s.trim()).filter(s => s);
+            
+            rawParts.forEach(part => {
+                const { text, weight } = parseWeight(part);
+                const rangeMatch = text.match(/^(\d+)~(\d+)$/);
+                if (rangeMatch) {
+                    let start = parseInt(rangeMatch[1]);
+                    let end = parseInt(rangeMatch[2]);
+                    if (start > end) [start, end] = [end, start];
+                    for (let i = start; i <= end; i++) {
+                        for (let w = 0; w < weight; w++) items.push(String(i));
+                    }
+                } else if (/^\d+$/.test(text)) {
+                    for (let w = 0; w < weight; w++) items.push(text);
+                }
+            });
+        } else {
             const outlineInput = document.getElementById(`outline-${id}`);
             if (!outlineInput) return [];
-            const outlineStr = outlineInput.value.trim();
-            items = outlineStr.split(',').map(item => item.trim()).filter(item => item.length > 0);
+            const rawParts = outlineInput.value.split(',').map(s => s.trim()).filter(s => s);
+            rawParts.forEach(part => {
+                const { text, weight } = parseWeight(part);
+                for (let w = 0; w < weight; w++) items.push(text);
+            });
         }
         return reverse ? items.reverse() : items;
     }
@@ -1804,7 +1861,7 @@
                     </div>
                 </div>
 
-                <div style="display:flex; gap:5px;">
+                <div style="display:flex; gap:10px;">
                     <label style="flex:1;"><span data-i18n-id="startDateLabel">${translations[currentLang].startDateLabel}</span><input id="startDate-${id}" type="date" value="${planData ? planData.startDate : formatDate(new Date())}"></label>
                     <label style="flex:1;"><span data-i18n-id="endDateLabel">${translations[currentLang].endDateLabel}</span><input id="endDate-${id}" type="date" value="${planData ? planData.endDate : ''}"></label>
                 </div>
@@ -1846,7 +1903,7 @@
 
                     <div id="pageRangeDiv-${id}" style="display: ${rangeType === 'pages' ? 'block' : 'none'};">
                         <label data-i18n-id="pageRangeLabel"><span>${translations[currentLang].pageRangeLabel}</span>
-                            <input id="pageRange-${id}" type="text" placeholder="ex. 19~306" value="${planData ? planData.pageRange : ''}" oninput="updateRequiredDays(${id})">
+                            <input id="pageRange-${id}" type="text" placeholder="ex. 19~25,20[4]" value="${planData ? planData.pageRange : ''}" oninput="updateRequiredDays(${id})">
                         </label>
                     </div>
 
