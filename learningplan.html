@@ -8,7 +8,7 @@
   
   <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.min.js"></script>
   
-  <title data-i18n="pageTitle">學習計劃表</title>
+  <title data-i18n="pageTitle">學習計劃表產生器</title>
   <style>
     /* CSS Variables for Theme */
     :root {
@@ -129,6 +129,7 @@
         margin-bottom: 20px;
         flex-wrap: wrap;
         gap: 20px;
+        border-radius: 0 0 15px 15px; 
         
         position: sticky;
         top: 0;
@@ -149,7 +150,9 @@
     .dark-mode .header-main {
         background-color: rgba(28, 28, 30, 0.8);
         border-bottom: 0.5px solid rgba(255,255,255,0.1);
+        border-radius: 0 0 15px 15px; 
     }
+
 
     .header-title-area {
         display: flex;
@@ -164,9 +167,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: var(--shadow-sm);
         flex-shrink: 0;
-        background-color: var(--bg-card);
         cursor: pointer;
         transition: box-shadow 0.3s ease;
     }
@@ -181,8 +182,8 @@
     }
 
     h1 {
-      font-size: 28px;
-      letter-spacing: -0.5px; 
+      font-size: 19px;
+      letter-spacing: 0.5px; 
       font-weight: 700; 
       margin: 0;
       color: var(--text-main);
@@ -478,6 +479,8 @@
     }
     .color-label button {
         width: auto; padding: 5px 12px; margin: 0; font-size: 12px;
+        border-radius: 20px;
+        border:none;
     }
 
     /* Palette Suggestion Styles */
@@ -907,16 +910,16 @@
       zh: {
         pageTitle: '學習計劃表產生器',
         mainHeader: '學習計劃表產生器',
-        headerSubtitle: 'Visual Learning Planner',
+        headerSubtitle: 'A Breeze to Plan, A Joy to Learn.',
         toggleThemeBtn: '夜間', 
-        toggleLangBtn: '中/En',
-        addPlanBtn: '新增計劃',
+        toggleLangBtn: '中文 / EN',
+        addPlanBtn: '新增任務',
         generatePlanBtn: '產生計劃',
         downloadGCcsv: '下載 CSV',
-        checklistBtnLabel: '追蹤檢核表',
+        checklistBtnLabel: '下載追蹤檢核表',
         openGoogleSheetBtn: '使用 Google Sheet 建立',
         downloadExcelBtn: '下載 Excel (.xlsx)',
-        importBtnLabel: '匯入',
+        importBtnLabel: '匯入 / 匯出計劃設定',
         selectAllDays: '全選日期', 
         addToCalendarBtnText: '加入行事曆', 
         gcTitleSettingLabel: '顯示設定:', 
@@ -944,9 +947,9 @@
         rangeLabel: '任務範圍',
         rangeTypePages: '頁數',
         rangeTypeOutline: '大綱',
-        pageRangeLabel: '頁數範圍 (ex. 19~25,20[4])',
+        pageRangeLabel: '頁數範圍 (ex. 19~25)',
         outlineLabel: '任務清單/大綱',
-        outlinePlaceholder: '主題一,主題二[4],主題三',
+        outlinePlaceholder: '主題一,主題二,主題三',
         dailyAmountLabel: '每日執行量',
         requiredDaysLabel: '預估天數', 
         reverseOrder: '逆序',
@@ -961,26 +964,26 @@
         reviewText: '複習',
       },
       en: {
-        pageTitle: 'Ebbinghaus Memory Plan',
-        mainHeader: 'Ebbinghaus Memory Plan',
-        headerSubtitle: 'Visual Learning Planner',
+        pageTitle: 'Simple Plan Builder',
+        mainHeader: 'Simple Plan Builder',
+        headerSubtitle: 'A Breeze to Plan, A Joy to Learn.',
         toggleThemeBtn: 'Dark', 
-        toggleLangBtn: 'Zh/En',
+        toggleLangBtn: 'ZH/EN',
         addPlanBtn: 'Add Plan',
         generatePlanBtn: 'Generate',
         downloadGCcsv: 'Download CSV',
-        checklistBtnLabel: 'Checklist',
+        checklistBtnLabel: 'Download Progress Tracker',
         openGoogleSheetBtn: 'Create in Google Sheets',
         downloadExcelBtn: 'Download Excel (.xlsx)',
-        importBtnLabel: 'Import',
+        importBtnLabel: 'Import / Export Plan Settings',
         selectAllDays: 'Select All', 
         addToCalendarBtnText: 'Add to Calendar', 
         gcTitleSettingLabel: 'Display Settings:',
-        mergePlansLabel: 'Merge',
-        separatePlansLabel: 'Separate',
+        mergePlansLabel: 'Merge Plans',
+        separatePlansLabel: 'Separate Plans',
         backupRestoreLabel: 'Config Backup / Restore:',
-        exportSettingsBtn: 'Export Config CSV',
-        importSettingsBtn: 'Import Config CSV',
+        exportSettingsBtn: 'Export Settings CSV',
+        importSettingsBtn: 'Import Settings CSV',
         planHeader: 'Plan', 
         titleLabel: 'Plan Name:',
         colorLabel: 'Color Tag',
@@ -988,21 +991,21 @@
         applyAllBtn: '✨ Apply',
         shuffleBtnTitle: 'Shuffle Palette',
         randomColorBtn: 'Reset',
-        unitLabel: 'Task Name/Unit',
+        unitLabel: 'Task',
         startDateLabel: 'Start Date',
         endDateLabel: 'End Date (Optional)',
         executionDatesLabel: 'Specific Dates', 
-        executionDatesPlaceholder: 'e.g. 11/23\n11/25',
+        executionDatesPlaceholder: 'e.g. 11/23, 11/25',
         excludeDaysLabel: 'Exclude Days',
-        weekdaySun: 'S', weekdayMon: 'M', weekdayTue: 'T', weekdayWed: 'W', weekdayThu: 'T', weekdayFri: 'F', weekdaySat: 'S',
+        weekdaySun: 'Sun', weekdayMon: 'Mon', weekdayTue: 'Tuee', weekdayWed: 'Wed', weekdayThu: 'Thu', weekdayFri: 'Fri', weekdaySat: 'Sat',
         excludeDatesLabel: 'Exclude Dates',
-        excludeDatesPlaceholder: 'e.g. 7/22\n12/25',
+        excludeDatesPlaceholder: 'e.g. 7/22, 12/25',
         rangeLabel: 'Scope',
         rangeTypePages: 'Pages',
         rangeTypeOutline: 'Outline',
-        pageRangeLabel: 'Range (e.g. 19~25,20[4])',
+        pageRangeLabel: 'Range (e.g. 19~25)',
         outlineLabel: 'Outline (comma separated)',
-        outlinePlaceholder: 'Topic 1, Topic 2[4], Topic 3',
+        outlinePlaceholder: 'Topic 1, Topic 2, Topic 3',
         dailyAmountLabel: 'Daily Amount',
         requiredDaysLabel: 'Est. Days', 
         reverseOrder: 'Reverse',
@@ -1903,7 +1906,7 @@
 
                     <div id="pageRangeDiv-${id}" style="display: ${rangeType === 'pages' ? 'block' : 'none'};">
                         <label data-i18n-id="pageRangeLabel"><span>${translations[currentLang].pageRangeLabel}</span>
-                            <input id="pageRange-${id}" type="text" placeholder="ex. 19~25,20[4]" value="${planData ? planData.pageRange : ''}" oninput="updateRequiredDays(${id})">
+                            <input id="pageRange-${id}" type="text" placeholder="ex. 19~25" value="${planData ? planData.pageRange : ''}" oninput="updateRequiredDays(${id})">
                         </label>
                     </div>
 
@@ -2522,7 +2525,8 @@
             });
         }
         csv += rows.join("\n");
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        // Added \uFEFF (BOM) to fix Excel encoding issue
+        const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
         link.setAttribute("href", URL.createObjectURL(blob));
         link.setAttribute("download", "google_calendar_import.csv");
