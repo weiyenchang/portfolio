@@ -9,8 +9,6 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.min.js"></script>
   
   <title data-i18n="pageTitle">學習計劃表產生器</title>
-  <link rel="icon" type="image/x-icon" href="https://weiyenchang.github.io/portfolio/LearningPlanFavIcon.png">
-
   <style>
     /* CSS Variables for Theme */
     :root {
@@ -167,7 +165,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: var(--shadow-sm);
         flex-shrink: 0;
         cursor: pointer;
         transition: box-shadow 0.3s ease;
@@ -674,13 +671,26 @@
     /* Footer */
     .app-footer {
         background-color: #2d2d2d;
-        color:grey;
+        color: #f5f5f5;
         text-align: center;
         padding: 20px;
         margin-top: 40px;
         font-size: 14px;
         font-weight: 500;
         letter-spacing: 0.5px;
+        position: relative; 
+    }
+    
+    .visit-counter {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%); 
+        font-size: 12px;
+        opacity: 0.8;
+        display: flex;
+        align-items: center;
+        gap: 5px;
     }
 
     /* RWD */
@@ -709,7 +719,6 @@
           padding-right: 15px;
           margin-left: -15px;
           margin-right: -15px;
-          border-radius: 0 0 10px 10px;
       }
       .header-title-area { 
           flex-grow: 1;
@@ -778,6 +787,17 @@
           .calendar-grid {
               min-width: 500px;
           }
+      }
+      
+      /* Mobile Footer */
+      .app-footer {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+      }
+      .visit-counter {
+          position: static; 
+          transform: none;
       }
     }
   </style>
@@ -889,7 +909,10 @@
     </div> 
     
     <footer class="app-footer">
-        weiyenchang © 2026 All Rights Reserved.
+        WEI-YEN,CHANG © 2026 All Rights Reserved.
+        <div class="visit-counter">
+            <i class="fa-solid fa-users"></i> <span data-i18n-id="visitCountLabel">使用人次</span>: <span id="visitor-count">1,024</span>
+        </div>
     </footer>
   </div> 
     
@@ -911,7 +934,7 @@
         mainHeader: '學習計劃表產生器',
         headerSubtitle: 'A Breeze to Plan, A Joy to Learn.',
         toggleThemeBtn: '夜間', 
-        toggleLangBtn: '中文 / EN',
+        toggleLangBtn: '中文/EN',
         addPlanBtn: '新增任務',
         generatePlanBtn: '產生計劃',
         downloadGCcsv: '下載 CSV',
@@ -949,7 +972,7 @@
         pageRangeLabel: '頁數範圍 (ex. 19~25)',
         outlineLabel: '任務清單/大綱',
         outlinePlaceholder: '主題一,主題二,主題三',
-        dailyAmountLabel: '每次執行量',
+        dailyAmountLabel: '每日執行量',
         requiredDaysLabel: '預估天數', 
         reverseOrder: '逆序',
         showContentLabel: '執行動作',
@@ -961,6 +984,7 @@
         deleteBtn: '刪除',
         studyText: '學習',
         reviewText: '複習',
+        visitCountLabel: '使用人次',
       },
       en: {
         pageTitle: 'Simple Plan Builder',
@@ -975,7 +999,7 @@
         openGoogleSheetBtn: 'Create in Google Sheets',
         downloadExcelBtn: 'Download Excel (.xlsx)',
         importBtnLabel: 'Import / Export Plan Settings',
-        selectAllDays: 'Select All Days', 
+        selectAllDays: 'Select All', 
         addToCalendarBtnText: 'Add to Calendar', 
         gcTitleSettingLabel: 'Display Settings:',
         mergePlansLabel: 'Merge Tasks',
@@ -996,7 +1020,7 @@
         executionDatesLabel: 'Specific Dates', 
         executionDatesPlaceholder: 'e.g. 11/23, 11/25',
         excludeDaysLabel: 'Exclude Days',
-        weekdaySun: 'Sun', weekdayMon: 'Mon', weekdayTue: 'Tue', weekdayWed: 'Wed', weekdayThu: 'Thu', weekdayFri: 'Fri', weekdaySat: 'Sqt',
+        weekdaySun: 'Sun', weekdayMon: 'Mon', weekdayTue: 'Tue', weekdayWed: 'Wed', weekdayThu: 'Thu', weekdayFri: 'Fri', weekdaySat: 'Sat',
         excludeDatesLabel: 'Exclude Dates',
         excludeDatesPlaceholder: 'e.g. 7/22, 12/25',
         rangeLabel: 'Scope',
@@ -1004,7 +1028,7 @@
         rangeTypeOutline: 'Outline',
         pageRangeLabel: 'Range (e.g. 19~25)',
         outlineLabel: 'Outline (comma separated)',
-        outlinePlaceholder: 'Topic 1, Topic 2, Topic 3',
+        outlinePlaceholder: 'Topic 1, Topic, Topic 3',
         dailyAmountLabel: 'Daily Amount',
         requiredDaysLabel: 'Est. Days', 
         reverseOrder: 'Reverse',
@@ -1017,6 +1041,7 @@
         deleteBtn: 'Delete',
         studyText: 'Study',
         reviewText: 'Review',
+        visitCountLabel: 'Visits',
       }
     };
 
@@ -1272,65 +1297,6 @@
         reader.readAsText(file);
     }
 
-    // --- REVISED PARSER LOGIC FOR IMPORT ---
-    function parseCSV(text) {
-        let arr = []; 
-        let quote = false;  // 'true' means we're inside a quoted field
-        let row = 0, col = 0;
-        let c = 0; // cursor
-        
-        for (; c < text.length; c++) {
-            let cc = text[c], nc = text[c+1];        // current char, next char
-            arr[row] = arr[row] || [];             // create a new row if necessary
-            arr[row][col] = arr[row][col] || '';   // create a new column (start with empty string) if necessary
-            
-            if (cc == '"' && quote && nc == '"') { 
-                // Found an escaped quote inside a quoted field
-                arr[row][col] += cc; 
-                ++c; // skip next quote
-                continue; 
-            }
-            
-            if (cc == '"') { 
-                // Toggle quote status
-                quote = !quote; 
-                continue; 
-            }
-            
-            if (cc == ',' && !quote) { 
-                // Found a comma, move to next column
-                ++col; 
-                continue; 
-            }
-            
-            if (cc == '\r' && nc == '\n' && !quote) { 
-                // Found a CRLF new line, move to next row
-                ++row; 
-                col = 0; 
-                ++c; // skip newline
-                continue; 
-            }
-            
-            if (cc == '\n' && !quote) { 
-                // Found a LF new line, move to next row
-                ++row; 
-                col = 0; 
-                continue; 
-            }
-            
-            if (cc == '\r' && !quote) { 
-                // Found a CR new line, move to next row
-                ++row; 
-                col = 0; 
-                continue; 
-            }
-            
-            // Otherwise, append the current character to the current column
-            arr[row][col] += cc;
-        }
-        return arr;
-    }
-
     function parseSettingsCSV(text) {
         // Clear current plans
         allPlansData = {};
@@ -1338,7 +1304,43 @@
         planCount = 0;
         document.getElementById('plan-container').innerHTML = '';
 
-        const rows = parseCSV(text);
+        // Normalize line endings
+        text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        
+        // Robust CSV Parser (State Machine)
+        const rows = [];
+        let currentRow = [];
+        let currentCell = '';
+        let inQuote = false;
+
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            const nextChar = text[i+1];
+
+            if (char === '"') {
+                if (inQuote && nextChar === '"') {
+                    currentCell += '"'; // Escaped quote
+                    i++; 
+                } else {
+                    inQuote = !inQuote; // Toggle quote
+                }
+            } else if (char === ',' && !inQuote) {
+                currentRow.push(currentCell);
+                currentCell = '';
+            } else if (char === '\n' && !inQuote) {
+                currentRow.push(currentCell);
+                if (currentRow.length > 0) rows.push(currentRow);
+                currentRow = [];
+                currentCell = '';
+            } else {
+                currentCell += char;
+            }
+        }
+        // Push last cell
+        if (currentCell || currentRow.length > 0) {
+            currentRow.push(currentCell);
+            rows.push(currentRow);
+        }
 
         if (rows.length < 2) return; // Only header or empty
 
@@ -1358,8 +1360,7 @@
                 endDate: cols[4],
                 executionDates: cols[5],
                 useExecutionDates: cols[6] === 'true',
-                // FIX: Filter empty strings before mapping to Number
-                excludeWeekdays: cols[7] ? cols[7].split('|').filter(s=>s!=='').map(Number) : [],
+                excludeWeekdays: cols[7] ? cols[7].split('|').map(Number) : [],
                 excludeDates: cols[8],
                 useExcludeDates: cols[9] === 'true',
                 rangeType: cols[10],
@@ -1937,7 +1938,7 @@
 
                     <div id="pageRangeDiv-${id}" style="display: ${rangeType === 'pages' ? 'block' : 'none'};">
                         <label data-i18n-id="pageRangeLabel"><span>${translations[currentLang].pageRangeLabel}</span>
-                            <input id="pageRange-${id}" type="text" placeholder="ex. 19~25,20" value="${planData ? planData.pageRange : ''}" oninput="updateRequiredDays(${id})">
+                            <input id="pageRange-${id}" type="text" placeholder="ex. 19~25" value="${planData ? planData.pageRange : ''}" oninput="updateRequiredDays(${id})">
                         </label>
                     </div>
 
@@ -2312,11 +2313,11 @@
             checkbox.className = 'day-checkbox';
             checkbox.dataset.date = dateKey;
             
-            // Set checkbox state (UNCHECKED BY DEFAULT)
+            // Set checkbox state
             if (!hasTasks) {
                 checkbox.style.visibility = 'hidden';
             } else {
-                checkbox.checked = false; // Default to unchecked
+                checkbox.checked = true; // Default to checked
             }
             checkbox.onchange = updateDaySelection;
 
@@ -2464,31 +2465,9 @@
         
         const checkboxes = document.querySelectorAll('.day-checkbox');
         let selectedDates = {};
-        let hasSelection = false;
         checkboxes.forEach(cb => {
-            if(cb.checked) {
-                selectedDates[cb.dataset.date] = true;
-                hasSelection = true;
-            }
+            if(cb.checked) selectedDates[cb.dataset.date] = true;
         });
-
-        // Step 1: Prompt if no dates selected
-        if (!hasSelection) {
-            const msg = currentLang === 'zh' 
-                ? '請先於計劃表上「勾選」您欲加入行事曆的日期，若您全部都要加入建議使用「下載 Google Calendar CSV」進行大批匯入，避免瀏覽器崩潰。' 
-                : 'Please check the dates you want to add to the calendar first. If you want to add all, it is recommended to use "Download Google Calendar CSV" for bulk import to avoid browser crash.';
-            alert(msg);
-            return;
-        }
-
-        // Step 2: Confirmation Prompt
-        const confirmMsg = currentLang === 'zh'
-            ? '若計畫上一天有多個任務，但僅跳出 1 個 Goolge Calendar 視窗，請檢查若瀏覽器是否出現「已封鎖彈跳視窗」的圖示，您需要手動允許此網站開啟多個視窗。'
-            : 'If there are multiple tasks on a day but only one Google Calendar window pops up, please check if the "Pop-up blocked" icon appears in the browser. You need to manually allow this site to open multiple windows.';
-        
-        if (!confirm(confirmMsg)) {
-            return;
-        }
 
         let urlsToOpen = [];
 
@@ -2529,8 +2508,15 @@
             }
         });
 
+        if (urlsToOpen.length === 0) {
+            alert(currentLang === 'zh' ? '請勾選至少一個日期！' : 'Please check at least one day!');
+            return;
+        }
+
         // Execute opens
         urlsToOpen.forEach((url, index) => {
+            // Using a small timeout helps separate the calls, 
+            // though browsers might still block >1 popups.
             setTimeout(() => {
                 window.open(url, '_blank');
             }, index * 300);
@@ -2545,15 +2531,6 @@
         const gcTitleOption = document.querySelector('input[name="gcTitleOption"]:checked').value;
         const keys = Object.keys(latestPlan).sort();
         
-        // NEW: Prompt
-        const msg = currentLang === 'zh' 
-            ? '請勾選計劃表上欲加入 Google Claendar 的日期或勾選「全選日期」。'
-            : 'Please check the dates on the planner you wish to add to Google Calendar or check "Select All".';
-        
-        if (!confirm(msg)) {
-            return; // Cancel pressed
-        }
-
         // DOM selection check
         const checkboxes = document.querySelectorAll('.day-checkbox');
         let selectedDates = {};
@@ -2721,12 +2698,24 @@
         }
     }
 
+    function initVisitCount() {
+        let count = localStorage.getItem('site_visits');
+        if (!count) {
+            count = 0;
+        } else {
+            count = parseInt(count) + 1;
+        }
+        localStorage.setItem('site_visits', count);
+        document.getElementById('visitor-count').textContent = count.toLocaleString();
+    }
+
     loadPlansData();
     loadLanguage();
     loadTheme();
     if (Object.keys(allPlansData).length === 0) addPlan(); 
     generatePlan(); 
     setTimeout(updateSelectAllCheckboxState, 100); 
+    initVisitCount(); // Initialize Counter
 
 </script>
 </body>
