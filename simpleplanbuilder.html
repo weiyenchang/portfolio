@@ -131,8 +131,7 @@
         margin-bottom: 20px;
         flex-wrap: wrap;
         gap: 20px;
-        border-radius: 0 0 15px 15px; 
-        
+        border-radius: 0 0 10px 10px;
         position: sticky;
         top: 0;
         z-index: 1000;
@@ -152,9 +151,8 @@
     .dark-mode .header-main {
         background-color: rgba(28, 28, 30, 0.8);
         border-bottom: 0.5px solid rgba(255,255,255,0.1);
-        border-radius: 0 0 15px 15px; 
+        border-radius: 0 0 10px 10px;
     }
-
 
     .header-title-area {
         display: flex;
@@ -169,8 +167,10 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        box-shadow: var(--shadow-sm);
         flex-shrink: 0;
         cursor: pointer;
+        transition: box-shadow 0.3s ease;
     }
     .svg_icon svg {
         fill: var(--text-main);
@@ -178,13 +178,10 @@
         width: 40px;
         height: 40px;
     }
-    .svg_icon:hover {
-        box-shadow: var(--shadow-md);
-    }
 
     h1 {
       font-size: 19px;
-      letter-spacing: 0.5px; 
+      letter-spacing: 0.3px; 
       font-weight: 700; 
       margin: 0;
       color: var(--text-main);
@@ -677,7 +674,7 @@
     /* Footer */
     .app-footer {
         background-color: #2d2d2d;
-        color: #f5f5f5;
+        color:grey;
         text-align: center;
         padding: 20px;
         margin-top: 40px;
@@ -712,6 +709,7 @@
           padding-right: 15px;
           margin-left: -15px;
           margin-right: -15px;
+          border-radius: 0 0 10px 10px;
       }
       .header-title-area { 
           flex-grow: 1;
@@ -891,7 +889,7 @@
     </div> 
     
     <footer class="app-footer">
-        WEI-YEN,CHANG © 2026 All Rights Reserved.
+        weiyenchang © 2026 All Rights Reserved.
     </footer>
   </div> 
     
@@ -923,7 +921,7 @@
         importBtnLabel: '匯入 / 匯出計劃設定',
         selectAllDays: '全選日期', 
         addToCalendarBtnText: '加入行事曆', 
-        gcTitleSettingLabel: '顯示設定:', 
+        gcTitleSettingLabel: '任務顯示設定:', 
         mergePlansLabel: '合併顯示',
         separatePlansLabel: '獨立顯示',
         backupRestoreLabel: '設定檔 備份/還原:',
@@ -936,7 +934,7 @@
         applyAllBtn: '✨ 套用',
         shuffleBtnTitle: '換一組配色',
         randomColorBtn: '隨機',
-        unitLabel: '任務名稱/單位',
+        unitLabel: '任務名稱',
         startDateLabel: '開始日',
         endDateLabel: '結束日 (選填)',
         executionDatesLabel: '指定特定執行日期', 
@@ -951,7 +949,7 @@
         pageRangeLabel: '頁數範圍 (ex. 19~25)',
         outlineLabel: '任務清單/大綱',
         outlinePlaceholder: '主題一,主題二,主題三',
-        dailyAmountLabel: '每日執行量',
+        dailyAmountLabel: '每次執行量',
         requiredDaysLabel: '預估天數', 
         reverseOrder: '逆序',
         showContentLabel: '執行動作',
@@ -970,35 +968,35 @@
         headerSubtitle: 'A Breeze to Plan, A Joy to Learn.',
         toggleThemeBtn: 'Dark', 
         toggleLangBtn: 'ZH/EN',
-        addPlanBtn: 'Add Plan',
+        addPlanBtn: 'Add Task',
         generatePlanBtn: 'Generate',
-        downloadGCcsv: 'Download CSV',
+        downloadGCcsv: 'Download Google Calendar CSV',
         checklistBtnLabel: 'Download Progress Tracker',
         openGoogleSheetBtn: 'Create in Google Sheets',
         downloadExcelBtn: 'Download Excel (.xlsx)',
         importBtnLabel: 'Import / Export Plan Settings',
-        selectAllDays: 'Select All', 
+        selectAllDays: 'Select All Days', 
         addToCalendarBtnText: 'Add to Calendar', 
         gcTitleSettingLabel: 'Display Settings:',
-        mergePlansLabel: 'Merge Plans',
-        separatePlansLabel: 'Separate Plans',
+        mergePlansLabel: 'Merge Tasks',
+        separatePlansLabel: 'Separate Tasks',
         backupRestoreLabel: 'Config Backup / Restore:',
         exportSettingsBtn: 'Export Settings CSV',
         importSettingsBtn: 'Import Settings CSV',
-        planHeader: 'Plan', 
+        planHeader: 'Task', 
         titleLabel: 'Plan Name:',
         colorLabel: 'Color Tag',
         paletteLabel: 'Smart Palette',
         applyAllBtn: '✨ Apply',
         shuffleBtnTitle: 'Shuffle Palette',
         randomColorBtn: 'Reset',
-        unitLabel: 'Task',
+        unitLabel: 'Task Name/Unit',
         startDateLabel: 'Start Date',
         endDateLabel: 'End Date (Optional)',
         executionDatesLabel: 'Specific Dates', 
         executionDatesPlaceholder: 'e.g. 11/23, 11/25',
         excludeDaysLabel: 'Exclude Days',
-        weekdaySun: 'Sun', weekdayMon: 'Mon', weekdayTue: 'Tuee', weekdayWed: 'Wed', weekdayThu: 'Thu', weekdayFri: 'Fri', weekdaySat: 'Sat',
+        weekdaySun: 'Sun', weekdayMon: 'Mon', weekdayTue: 'Tue', weekdayWed: 'Wed', weekdayThu: 'Thu', weekdayFri: 'Fri', weekdaySat: 'Sqt',
         excludeDatesLabel: 'Exclude Dates',
         excludeDatesPlaceholder: 'e.g. 7/22, 12/25',
         rangeLabel: 'Scope',
@@ -1250,7 +1248,8 @@
             csvContent += row.join(",") + "\n";
         });
 
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        // Add BOM (\uFEFF) to fix Excel encoding
+        const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
         const url = URL.createObjectURL(blob);
         link.setAttribute("href", url);
@@ -1273,6 +1272,65 @@
         reader.readAsText(file);
     }
 
+    // --- REVISED PARSER LOGIC FOR IMPORT ---
+    function parseCSV(text) {
+        let arr = []; 
+        let quote = false;  // 'true' means we're inside a quoted field
+        let row = 0, col = 0;
+        let c = 0; // cursor
+        
+        for (; c < text.length; c++) {
+            let cc = text[c], nc = text[c+1];        // current char, next char
+            arr[row] = arr[row] || [];             // create a new row if necessary
+            arr[row][col] = arr[row][col] || '';   // create a new column (start with empty string) if necessary
+            
+            if (cc == '"' && quote && nc == '"') { 
+                // Found an escaped quote inside a quoted field
+                arr[row][col] += cc; 
+                ++c; // skip next quote
+                continue; 
+            }
+            
+            if (cc == '"') { 
+                // Toggle quote status
+                quote = !quote; 
+                continue; 
+            }
+            
+            if (cc == ',' && !quote) { 
+                // Found a comma, move to next column
+                ++col; 
+                continue; 
+            }
+            
+            if (cc == '\r' && nc == '\n' && !quote) { 
+                // Found a CRLF new line, move to next row
+                ++row; 
+                col = 0; 
+                ++c; // skip newline
+                continue; 
+            }
+            
+            if (cc == '\n' && !quote) { 
+                // Found a LF new line, move to next row
+                ++row; 
+                col = 0; 
+                continue; 
+            }
+            
+            if (cc == '\r' && !quote) { 
+                // Found a CR new line, move to next row
+                ++row; 
+                col = 0; 
+                continue; 
+            }
+            
+            // Otherwise, append the current character to the current column
+            arr[row][col] += cc;
+        }
+        return arr;
+    }
+
     function parseSettingsCSV(text) {
         // Clear current plans
         allPlansData = {};
@@ -1280,45 +1338,16 @@
         planCount = 0;
         document.getElementById('plan-container').innerHTML = '';
 
-        const rows = text.trim().split("\n");
-        if (rows.length < 2) return; // Only header or empty
+        const rows = parseCSV(text);
 
-        // Basic CSV Parser that handles quoted strings
-        const parseRow = (rowStr) => {
-            const result = [];
-            let current = '';
-            let inQuote = false;
-            for (let i = 0; i < rowStr.length; i++) {
-                const char = rowStr[i];
-                if (char === '"') {
-                    if (inQuote && rowStr[i+1] === '"') {
-                        current += '"';
-                        i++; // Skip next quote
-                    } else {
-                        inQuote = !inQuote;
-                    }
-                } else if (char === ',' && !inQuote) {
-                    result.push(current);
-                    current = '';
-                } else {
-                    current += char;
-                }
-            }
-            result.push(current);
-            return result;
-        };
+        if (rows.length < 2) return; // Only header or empty
 
         // Skip header (index 0)
         for (let i = 1; i < rows.length; i++) {
-            const cols = parseRow(rows[i]);
-            // Columns mapping matches export function:
-            // 0:id, 1:color, 2:unit, 3:startDate, 4:endDate, 
-            // 5:executionDates, 6:useExecutionDates, 
-            // 7:excludeWeekdays, 8:excludeDates, 9:useExcludeDates,
-            // 10:rangeType, 11:dailyAmount, 12:pageRange, 13:outline,
-            // 14:reverseOrder, 15:showStudy, 16:showReview, 17:showCustom, 18:customText
-
-            if (cols.length < 10) continue; // Invalid row
+            const cols = rows[i];
+            
+            // Check if row has enough columns (at least id and color)
+            if (cols.length < 2) continue;
 
             const id = parseInt(cols[0]) || 0;
             const planData = {
@@ -1329,7 +1358,8 @@
                 endDate: cols[4],
                 executionDates: cols[5],
                 useExecutionDates: cols[6] === 'true',
-                excludeWeekdays: cols[7] ? cols[7].split('|').map(Number) : [],
+                // FIX: Filter empty strings before mapping to Number
+                excludeWeekdays: cols[7] ? cols[7].split('|').filter(s=>s!=='').map(Number) : [],
                 excludeDates: cols[8],
                 useExcludeDates: cols[9] === 'true',
                 rangeType: cols[10],
@@ -1907,7 +1937,7 @@
 
                     <div id="pageRangeDiv-${id}" style="display: ${rangeType === 'pages' ? 'block' : 'none'};">
                         <label data-i18n-id="pageRangeLabel"><span>${translations[currentLang].pageRangeLabel}</span>
-                            <input id="pageRange-${id}" type="text" placeholder="ex. 19~25" value="${planData ? planData.pageRange : ''}" oninput="updateRequiredDays(${id})">
+                            <input id="pageRange-${id}" type="text" placeholder="ex. 19~25,20" value="${planData ? planData.pageRange : ''}" oninput="updateRequiredDays(${id})">
                         </label>
                     </div>
 
@@ -2281,10 +2311,14 @@
             checkbox.type = 'checkbox';
             checkbox.className = 'day-checkbox';
             checkbox.dataset.date = dateKey;
-            checkbox.onchange = updateDaySelection; 
             
-            // Checkboxes NOT retrieved from storage in this version
-            if (!hasTasks) checkbox.style.visibility = 'hidden';
+            // Set checkbox state (UNCHECKED BY DEFAULT)
+            if (!hasTasks) {
+                checkbox.style.visibility = 'hidden';
+            } else {
+                checkbox.checked = false; // Default to unchecked
+            }
+            checkbox.onchange = updateDaySelection;
 
             dateHeaderContainer.appendChild(dateOnlySpan);
             dateHeaderContainer.appendChild(checkbox);
@@ -2427,16 +2461,36 @@
         }
         const gcTitleOption = document.querySelector('input[name="gcTitleOption"]:checked').value;
         const keys = Object.keys(latestPlan).sort();
-        // Since no persistence, we only check DOM status for selection
+        
         const checkboxes = document.querySelectorAll('.day-checkbox');
         let selectedDates = {};
+        let hasSelection = false;
         checkboxes.forEach(cb => {
-            if(cb.checked) selectedDates[cb.dataset.date] = true;
+            if(cb.checked) {
+                selectedDates[cb.dataset.date] = true;
+                hasSelection = true;
+            }
         });
 
-        let mergedTitle = '';
-        let mergedDescription = '';
-        let eventCount = 0;
+        // Step 1: Prompt if no dates selected
+        if (!hasSelection) {
+            const msg = currentLang === 'zh' 
+                ? '請先於計劃表上「勾選」您欲加入行事曆的日期，若您全部都要加入建議使用「下載 Google Calendar CSV」進行大批匯入，避免瀏覽器崩潰。' 
+                : 'Please check the dates you want to add to the calendar first. If you want to add all, it is recommended to use "Download Google Calendar CSV" for bulk import to avoid browser crash.';
+            alert(msg);
+            return;
+        }
+
+        // Step 2: Confirmation Prompt
+        const confirmMsg = currentLang === 'zh'
+            ? '若計畫上一天有多個任務，但僅跳出 1 個 Goolge Calendar 視窗，請檢查若瀏覽器是否出現「已封鎖彈跳視窗」的圖示，您需要手動允許此網站開啟多個視窗。'
+            : 'If there are multiple tasks on a day but only one Google Calendar window pops up, please check if the "Pop-up blocked" icon appears in the browser. You need to manually allow this site to open multiple windows.';
+        
+        if (!confirm(confirmMsg)) {
+            return;
+        }
+
+        let urlsToOpen = [];
 
         keys.forEach(dateStr => {
             if (selectedDates[dateStr]) {
@@ -2447,8 +2501,8 @@
                     if (!representativeTask) return;
                     const unitInput = document.getElementById(`unit-${representativeTask.planId}`);
                     const planTitle = unitInput ? unitInput.value : (currentLang === 'zh' ? `記憶計劃` : `Memory Plan`);
-                    mergedTitle = `${planTitle} - ${mergedTasksText}`;
-                    mergedDescription = tasks.map(t => `• ${t.text}`).join('\n');
+                    const mergedTitle = `${planTitle} - ${mergedTasksText}`;
+                    const mergedDescription = tasks.map(t => `• ${t.text}`).join('\n');
                     const date = new Date(dateStr);
                     const startYear = date.getFullYear();
                     const startMonth = date.getMonth() + 1;
@@ -2456,9 +2510,10 @@
                     const title = encodeURIComponent(mergedTitle);
                     const details = encodeURIComponent(mergedDescription);
                     const dates = `${startYear}${String(startMonth).padStart(2, '0')}${String(startDate).padStart(2, '0')}`;
-                    window.open(`https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&dates=${dates}/${dates}&sf=true&output=xml`, '_blank');
-                    eventCount++;
+                    
+                    urlsToOpen.push(`https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&dates=${dates}/${dates}&sf=true&output=xml`);
                 } else {
+                    // SEPARATE LOGIC
                     tasks.forEach(taskObj => {
                         const date = new Date(dateStr);
                         const startYear = date.getFullYear();
@@ -2467,13 +2522,19 @@
                         const title = encodeURIComponent(formatTaskForCalendar(taskObj));
                         const details = encodeURIComponent(taskObj.text);
                         const dates = `${startYear}${String(startMonth).padStart(2, '0')}${String(startDate).padStart(2, '0')}`;
-                        window.open(`https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&dates=${dates}/${dates}&sf=true&output=xml`, '_blank');
-                        eventCount++;
+                        
+                        urlsToOpen.push(`https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&dates=${dates}/${dates}&sf=true&output=xml`);
                     });
                 }
             }
         });
-        if (eventCount === 0) alert(currentLang === 'zh' ? '請勾選至少一個日期！' : 'Please check at least one day!');
+
+        // Execute opens
+        urlsToOpen.forEach((url, index) => {
+            setTimeout(() => {
+                window.open(url, '_blank');
+            }, index * 300);
+        });
     }
 
     function downloadCSV() {
@@ -2484,6 +2545,15 @@
         const gcTitleOption = document.querySelector('input[name="gcTitleOption"]:checked').value;
         const keys = Object.keys(latestPlan).sort();
         
+        // NEW: Prompt
+        const msg = currentLang === 'zh' 
+            ? '請勾選計劃表上欲加入 Google Claendar 的日期或勾選「全選日期」。'
+            : 'Please check the dates on the planner you wish to add to Google Calendar or check "Select All".';
+        
+        if (!confirm(msg)) {
+            return; // Cancel pressed
+        }
+
         // DOM selection check
         const checkboxes = document.querySelectorAll('.day-checkbox');
         let selectedDates = {};
