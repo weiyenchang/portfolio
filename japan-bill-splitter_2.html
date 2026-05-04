@@ -3,55 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>割り勘 · 日本拆帳工具 (OCR 加強版)</title>
+<title>割り勘 · 日本拆帳工具</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink: #1a1a18; --ink-2: #4a4a46; --ink-3: #8a8a84;
-    --paper: #f7f5f0; --paper-2: #eeece6; --paper-3: #e4e1d8;
-    --red: #c0392b; --red-light: #fdf0ee; --green: #1a6b4a;
-    --accent: #c0392b; --border: rgba(26,26,24,0.12);
-    --border-strong: rgba(26,26,24,0.25); --radius: 4px;
-    --radius-lg: 8px; --mono: 'DM Mono', monospace; --serif: 'Noto Serif JP', serif;
+    --ink: #1a1a18; --paper: #f7f5f0; --paper-2: #eeece6;
+    --red: #c0392b; --green: #1a6b4a; --border: rgba(26,26,24,0.12);
+    --border-strong: rgba(26,26,24,0.25); --radius-lg: 8px;
+    --mono: 'DM Mono', monospace; --serif: 'Noto Serif JP', serif;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: var(--serif); background: var(--paper); color: var(--ink); line-height: 1.7; padding-bottom: 80px; }
   .shell { max-width: 720px; margin: 0 auto; padding: 0 20px; }
   header { padding: 40px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 36px; display: flex; align-items: baseline; gap: 16px; }
   .logo-jp { font-size: 22px; font-weight: 300; letter-spacing: 0.12em; }
-  .logo-slash { width: 1px; height: 22px; background: var(--border-strong); align-self: center; }
-  .logo-sub { font-family: var(--mono); font-size: 11px; color: var(--ink-3); text-transform: uppercase; }
+  .logo-sub { font-family: var(--mono); font-size: 11px; color: #8a8a84; text-transform: uppercase; }
 
-  /* Steps nav */
-  .steps-nav { display: flex; margin-bottom: 36px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-  .step-tab { flex: 1; padding: 10px 8px; text-align: center; font-family: var(--mono); font-size: 11px; color: var(--ink-3); cursor: pointer; border-right: 1px solid var(--border); background: var(--paper-2); }
+  .steps-nav { display: flex; margin-bottom: 36px; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+  .step-tab { flex: 1; padding: 10px 8px; text-align: center; font-family: var(--mono); font-size: 11px; cursor: pointer; border-right: 1px solid var(--border); background: var(--paper-2); }
   .step-tab.active { background: var(--ink); color: var(--paper); }
-  .step-tab .num { display: block; font-size: 16px; margin-bottom: 2px; }
+  .step-tab .num { display: block; font-size: 16px; }
 
-  /* Panels */
   .panel { display: none; }
   .panel.active { display: block; }
 
-  /* OCR Upload Zone */
-  .upload-zone { border: 1.5px dashed var(--border-strong); border-radius: var(--radius-lg); padding: 52px 24px; text-align: center; cursor: pointer; background: var(--paper-2); position: relative; }
+  .upload-zone { border: 1.5px dashed var(--border-strong); border-radius: var(--radius-lg); padding: 50px 20px; text-align: center; cursor: pointer; background: var(--paper-2); position: relative; }
   .upload-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-  .upload-icon { font-size: 36px; display: block; margin-bottom: 16px; }
   .progress-wrap { display: none; margin-top: 20px; }
-  .progress-bar { height: 3px; background: var(--paper-3); margin-top: 8px; border-radius: 2px; overflow: hidden; }
+  .progress-bar { height: 3px; background: #e4e1d8; margin-top: 8px; border-radius: 2px; overflow: hidden; }
   .progress-fill { height: 100%; background: var(--ink); width: 0%; transition: width 0.3s; }
 
-  /* UI Elements */
-  .preview-wrap { display: none; margin-top: 20px; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-  .preview-wrap img { width: 100%; max-height: 300px; object-fit: contain; background: #000; }
-  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; font-family: var(--mono); font-size: 12px; border: 1px solid var(--border-strong); border-radius: var(--radius); background: var(--paper); cursor: pointer; }
-  .btn-fill { background: var(--ink); color: var(--paper); }
   .item-card { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 12px; background: #fff; }
-  .item-top { display: flex; gap: 10px; margin-bottom: 10px; }
-  .item-name-input { flex: 1; font-family: var(--serif); border: none; border-bottom: 1px solid var(--border); font-size: 15px; }
-  .item-price-input { width: 90px; text-align: right; font-family: var(--mono); border: none; border-bottom: 1px solid var(--border); }
-  .payer-chip { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; margin-right: 5px; cursor: pointer; border: 1px solid var(--border); background: var(--paper-2); }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; font-family: var(--mono); font-size: 12px; border: 1px solid var(--border-strong); border-radius: 4px; background: var(--paper); cursor: pointer; }
+  .btn-fill { background: var(--ink); color: var(--paper); }
+  .payer-chip { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; margin: 5px 5px 0 0; cursor: pointer; border: 1px solid var(--border); background: var(--paper-2); }
   .payer-chip.on { background: var(--ink); color: #fff; }
-  .notice { font-size: 11px; color: var(--ink-3); background: var(--paper-2); padding: 12px; border-radius: var(--radius); margin-top: 20px; }
+  input { border: none; border-bottom: 1px solid var(--border); padding: 4px; background: transparent; }
 </style>
 </head>
 <body>
@@ -59,61 +46,46 @@
 <div class="shell">
   <header>
     <span class="logo-jp">割り勘</span>
-    <div class="logo-slash"></div>
     <span class="logo-sub">Japan Bill Splitter</span>
   </header>
 
   <div class="steps-nav">
-    <div class="step-tab active" onclick="goStep(0)"><span class="num">01</span>辨識發票</div>
-    <div class="step-tab" onclick="goStep(1)"><span class="num">02</span>設定人員</div>
-    <div class="step-tab" onclick="goStep(2)"><span class="num">03</span>分配金額</div>
-    <div class="step-tab" onclick="goStep(3)"><span class="num">04</span>結算匯出</div>
+    <div class="step-tab active" data-step="0" onclick="goStep(0)"><span class="num">01</span>辨識</div>
+    <div class="step-tab" data-step="1" onclick="goStep(1)"><span class="num">02</span>成員</div>
+    <div class="step-tab" data-step="2" onclick="goStep(2)"><span class="num">03</span>分配</div>
+    <div class="step-tab" data-step="3" onclick="goStep(3)"><span class="num">04</span>結算</div>
   </div>
 
-  <!-- Step 0: OCR -->
+  <!-- Step 0 -->
   <div class="panel active" id="panel-0">
     <div class="upload-zone">
-      <input type="file" accept="image/*" onchange="handleFile(this.files[0])">
-      <span class="upload-icon">🧾</span>
-      <strong>點擊或拖曳上傳日本發票</strong>
-      <p style="font-size:12px; color:var(--ink-3)">支援明細自動抓取</p>
+      <input type="file" accept="image/*" id="fileInput">
+      <span>🧾 點擊上傳發票圖片</span>
     </div>
-
-    <canvas id="preprocess-canvas" style="display:none;"></canvas>
-
-    <div class="preview-wrap" id="preview-wrap">
-      <img id="preview-img">
-    </div>
-
     <div class="progress-wrap" id="progress-wrap">
       <div style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:11px;">
-        <span id="progress-text">處理中...</span>
+        <span id="progress-text">辨識中...</span>
         <span id="progress-pct">0%</span>
       </div>
       <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
     </div>
-
     <div style="margin-top:24px; display:flex; gap:10px;">
-      <button class="btn btn-fill" id="btn-ocr" style="display:none;" onclick="runOCR()">🔍 開始自動辨識</button>
-      <button class="btn" onclick="goStep(1)">手動輸入 →</button>
-    </div>
-    <div class="notice">
-      ※ 本地辨識保護隱私：圖片不會上傳至伺服器。<br>
-      ※ 自動優化：系統會自動調整對比度以過濾發票背景雜訊。
+      <button class="btn btn-fill" id="btn-ocr" style="display:none;" onclick="runOCR()">🔍 自動辨識明細</button>
+      <button class="btn" onclick="goStep(1)">手動輸入項目 →</button>
     </div>
   </div>
 
-  <!-- Step 1: Payers -->
+  <!-- Step 1 -->
   <div class="panel" id="panel-1">
-    <h3>誰參與了這次消費？</h3>
+    <h3>參與成員</h3>
     <div id="payer-list" style="margin: 20px 0;"></div>
-    <button class="btn" onclick="addPayer()">＋ 新增付款人</button>
+    <button class="btn" onclick="addPayer()">＋ 新增成員</button>
     <div style="margin-top:30px;"><button class="btn btn-fill" onclick="goStep(2)">下一步：分配品項 →</button></div>
   </div>
 
-  <!-- Step 2: Items -->
+  <!-- Step 2 -->
   <div class="panel" id="panel-2">
-    <h3>明細分配</h3>
+    <h3>品項分配 (¥)</h3>
     <div id="item-list" style="margin: 20px 0;"></div>
     <button class="btn" onclick="addItem()">＋ 新增品項</button>
     <div style="margin-top:30px; display:flex; justify-content:space-between;">
@@ -122,52 +94,48 @@
     </div>
   </div>
 
-  <!-- Step 3: Summary -->
+  <!-- Step 3 -->
   <div class="panel" id="panel-3">
-    <h3>結算清單</h3>
+    <h3>結算金額</h3>
     <div id="summary-content" style="margin: 20px 0;"></div>
-    <button class="btn btn-fill" onclick="exportCSV()">⬇ 匯出 CSV (Excel)</button>
-    <button class="btn" style="margin-left:10px;" onclick="location.reload()">重新開始</button>
+    <button class="btn btn-fill" onclick="exportCSV()">匯出檔案</button>
   </div>
 </div>
 
+<canvas id="tempCanvas" style="display:none;"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
 <script>
+  // 1. 初始化狀態
   let state = {
-    payers: [{id: 1, name: '小明'}, {id: 2, name: '小美'}],
+    payers: [{id: 1, name: 'Wei-Yen'}, {id: 2, name: '朋友'}],
     items: [],
     nextId: 100
   };
 
-  // 1. 影像預處理：針對日文發票優化
-  async function preprocessImage(file) {
-    return new Promise((resolve) => {
-      const canvas = document.getElementById('preprocess-canvas');
-      const ctx = canvas.getContext('2d');
-      const img = new Image();
-      img.onload = () => {
-        const scale = 2; // 放大兩倍以利辨識小字
-        canvas.width = img.width * scale;
-        canvas.height = img.height * scale;
-        ctx.filter = 'grayscale(1) contrast(1.2)'; // 轉灰階並增加對比[cite: 1]
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL('image/png'));
-      };
-      img.src = URL.createObjectURL(file);
-    });
+  // 2. 核心切換邏輯：放在最前面避免 ReferenceError
+  function goStep(n) {
+    document.querySelectorAll('.panel').forEach((p, i) => p.classList.toggle('active', i === n));
+    document.querySelectorAll('.step-tab').forEach((t, i) => t.classList.toggle('active', i === n));
+    if (n === 1) renderPayers();
+    if (n === 2) renderItems();
+    if (n === 3) renderSummary();
   }
 
-  // 2. 核心 OCR 邏輯[cite: 1]
+  // 3. OCR 邏輯[cite: 1]
   async function runOCR() {
-    const fileInput = document.querySelector('input[type=file]');
-    if (!fileInput.files[0]) return;
+    const file = document.getElementById('fileInput').files[0];
+    if (!file) return;
 
+    if (window.location.protocol === 'file:') {
+        alert("偵測到您直接開啟檔案。若辨識無反應，請參考前述方法使用 Live Server 或 Python 伺服器開啟。");
+    }
+
+    document.getElementById('progress-wrap').style.display = 'block';
     const btn = document.getElementById('btn-ocr');
     btn.disabled = true;
-    document.getElementById('progress-wrap').style.display = 'block';
 
     try {
-      const processedImg = await preprocessImage(fileInput.files[0]);
       const worker = await Tesseract.createWorker('jpn+eng', 1, {
         logger: m => {
           if (m.status === 'recognizing text') {
@@ -178,448 +146,103 @@
         }
       });
 
-      // 設定為 PSM 4：假設是單欄變動大小的文字[cite: 1]
-      await worker.setParameters({ tessedit_pageseg_mode: '4' });
-      const { data: { text } } = await worker.recognize(processedImg);
+      const { data: { text } } = await worker.recognize(file);
       await worker.terminate();
-
-      state.items = parseReceipt(text);[cite: 1]
+      
+      state.items = parseReceipt(text);
       goStep(1);
     } catch (e) {
-      alert("辨識出錯，請手動輸入");
+      console.error(e);
+      alert("辨識失敗，請嘗試手動輸入。錯誤：" + e.message);
       goStep(1);
     }
   }
 
-  // 3. 日文發票解析算法[cite: 1]
   function parseReceipt(text) {
-    const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 2);
+    const lines = text.split('\n').map(l => l.trim());
+    const priceRe = /([0-9０-９,，.]{2,})\s*[円点税]?$/; // 抓取行末金額[cite: 1]
     const results = [];
-    const priceRe = /(?:[¥￥\s]|單價)?\s*([0-9０-９,，.]{2,})\s*(?:[税軽*＊※]|円|点)?$/; //[cite: 1]
-    const skipRe = /^(合計|小計|税|消費税|子|現|預|客|subtotal|total|tax|割引|お釣|領収|電話|〒|202)/i;
 
     lines.forEach(line => {
-      if (skipRe.test(line)) return;
       const m = line.match(priceRe);
       if (m) {
         let rawPrice = m[1].replace(/[,，. ]/g, '').replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFF10 + 48));
         const price = parseInt(rawPrice, 10);
         if (!isNaN(price) && price < 1000000) {
-          let name = line.replace(m[0], '').trim().replace(/^[*＊※\s\d]+/, '').replace(/[\sxd\d]+$/, '');[cite: 1]
-          results.push({ id: state.nextId++, name: name || "品項", price: price, assignees: [] });
+            let name = line.replace(m[0], '').trim().substring(0, 15);
+            results.push({ id: state.nextId++, name: name || "品項", price: price, assignees: [] });
         }
       }
     });
     return results;
   }
 
-  // UI Functions
-  function handleFile(file) {
-    if (!file) return;
-    document.getElementById('preview-img').src = URL.createObjectURL(file);
-    document.getElementById('preview-wrap').style.display = 'block';
-    document.getElementById('btn-ocr').style.display = 'inline-flex';
-  }
-
-  function goStep(n) {
-    document.querySelectorAll('.panel').forEach((p, i) => p.classList.toggle('active', i === n));
-    document.querySelectorAll('.step-tab').forEach((t, i) => t.classList.toggle('active', i === n));
-    if (n === 1) renderPayers();
-    if (n === 2) renderItems();
-    if (n === 3) renderSummary();
-  }
-
+  // 4. UI 渲染功能[cite: 1]
   function renderPayers() {
     const container = document.getElementById('payer-list');
     container.innerHTML = state.payers.map(p => `
-      <div style="margin-bottom:10px; display:flex; gap:10px;">
-        <input class="item-name-input" value="${p.name}" onchange="updatePayerName(${p.id}, this.value)">
-        <button class="btn" style="color:var(--red)" onclick="removePayer(${p.id})">✕</button>
+      <div style="margin-bottom:8px; display:flex; gap:10px;">
+        <input style="flex:1" value="${p.name}" onchange="updatePayer(${p.id}, this.value)">
+        <button onclick="removePayer(${p.id})" style="color:var(--red); border:none; background:none; cursor:pointer;">✕</button>
       </div>
     `).join('');
   }
-
-  function addPayer() { state.payers.push({id: Date.now(), name: '新成員'}); renderPayers(); }
-  function removePayer(id) { state.payers = state.payers.filter(p => p.id !== id); renderPayers(); }
-  function updatePayerName(id, val) { const p = state.payers.find(x => x.id === id); if(p) p.name = val; }
 
   function renderItems() {
     const container = document.getElementById('item-list');
-    container.innerHTML = state.items.map(item => `
+    container.innerHTML = state.items.map(it => `
       <div class="item-card">
-        <div class="item-top">
-          <input class="item-name-input" value="${item.name}" onchange="updateItem(${item.id}, 'name', this.value)">
-          <span style="font-family:var(--mono)">¥</span>
-          <input class="item-price-input" type="number" value="${item.price}" onchange="updateItem(${item.id}, 'price', this.value)">
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+          <input style="width:60%" value="${it.name}" onchange="updateItem(${it.id}, 'name', this.value)">
+          <input style="width:30%; text-align:right;" type="number" value="${it.price}" onchange="updateItem(${it.id}, 'price', this.value)">
         </div>
         <div>
           ${state.payers.map(p => `
-            <span class="payer-chip ${item.assignees.includes(p.id) ? 'on' : ''}" onclick="toggleAssign(${item.id}, ${p.id})">${p.name}</span>
+            <span class="payer-chip ${it.assignees.includes(p.id) ? 'on' : ''}" onclick="toggleAssign(${it.id}, ${p.id})">${p.name}</span>
           `).join('')}
-          <span class="payer-chip ${item.assignees.length === 0 ? 'on' : ''}" onclick="clearAssign(${item.id})">所有人平均</span>
         </div>
       </div>
     `).join('');
   }
 
-  function addItem() { state.items.push({id: state.nextId++, name: '新項目', price: 0, assignees: []}); renderItems(); }
-  function updateItem(id, key, val) { 
-    const it = state.items.find(x => x.id === id); 
-    if(it) it[key] = key === 'price' ? parseInt(val) : val; 
-  }
-  function toggleAssign(itemId, payerId) {
-    const it = state.items.find(x => x.id === itemId);
-    const idx = it.assignees.indexOf(payerId);
-    if (idx > -1) it.assignees.splice(idx, 1);
-    else it.assignees.push(payerId);
-    renderItems();
-  }
-  function clearAssign(itemId) {
-    state.items.find(x => x.id === itemId).assignees = [];
-    renderItems();
-  }
-
   function renderSummary() {
-    const results = {};
-    state.payers.forEach(p => results[p.id] = 0);
+    const totals = {};
+    state.payers.forEach(p => totals[p.id] = 0);
     state.items.forEach(it => {
       const targets = it.assignees.length ? it.assignees : state.payers.map(p => p.id);
-      const share = it.price / targets.length;
-      targets.forEach(tid => results[tid] += share);
+      const per = it.price / targets.length;
+      targets.forEach(tid => totals[tid] += per);
     });
-
     document.getElementById('summary-content').innerHTML = state.payers.map(p => `
-      <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid var(--border);">
+      <div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border);">
         <strong>${p.name}</strong>
-        <span style="font-family:var(--mono); color:var(--green); font-size:18px;">¥ ${Math.round(results[p.id]).toLocaleString()}</span>
+        <span style="font-family:var(--mono); color:var(--green)">¥ ${Math.round(totals[p.id]).toLocaleString()}</span>
       </div>
     `).join('');
   }
 
-  function exportCSV() {
-    let csv = "品項,金額,分配人員\n";
-    state.items.forEach(it => {
-      const names = it.assignees.length ? it.assignees.map(id => state.payers.find(p => p.id === id).name).join('/') : "全員平均";
-      csv += `${it.name},${it.price},${names}\n`;
-    });
-    const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "japan_bill.csv";
-    link.click();
-  }
-</script>
-</body>
-</html><!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>割り勘 · 日本拆帳工具 (OCR 加強版)</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --ink: #1a1a18; --ink-2: #4a4a46; --ink-3: #8a8a84;
-    --paper: #f7f5f0; --paper-2: #eeece6; --paper-3: #e4e1d8;
-    --red: #c0392b; --red-light: #fdf0ee; --green: #1a6b4a;
-    --accent: #c0392b; --border: rgba(26,26,24,0.12);
-    --border-strong: rgba(26,26,24,0.25); --radius: 4px;
-    --radius-lg: 8px; --mono: 'DM Mono', monospace; --serif: 'Noto Serif JP', serif;
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: var(--serif); background: var(--paper); color: var(--ink); line-height: 1.7; padding-bottom: 80px; }
-  .shell { max-width: 720px; margin: 0 auto; padding: 0 20px; }
-  header { padding: 40px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 36px; display: flex; align-items: baseline; gap: 16px; }
-  .logo-jp { font-size: 22px; font-weight: 300; letter-spacing: 0.12em; }
-  .logo-slash { width: 1px; height: 22px; background: var(--border-strong); align-self: center; }
-  .logo-sub { font-family: var(--mono); font-size: 11px; color: var(--ink-3); text-transform: uppercase; }
-
-  /* Steps nav */
-  .steps-nav { display: flex; margin-bottom: 36px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-  .step-tab { flex: 1; padding: 10px 8px; text-align: center; font-family: var(--mono); font-size: 11px; color: var(--ink-3); cursor: pointer; border-right: 1px solid var(--border); background: var(--paper-2); }
-  .step-tab.active { background: var(--ink); color: var(--paper); }
-  .step-tab .num { display: block; font-size: 16px; margin-bottom: 2px; }
-
-  /* Panels */
-  .panel { display: none; }
-  .panel.active { display: block; }
-
-  /* OCR Upload Zone */
-  .upload-zone { border: 1.5px dashed var(--border-strong); border-radius: var(--radius-lg); padding: 52px 24px; text-align: center; cursor: pointer; background: var(--paper-2); position: relative; }
-  .upload-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-  .upload-icon { font-size: 36px; display: block; margin-bottom: 16px; }
-  .progress-wrap { display: none; margin-top: 20px; }
-  .progress-bar { height: 3px; background: var(--paper-3); margin-top: 8px; border-radius: 2px; overflow: hidden; }
-  .progress-fill { height: 100%; background: var(--ink); width: 0%; transition: width 0.3s; }
-
-  /* UI Elements */
-  .preview-wrap { display: none; margin-top: 20px; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-  .preview-wrap img { width: 100%; max-height: 300px; object-fit: contain; background: #000; }
-  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; font-family: var(--mono); font-size: 12px; border: 1px solid var(--border-strong); border-radius: var(--radius); background: var(--paper); cursor: pointer; }
-  .btn-fill { background: var(--ink); color: var(--paper); }
-  .item-card { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 12px; background: #fff; }
-  .item-top { display: flex; gap: 10px; margin-bottom: 10px; }
-  .item-name-input { flex: 1; font-family: var(--serif); border: none; border-bottom: 1px solid var(--border); font-size: 15px; }
-  .item-price-input { width: 90px; text-align: right; font-family: var(--mono); border: none; border-bottom: 1px solid var(--border); }
-  .payer-chip { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; margin-right: 5px; cursor: pointer; border: 1px solid var(--border); background: var(--paper-2); }
-  .payer-chip.on { background: var(--ink); color: #fff; }
-  .notice { font-size: 11px; color: var(--ink-3); background: var(--paper-2); padding: 12px; border-radius: var(--radius); margin-top: 20px; }
-</style>
-</head>
-<body>
-
-<div class="shell">
-  <header>
-    <span class="logo-jp">割り勘</span>
-    <div class="logo-slash"></div>
-    <span class="logo-sub">Japan Bill Splitter</span>
-  </header>
-
-  <div class="steps-nav">
-    <div class="step-tab active" onclick="goStep(0)"><span class="num">01</span>辨識發票</div>
-    <div class="step-tab" onclick="goStep(1)"><span class="num">02</span>設定人員</div>
-    <div class="step-tab" onclick="goStep(2)"><span class="num">03</span>分配金額</div>
-    <div class="step-tab" onclick="goStep(3)"><span class="num">04</span>結算匯出</div>
-  </div>
-
-  <!-- Step 0: OCR -->
-  <div class="panel active" id="panel-0">
-    <div class="upload-zone">
-      <input type="file" accept="image/*" onchange="handleFile(this.files[0])">
-      <span class="upload-icon">🧾</span>
-      <strong>點擊或拖曳上傳日本發票</strong>
-      <p style="font-size:12px; color:var(--ink-3)">支援明細自動抓取</p>
-    </div>
-
-    <canvas id="preprocess-canvas" style="display:none;"></canvas>
-
-    <div class="preview-wrap" id="preview-wrap">
-      <img id="preview-img">
-    </div>
-
-    <div class="progress-wrap" id="progress-wrap">
-      <div style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:11px;">
-        <span id="progress-text">處理中...</span>
-        <span id="progress-pct">0%</span>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-    </div>
-
-    <div style="margin-top:24px; display:flex; gap:10px;">
-      <button class="btn btn-fill" id="btn-ocr" style="display:none;" onclick="runOCR()">🔍 開始自動辨識</button>
-      <button class="btn" onclick="goStep(1)">手動輸入 →</button>
-    </div>
-    <div class="notice">
-      ※ 本地辨識保護隱私：圖片不會上傳至伺服器。<br>
-      ※ 自動優化：系統會自動調整對比度以過濾發票背景雜訊。
-    </div>
-  </div>
-
-  <!-- Step 1: Payers -->
-  <div class="panel" id="panel-1">
-    <h3>誰參與了這次消費？</h3>
-    <div id="payer-list" style="margin: 20px 0;"></div>
-    <button class="btn" onclick="addPayer()">＋ 新增付款人</button>
-    <div style="margin-top:30px;"><button class="btn btn-fill" onclick="goStep(2)">下一步：分配品項 →</button></div>
-  </div>
-
-  <!-- Step 2: Items -->
-  <div class="panel" id="panel-2">
-    <h3>明細分配</h3>
-    <div id="item-list" style="margin: 20px 0;"></div>
-    <button class="btn" onclick="addItem()">＋ 新增品項</button>
-    <div style="margin-top:30px; display:flex; justify-content:space-between;">
-      <button class="btn" onclick="goStep(1)">← 返回</button>
-      <button class="btn btn-fill" onclick="goStep(3)">查看結算結果 →</button>
-    </div>
-  </div>
-
-  <!-- Step 3: Summary -->
-  <div class="panel" id="panel-3">
-    <h3>結算清單</h3>
-    <div id="summary-content" style="margin: 20px 0;"></div>
-    <button class="btn btn-fill" onclick="exportCSV()">⬇ 匯出 CSV (Excel)</button>
-    <button class="btn" style="margin-left:10px;" onclick="location.reload()">重新開始</button>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<script>
-  let state = {
-    payers: [{id: 1, name: '小明'}, {id: 2, name: '小美'}],
-    items: [],
-    nextId: 100
-  };
-
-  // 1. 影像預處理：針對日文發票優化
-  async function preprocessImage(file) {
-    return new Promise((resolve) => {
-      const canvas = document.getElementById('preprocess-canvas');
-      const ctx = canvas.getContext('2d');
-      const img = new Image();
-      img.onload = () => {
-        const scale = 2; // 放大兩倍以利辨識小字
-        canvas.width = img.width * scale;
-        canvas.height = img.height * scale;
-        ctx.filter = 'grayscale(1) contrast(1.2)'; // 轉灰階並增加對比[cite: 1]
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL('image/png'));
-      };
-      img.src = URL.createObjectURL(file);
-    });
-  }
-
-  // 2. 核心 OCR 邏輯[cite: 1]
-  async function runOCR() {
-    const fileInput = document.querySelector('input[type=file]');
-    if (!fileInput.files[0]) return;
-
-    const btn = document.getElementById('btn-ocr');
-    btn.disabled = true;
-    document.getElementById('progress-wrap').style.display = 'block';
-
-    try {
-      const processedImg = await preprocessImage(fileInput.files[0]);
-      const worker = await Tesseract.createWorker('jpn+eng', 1, {
-        logger: m => {
-          if (m.status === 'recognizing text') {
-            const p = Math.round(m.progress * 100);
-            document.getElementById('progress-fill').style.width = p + '%';
-            document.getElementById('progress-pct').textContent = p + '%';
-          }
-        }
-      });
-
-      // 設定為 PSM 4：假設是單欄變動大小的文字[cite: 1]
-      await worker.setParameters({ tessedit_pageseg_mode: '4' });
-      const { data: { text } } = await worker.recognize(processedImg);
-      await worker.terminate();
-
-      state.items = parseReceipt(text);[cite: 1]
-      goStep(1);
-    } catch (e) {
-      alert("辨識出錯，請手動輸入");
-      goStep(1);
-    }
-  }
-
-  // 3. 日文發票解析算法[cite: 1]
-  function parseReceipt(text) {
-    const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 2);
-    const results = [];
-    const priceRe = /(?:[¥￥\s]|單價)?\s*([0-9０-９,，.]{2,})\s*(?:[税軽*＊※]|円|点)?$/; //[cite: 1]
-    const skipRe = /^(合計|小計|税|消費税|子|現|預|客|subtotal|total|tax|割引|お釣|領収|電話|〒|202)/i;
-
-    lines.forEach(line => {
-      if (skipRe.test(line)) return;
-      const m = line.match(priceRe);
-      if (m) {
-        let rawPrice = m[1].replace(/[,，. ]/g, '').replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFF10 + 48));
-        const price = parseInt(rawPrice, 10);
-        if (!isNaN(price) && price < 1000000) {
-          let name = line.replace(m[0], '').trim().replace(/^[*＊※\s\d]+/, '').replace(/[\sxd\d]+$/, '');[cite: 1]
-          results.push({ id: state.nextId++, name: name || "品項", price: price, assignees: [] });
-        }
-      }
-    });
-    return results;
-  }
-
-  // UI Functions
-  function handleFile(file) {
-    if (!file) return;
-    document.getElementById('preview-img').src = URL.createObjectURL(file);
-    document.getElementById('preview-wrap').style.display = 'block';
-    document.getElementById('btn-ocr').style.display = 'inline-flex';
-  }
-
-  function goStep(n) {
-    document.querySelectorAll('.panel').forEach((p, i) => p.classList.toggle('active', i === n));
-    document.querySelectorAll('.step-tab').forEach((t, i) => t.classList.toggle('active', i === n));
-    if (n === 1) renderPayers();
-    if (n === 2) renderItems();
-    if (n === 3) renderSummary();
-  }
-
-  function renderPayers() {
-    const container = document.getElementById('payer-list');
-    container.innerHTML = state.payers.map(p => `
-      <div style="margin-bottom:10px; display:flex; gap:10px;">
-        <input class="item-name-input" value="${p.name}" onchange="updatePayerName(${p.id}, this.value)">
-        <button class="btn" style="color:var(--red)" onclick="removePayer(${p.id})">✕</button>
-      </div>
-    `).join('');
-  }
-
+  // 數據操作
   function addPayer() { state.payers.push({id: Date.now(), name: '新成員'}); renderPayers(); }
   function removePayer(id) { state.payers = state.payers.filter(p => p.id !== id); renderPayers(); }
-  function updatePayerName(id, val) { const p = state.payers.find(x => x.id === id); if(p) p.name = val; }
-
-  function renderItems() {
-    const container = document.getElementById('item-list');
-    container.innerHTML = state.items.map(item => `
-      <div class="item-card">
-        <div class="item-top">
-          <input class="item-name-input" value="${item.name}" onchange="updateItem(${item.id}, 'name', this.value)">
-          <span style="font-family:var(--mono)">¥</span>
-          <input class="item-price-input" type="number" value="${item.price}" onchange="updateItem(${item.id}, 'price', this.value)">
-        </div>
-        <div>
-          ${state.payers.map(p => `
-            <span class="payer-chip ${item.assignees.includes(p.id) ? 'on' : ''}" onclick="toggleAssign(${item.id}, ${p.id})">${p.name}</span>
-          `).join('')}
-          <span class="payer-chip ${item.assignees.length === 0 ? 'on' : ''}" onclick="clearAssign(${item.id})">所有人平均</span>
-        </div>
-      </div>
-    `).join('');
-  }
-
+  function updatePayer(id, val) { state.payers.find(p => p.id === id).name = val; }
   function addItem() { state.items.push({id: state.nextId++, name: '新項目', price: 0, assignees: []}); renderItems(); }
-  function updateItem(id, key, val) { 
-    const it = state.items.find(x => x.id === id); 
-    if(it) it[key] = key === 'price' ? parseInt(val) : val; 
-  }
-  function toggleAssign(itemId, payerId) {
-    const it = state.items.find(x => x.id === itemId);
-    const idx = it.assignees.indexOf(payerId);
-    if (idx > -1) it.assignees.splice(idx, 1);
-    else it.assignees.push(payerId);
+  function updateItem(id, k, v) { const it = state.items.find(x => x.id === id); it[k] = k==='price'?parseInt(v):v; }
+  function toggleAssign(iid, pid) {
+    const it = state.items.find(x => x.id === iid);
+    const idx = it.assignees.indexOf(pid);
+    if(idx > -1) it.assignees.splice(idx,1); else it.assignees.push(pid);
     renderItems();
   }
-  function clearAssign(itemId) {
-    state.items.find(x => x.id === itemId).assignees = [];
-    renderItems();
-  }
-
-  function renderSummary() {
-    const results = {};
-    state.payers.forEach(p => results[p.id] = 0);
-    state.items.forEach(it => {
-      const targets = it.assignees.length ? it.assignees : state.payers.map(p => p.id);
-      const share = it.price / targets.length;
-      targets.forEach(tid => results[tid] += share);
-    });
-
-    document.getElementById('summary-content').innerHTML = state.payers.map(p => `
-      <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid var(--border);">
-        <strong>${p.name}</strong>
-        <span style="font-family:var(--mono); color:var(--green); font-size:18px;">¥ ${Math.round(results[p.id]).toLocaleString()}</span>
-      </div>
-    `).join('');
-  }
-
   function exportCSV() {
-    let csv = "品項,金額,分配人員\n";
-    state.items.forEach(it => {
-      const names = it.assignees.length ? it.assignees.map(id => state.payers.find(p => p.id === id).name).join('/') : "全員平均";
-      csv += `${it.name},${it.price},${names}\n`;
-    });
-    const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "japan_bill.csv";
-    link.click();
+    let content = "Item,Price,Who\n" + state.items.map(it => `${it.name},${it.price},${it.assignees.length?it.assignees.join('/'):'All'}`).join('\n');
+    const blob = new Blob([content], {type: 'text/csv'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'split.csv'; a.click();
   }
+
+  // 監聽上傳
+  document.getElementById('fileInput').addEventListener('change', function(e) {
+    if(e.target.files[0]) document.getElementById('btn-ocr').style.display = 'inline-flex';
+  });
 </script>
 </body>
 </html>
