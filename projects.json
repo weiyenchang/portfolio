@@ -92,7 +92,7 @@
                 ],
             
             "zh-TW": {
-                "title": "Simple Plan Builder ｜學習計劃表產生器",
+                "title": "學習計劃表產生器",
                 "description": "客製化輸入、自動化排程，快速產出學習計劃，並支援支援 Google Calendar 大批提醒建立",
                 "tools": ["Genmini", "HTML/CSS/JavaScript"]
             },
@@ -122,7 +122,7 @@
                 ],
             
             "zh-TW": {
-                "title": "Simple eLearning Platform",
+                "title": "低成本數位學習平台",
                 "description": "適用於新創與中小企業低成本數位學習平台，幫助企業進行知識管理",
                 "tools": ["Genmini", "HTML/CSS/JavaScript"]
             },
